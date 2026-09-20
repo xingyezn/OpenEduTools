@@ -7,7 +7,7 @@ const outputDir = path.join(root, 'downloads');
 const sharedFiles = [
   'css/tokens.css', 'css/main.css', 'css/components.css', 'css/tool.css',
   'js/theme.js', 'js/storage.js', 'js/favorites.js', 'js/recent.js', 'js/tool-page.js',
-  'assets/icons/favicon.svg'
+  'assets/icons/favicon-32.png', 'assets/images/logo.png'
 ];
 
 const crcTable = Array.from({ length: 256 }, (_, start) => {

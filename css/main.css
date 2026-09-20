@@ -17,7 +17,7 @@ p { margin-block: 0 var(--space-4); }
 .site-header { position: sticky; z-index: 10; top: 0; background: var(--surface-glass); border-bottom: var(--border-width) solid var(--border); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); }
 .site-header__inner { min-height: 4.5rem; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--text); font-weight: 800; text-decoration: none; letter-spacing: -0.025em; }
-.brand__mark { width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 0.65rem; background: var(--brand-gradient); color: #fff; box-shadow: 0 10px 24px -8px var(--glow); font-size: var(--text-sm); }
+.brand__mark { width: 2.25rem; height: 2.25rem; display: grid; place-items: center; border-radius: 0.6rem; background: url('../assets/images/logo.png') center / contain no-repeat; font-size: 0; color: transparent; filter: drop-shadow(0 6px 12px var(--glow)); }
 .site-nav { display: flex; align-items: center; gap: var(--space-4); }
 .site-nav a { position: relative; color: var(--text); text-decoration: none; white-space: nowrap; }
 .site-nav a::after { content: ""; position: absolute; inset: auto 0 -0.25rem; height: 2px; background: var(--brand-gradient); transform: scaleX(0); transition: transform 160ms ease; }

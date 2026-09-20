@@ -34,7 +34,7 @@ V0.1 聚焦一个可公开使用、可持续扩展的最小版本：
 - GitHub Pages 自动部署；
 - 面向传统开发与 Vibe Coding 的贡献流程。
 
-完整任务见 [V0.1_TASKS.md](V0.1_TASKS.md)。
+完整任务见 [docs/V0.1_TASKS.md](docs/V0.1_TASKS.md)。
 
 V0.1 的静态站点、6 个首批工具、元数据工具链、自动化测试和 Pages 工作流已经实现。可直接访问 [线上站点](https://xingyezn.github.io/OpenEduTools/)；当前测试记录见 [docs/TEST_REPORT.md](docs/TEST_REPORT.md)，发布前人工验收项见 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)。
 
@@ -76,6 +76,8 @@ OpenEduTools/
 │   └── validate-tools.mjs     # 校验元数据和必要文件
 ├── tests/
 ├── docs/
+│   ├── TOOL_SPEC.md           # 工具实现与验收规范
+│   ├── V0.1_TASKS.md          # 版本范围与任务清单
 │   └── RELEASE_CHECKLIST.md  # 发布前人工与线上验收
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
@@ -85,9 +87,6 @@ OpenEduTools/
 │       └── deploy-pages.yml
 ├── README.md
 ├── CONTRIBUTING.md
-├── TOOL_SPEC.md
-├── V0.1_TASKS.md
-├── CODEX_PROMPT.md
 └── LICENSE
 ```
 
@@ -175,7 +174,7 @@ tools/random-picker/
 }
 ```
 
-字段、目录、交互、隐私和验收要求见 [TOOL_SPEC.md](TOOL_SPEC.md)。
+字段、目录、交互、隐私和验收要求见 [docs/TOOL_SPEC.md](docs/TOOL_SPEC.md)。
 
 ## 分类
 
@@ -214,7 +213,7 @@ V0.1 使用以下稳定分类 ID：
 - 使用 Codex 等 AI 编程工具进行 Vibe Coding，再人工验证结果；
 - 审查 Pull Request、补充测试或文档。
 
-首次贡献前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [TOOL_SPEC.md](TOOL_SPEC.md)。AI 可以帮助写代码，但贡献者仍需对隐私、安全、版权和可用性负责。
+首次贡献前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [docs/TOOL_SPEC.md](docs/TOOL_SPEC.md)。AI 可以帮助写代码，但贡献者仍需对隐私、安全、版权和可用性负责。
 
 新增工具可复制 `tools/_template/`，将目录名、`tool.json` 的 `id`/`entry` 与页面 `data-tool-id` 一并替换，再运行 `npm run build:index`、`npm run build:downloads` 和 `npm run check`。
 

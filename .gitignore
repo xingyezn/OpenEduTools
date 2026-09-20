@@ -5,5 +5,3 @@ Thumbs.db
 .idea/
 .vscode/
 coverage/
-# 本地未审核素材；项目图片请放在 assets/images/ 并说明来源。
-img/

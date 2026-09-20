@@ -3,7 +3,7 @@
   const KEY = 'openEduTools:theme';
   const allowed = new Set(['system', 'light', 'dark']);
   const scriptUrl = typeof document !== 'undefined' ? document.currentScript?.src : '';
-  if (scriptUrl && !document.querySelector('link[rel~="icon"]')) { const icon = document.createElement('link'); icon.rel = 'icon'; icon.type = 'image/svg+xml'; icon.href = new URL('../assets/icons/favicon.svg', scriptUrl).href; document.head.append(icon); }
+  if (scriptUrl && !document.querySelector('link[rel~="icon"]')) { const icon = document.createElement('link'); icon.rel = 'icon'; icon.type = 'image/png'; icon.href = new URL('../assets/icons/favicon-32.png', scriptUrl).href; document.head.append(icon); }
   function safeGet() { try { const value = localStorage.getItem(KEY); return allowed.has(value) ? value : 'dark'; } catch { return 'dark'; } }
   function apply(value) { const theme = allowed.has(value) ? value : 'dark'; if (theme === 'system') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme = theme; return theme; }
   function save(value) { const theme = apply(value); try { localStorage.setItem(KEY, theme); } catch { /* non-blocking */ } return theme; }
