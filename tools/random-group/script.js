@@ -52,6 +52,7 @@
       const total = lastGroups.reduce((sum, group) => sum + group.length, 0);
       groupInfo.textContent = `共 ${lastGroups.length} 组 ｜ ${total} 人`;
       setStatus(`已分为 ${lastGroups.length} 组，每组 ${Math.min(...lastGroups.map((group) => group.length))}–${Math.max(...lastGroups.map((group) => group.length))} 人。`, 'success');
+      root.OpenEduAnalytics?.toolUse?.('random-group');
     } catch (error) { clearResult(); setStatus(error.message, 'error'); }
   }
   function openPanel(open) { panel.hidden = !open; settingsToggle.setAttribute('aria-expanded', String(open)); if (open) { updateCount(); input.focus(); } }

@@ -94,6 +94,7 @@
     if (state.running) {
       state.accumulated += Math.max(0, Date.now() - state.startedAt); state.running = false; setStatus('已暂停。', 'info');
     } else {
+      if (state.accumulated === 0) root.OpenEduAnalytics?.toolUse?.('pomodoro-timer');
       state.startedAt = Date.now(); state.running = true; setStatus(`${PHASE_LABEL[state.mode]}中…`, 'success');
     }
     render();

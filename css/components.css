@@ -68,4 +68,18 @@
 .share-link { display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0.45rem 1rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--text); text-decoration: none; font-weight: 700; }
 .share-link:hover { border-color: var(--accent-strong); color: var(--text); }
 .share-dialog__hint { margin: 0; text-align: center; }
+.tool-card__metrics { display: flex; gap: var(--space-3); color: var(--text-muted); font-size: var(--text-sm); font-weight: 700; }
+.tool-card__metric { display: inline-flex; align-items: center; gap: 0.25rem; }
+.home-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: var(--space-3); margin-top: var(--space-5); }
+.home-stat { display: grid; gap: 0.15rem; padding: var(--space-4); text-align: center; background: var(--surface-glass); border: var(--border-width) solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.home-stat strong { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 850; background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.home-stat span { color: var(--text-muted); font-size: var(--text-sm); }
+.ranking-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--space-4); }
+.ranking { display: grid; gap: var(--space-3); align-content: start; }
+.ranking h3 { margin: 0; font-size: 1.05rem; }
+.ranking-list { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.ranking-item { display: flex; align-items: center; gap: var(--space-3); }
+.ranking-item__rank { flex: none; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: 50%; background: var(--surface-soft); color: var(--text-muted); font-weight: 800; font-size: var(--text-xs); }
+.ranking-item__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.ranking-item__count { flex: none; color: var(--text-muted); font-size: var(--text-sm); }
 @media (max-width: 30rem) { .search-row { grid-template-columns: 1fr; } .panel { padding: var(--space-4); } .button { width: 100%; } .tool-actions .button { flex: 1 1 100%; } .share-dialog__url { grid-template-columns: 1fr; } }

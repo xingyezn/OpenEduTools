@@ -1,0 +1,19 @@
+{
+  "updated_at": null,
+  "summary": {
+    "total_opens": 0,
+    "total_uses": 0,
+    "total_favorites": 0
+  },
+  "tools": {},
+  "rankings": {
+    "all_time": {
+      "most_used": [],
+      "most_favorited": []
+    },
+    "last_7_days": {
+      "most_used": [],
+      "most_favorited": []
+    }
+  }
+}

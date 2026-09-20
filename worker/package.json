@@ -1,0 +1,21 @@
+{
+  "name": "openedutools-stats-worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OpenEduTools 匿名使用统计 Cloudflare Worker（Cloudflare D1）。",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:local": "wrangler d1 execute openedutools-stats --local --file=./schema.sql",
+    "db:remote": "wrangler d1 execute openedutools-stats --remote --file=./schema.sql",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

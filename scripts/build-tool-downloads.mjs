@@ -63,7 +63,12 @@ export async function collectToolPackage(id) {
   entries.push({ name: `${prefix}/index.html`, data: landing }, { name: `${prefix}/README.txt`, data: readme });
   for (const file of files.filter((name) => ['index.html', 'script.js', 'style.css', 'tool.json'].includes(name)).sort()) {
     let data = await readFile(path.join(toolDir, file));
-    if (file === 'index.html') data = Buffer.from(data.toString().replace('<html lang="zh-CN">', '<html lang="zh-CN" data-offline-bundle>'));
+    if (file === 'index.html') {
+      const html = data.toString()
+        .replace('<html lang="zh-CN">', '<html lang="zh-CN" data-offline-bundle>')
+        .replace('<script src="../../js/analytics.js" defer></script>', '');
+      data = Buffer.from(html);
+    }
     entries.push({ name: `${prefix}/tools/${id}/${file}`, data });
   }
   for (const file of sharedFiles) entries.push(await readEntry(file, `${prefix}/${file}`));

@@ -70,6 +70,7 @@
     drawButton.disabled = false; setRollingUI(false);
     updateStats();
     setStatus(`已抽中：${name}`, 'success');
+    root.OpenEduAnalytics?.toolUse?.('random-picker');
     playRevealSound();
     if (dedupe.checked && getPool().length === 0) { setStatus(`已抽中：${name}，全部同学都点过啦，点击「重置」可重新开始。`, 'success'); }
   }

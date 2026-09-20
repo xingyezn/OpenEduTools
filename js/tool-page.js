@@ -202,6 +202,8 @@
   }
   function openShareDialog(info) {
     const context = resolveShareInfo(info);
+    const toolId = (info && info.toolId) || document.body.dataset.toolId;
+    if (toolId) root.OpenEduAnalytics?.share?.(toolId);
     const url = context.url; const title = context.title; const text = buildShareText(context);
     const qr = encodeQr(url, url.length > 110 ? 'L' : 'M');
     const overlay = document.createElement('div'); overlay.className = 'share-dialog'; overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); overlay.setAttribute('aria-label', '分享');
@@ -261,6 +263,7 @@
   function init() {
     initShare();
     const id = document.body.dataset.toolId; if (!id) return;
+    root.OpenEduAnalytics?.toolOpen?.(id);
     const favoriteButton = document.querySelector('[data-tool-favorite]');
     if (favoriteButton && id !== 'sample-tool' && !document.documentElement.hasAttribute('data-offline-bundle')) {
       const actions = document.createElement('div'); actions.className = 'tool-header__actions';
@@ -270,7 +273,7 @@
     let favorites;
     try { favorites = root.OETFavorites.createFavorites(localStorage); root.OETRecent.createRecent(localStorage).add(id); } catch { showToast('浏览器存储不可用，工具仍可正常使用'); }
     function sync() { if (!favoriteButton || !favorites) return; const active = favorites.get().includes(id); favoriteButton.textContent = active ? '★ 已收藏' : '☆ 收藏'; favoriteButton.setAttribute('aria-pressed', String(active)); }
-    if (favoriteButton) favoriteButton.addEventListener('click', () => { const result = favorites?.toggle(id); sync(); showToast(result?.saved === false ? '收藏仅在本页有效，浏览器存储不可用' : (result?.value.includes(id) ? '已收藏' : '已取消收藏')); });
+    if (favoriteButton) favoriteButton.addEventListener('click', () => { const result = favorites?.toggle(id); if (result) { if (result.value.includes(id)) root.OpenEduAnalytics?.favoriteAdd?.(id); else root.OpenEduAnalytics?.favoriteRemove?.(id); } sync(); showToast(result?.saved === false ? '收藏仅在本页有效，浏览器存储不可用' : (result?.value.includes(id) ? '已收藏' : '已取消收藏')); });
     sync();
   }
   const api = { showToast, copyText, downloadText, downloadDataUrl, utf8Bytes, encodeQr, buildShareLinks, buildShareText, openShareDialog };

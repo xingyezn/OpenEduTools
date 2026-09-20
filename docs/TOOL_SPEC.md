@@ -236,6 +236,7 @@ openEduTools:favorites
 openEduTools:recent
 openEduTools:theme
 openEduTools:tool:<tool-id>:settings
+openEduTools:open:<tool-id>        # sessionStorage：tool_open 去重时间戳
 ```
 
 规则：
@@ -244,7 +245,8 @@ openEduTools:tool:<tool-id>:settings
 - 如工具提供“记住输入”，必须默认关闭、明确说明保存位置，并提供清除按钮；
 - 读取本地存储时处理无权限、配额不足、JSON 损坏和旧版本数据；
 - 单个工具不得清空整个域名下的 `localStorage`；
-- `recent` 只记录工具 ID 和访问时间，不记录用户输入。
+- `recent` 只记录工具 ID 和访问时间，不记录用户输入；
+- `open` 前缀键只用于 `sessionStorage` 中的 `tool_open` 去重时间戳，不记录输入。
 
 ## 8. 搜索、分类、收藏与最近使用
 
@@ -273,7 +275,7 @@ V0.1 工具必须满足：
 
 - `offline: true` 且 `dataPolicy: "local-only"`；
 - 不发送名单、成绩、文本、文件名、文件内容或操作记录；
-- 不加载分析、广告、第三方追踪或远程字体；
+- 不加载第三方分析、广告、追踪脚本或远程字体；第一方匿名统计必须通过 `js/analytics.js`，见 §9.1；
 - 不把用户输入拼接为 HTML、CSS、脚本、URL 或选择器执行；
 - 不使用动态代码执行；
 - 不含密钥、令牌、内部服务地址或真实个人数据；
@@ -281,6 +283,18 @@ V0.1 工具必须满足：
 - 打开的外部链接使用恰当的 `rel="noopener noreferrer"`。
 
 如果未来引入联网工具，必须先更新本规范，增加显式同意、数据流说明、故障处理和第三方隐私评估。仅修改 `tool.json` 不足以绕过 V0.1 限制。
+
+### 9.1 匿名统计
+
+工具可以接入全站统一的匿名统计，规则如下：
+
+- 只能调用 `js/analytics.js` 暴露的 `OpenEduAnalytics` 方法，禁止在工具内直接发起统计请求；
+- 只允许发送 `tool_id` 与事件类型（`tool_open`、`tool_use`、`favorite_add`、`favorite_remove`、`share`）；
+- 不得发送任何用户输入、文件名、文件内容、成绩、学生信息或账号；
+- 统计调用必须可失败降级：任何异常都不得影响工具运行，禁止先 `await` 统计再执行核心逻辑；
+- `tool_use` 应在用户明确执行核心功能时调用一次，避免一次点击重复触发；
+- 离线包不包含统计逻辑，也不得发送任何网络请求；
+- 新增事件类型必须先更新本规范、Worker 事件白名单和 `PRIVACY.md`。
 
 ## 10. 第三方依赖
 
@@ -355,7 +369,7 @@ V0.1 目标：
 
 ### 质量验收
 
-- [ ] 没有意外网络请求；
+- [ ] 除 `js/analytics.js` 的匿名统计外没有意外网络请求；
 - [ ] 没有控制台错误；
 - [ ] 键盘、窄屏、缩放和至少两种浏览器已测试；
 - [ ] 用户输入不会被解释为可执行内容；

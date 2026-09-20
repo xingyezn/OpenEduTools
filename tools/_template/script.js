@@ -1,5 +1,6 @@
 (function () {
   'use strict';
+  // 接入统计：在核心功能成功后调用 window.OpenEduAnalytics?.toolUse('<tool-id>')，规则见 docs/TOOL_SPEC.md §9.1。
   if (typeof document === 'undefined') return;
   const input = document.getElementById('sample-input'); const status = document.getElementById('status'); const result = document.getElementById('result');
   document.getElementById('run').addEventListener('click', () => { const value = input.value.trim(); if (!value) { status.textContent = '请先输入内容。'; status.dataset.kind = 'error'; return; } const output = document.createElement('p'); output.textContent = value; result.replaceChildren(output); status.textContent = '处理完成。'; status.dataset.kind = 'success'; });

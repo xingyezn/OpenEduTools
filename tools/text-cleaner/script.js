@@ -22,8 +22,8 @@
   function signed(value) { return value > 0 ? `+${value}` : String(value); }
   function update() { const result = cleanText(source.value, options()); output.value = result; const diff = differenceSummary(source.value, result); summary.textContent = `输入 ${diff.before.characters} 字符 / ${diff.before.lines} 行；输出 ${diff.after.characters} 字符 / ${diff.after.lines} 行；${diff.changed ? `字符 ${signed(diff.characterDelta)}，行 ${signed(diff.lineDelta)}` : '无变化'}。`; status.textContent = source.value.length > 1000000 ? '文本超过 100 万字符，处理可能变慢。' : ''; status.dataset.kind = source.value.length > 1000000 ? 'error' : ''; }
   source.addEventListener('input', update); document.querySelectorAll('[data-option]').forEach((input) => input.addEventListener('change', update));
-  document.getElementById('copy').addEventListener('click', () => root.OETToolPage.copyText(output.value));
-  document.getElementById('download').addEventListener('click', () => root.OETToolPage.downloadText('清洗后的文本.txt', output.value));
+  document.getElementById('copy').addEventListener('click', () => { root.OpenEduAnalytics?.toolUse?.('text-cleaner'); root.OETToolPage.copyText(output.value); });
+  document.getElementById('download').addEventListener('click', () => { root.OpenEduAnalytics?.toolUse?.('text-cleaner'); root.OETToolPage.downloadText('清洗后的文本.txt', output.value); });
   document.getElementById('undo').addEventListener('click', () => { document.querySelectorAll('[data-option]').forEach((input) => { input.checked = false; }); output.value = source.value; update(); root.OETToolPage.showToast('已恢复原文并取消清理选项'); });
   document.getElementById('clear').addEventListener('click', () => { source.value = ''; output.value = ''; document.querySelectorAll('[data-option]').forEach((input) => { input.checked = false; }); update(); source.focus(); }); update();
 })(typeof globalThis !== 'undefined' ? globalThis : this);

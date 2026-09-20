@@ -1,5 +1,22 @@
 # 更新日志
 
+## 未发布
+
+### 新增
+
+- 匿名使用统计：工具打开、使用、收藏与分享计数，以及首页「本周热门」「最多收藏」排行；
+- 首页展示工具总数、累计使用量与收藏量，工具卡片显示使用与收藏次数；
+- Cloudflare Worker + D1 统计服务（`worker/`）与每日 GitHub Actions 同步到 `data/stats.json`。
+
+### 文档
+
+- 新增 [PRIVACY.md](PRIVACY.md)，并同步更新 README、TOOL_SPEC、关于页与贡献指南中的隐私说明。
+
+### 隐私
+
+- 统计只发送 `tool_id` 与事件类型（`tool_open`、`tool_use`、`favorite_add`、`favorite_remove`、`share`），按 UTC 日期聚合；不含用户输入、文件、账号、IP 或浏览器指纹；
+- 统计请求失败静默降级，离线包不包含统计逻辑，服务不可用时工具照常运行。
+
 ## 0.1.1 - 2026-09-21
 
 ### 新增

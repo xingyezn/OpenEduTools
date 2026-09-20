@@ -1,0 +1,22 @@
+{
+  // OpenEduTools 匿名使用统计 Worker。
+  // 部署前请把 database_id 替换为 `wrangler d1 create openedutools-stats` 输出的真实 ID。
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "openedutools-stats",
+  "main": "src/index.js",
+  "compatibility_date": "2024-11-01",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    // 允许的前端来源，逗号分隔。生产环境只保留正式站点。
+    "ALLOWED_ORIGINS": "https://xingyezn.github.io"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "openedutools-stats",
+      "database_id": "0c58da74-8638-468d-b264-7ef6bf4ca2f6"
+    }
+  ]
+}

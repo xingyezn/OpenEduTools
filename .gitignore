@@ -5,3 +5,5 @@ Thumbs.db
 .idea/
 .vscode/
 coverage/
+.wrangler/
+.dev.vars

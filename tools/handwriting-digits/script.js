@@ -137,7 +137,7 @@
   }
   function startCollecting() {
     if (!canStart()) { setStatus('请先填写学号并选择保存文件夹。', 'warning'); return; }
-    state.collecting = true; updateUI(); setStatus(`开始收集，请书写数字 ${state.currentTarget}。`, 'success');
+    state.collecting = true; updateUI(); setStatus(`开始收集，请书写数字 ${state.currentTarget}。`, 'success'); root.OpenEduAnalytics?.toolUse?.('handwriting-digits');
     try { elements.drawingCanvas.focus(); } catch { /* 画布不可聚焦时忽略 */ }
   }
   function stopCollecting() {

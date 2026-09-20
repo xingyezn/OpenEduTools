@@ -61,6 +61,7 @@
       state.running = true; state.smooth = 0; state.peak = 0; state.loud = false;
       elements.startBtn.disabled = true; elements.stopBtn.disabled = false; elements.peakValue.textContent = '0';
       setStatus('测量中：请保持环境自然，数值会随音量变化。', 'success');
+      root.OpenEduAnalytics?.toolUse?.('noise-meter');
       render(0); loop();
     } catch (error) {
       const messages = { NotAllowedError: '麦克风权限被拒绝，请在浏览器地址栏允许后重试。', NotFoundError: '没有找到可用的麦克风设备。', NotReadableError: '麦克风被其他程序占用，请关闭后重试。' };

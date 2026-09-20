@@ -73,7 +73,7 @@
     const stage = elements.clockStage;
     try {
       if (document.fullscreenElement) { if (document.exitFullscreen) document.exitFullscreen().catch(() => {}); }
-      else if (stage.requestFullscreen) stage.requestFullscreen().catch(() => root.OETToolPage.showToast('无法进入全屏，可使用浏览器缩放。'));
+      else if (stage.requestFullscreen) { root.OpenEduAnalytics?.toolUse?.('fullscreen-clock'); stage.requestFullscreen().catch(() => root.OETToolPage.showToast('无法进入全屏，可使用浏览器缩放。')); }
       else root.OETToolPage.showToast('当前浏览器不支持全屏，可使用浏览器缩放。');
     } catch { root.OETToolPage.showToast('当前浏览器不支持全屏，可使用浏览器缩放。'); }
   }

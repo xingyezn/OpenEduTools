@@ -10,14 +10,17 @@
   };
   const ICON_LABELS = { 'user-search': '点', users: '组', timer: '时', 'text-clean': '文', chart: '数', handwriting: '写', volume: '音', clock: '钟' };
   function element(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
-  function createToolCard(tool, favoriteIds, onToggle) {
+  function createToolCard(tool, favoriteIds, onToggle, options) {
+    const settings = options || {};
+    const formatCount = typeof settings.formatCount === 'function' ? settings.formatCount : (value) => String(value);
+    const stats = settings.stats ? settings.stats[tool.id] : null;
     const card = element('article', 'tool-card');
     const head = element('div', 'tool-card__head');
     const icon = element('span', 'tool-card__icon', ICON_LABELS[tool.icon] || '工'); icon.setAttribute('aria-hidden', 'true');
     const tools = element('div', 'tool-card__tools');
     const share = element('button', 'tool-card__share', '分享');
     share.type = 'button'; share.setAttribute('aria-label', `分享${tool.name}`);
-    share.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); if (!root.OETToolPage) return; root.OETToolPage.openShareDialog({ url: new URL(tool.entry, location.href).href, title: tool.name, description: tool.description }); });
+    share.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); if (!root.OETToolPage) return; root.OETToolPage.openShareDialog({ url: new URL(tool.entry, location.href).href, title: tool.name, description: tool.description, toolId: tool.id }); });
     const favorite = element('button', 'favorite-button', favoriteIds.includes(tool.id) ? '★' : '☆');
     favorite.type = 'button'; favorite.dataset.toolId = tool.id; favorite.setAttribute('aria-pressed', String(favoriteIds.includes(tool.id)));
     favorite.setAttribute('aria-label', favoriteIds.includes(tool.id) ? `取消收藏${tool.name}` : `收藏${tool.name}`);
@@ -32,9 +35,18 @@
     const actions = element('div', 'tool-card__actions');
     const download = element('a', 'tool-card__download', '下载离线包'); download.href = `downloads/${tool.id}.zip`; download.download = `${tool.id}.zip`; download.setAttribute('aria-label', `下载${tool.name}离线包`);
     actions.append(download);
-    card.append(head, title, description, meta, actions); return card;
+    const parts = [head, title, description, meta];
+    if (stats && (Number(stats.uses) > 0 || Number(stats.favorites) > 0)) {
+      const metrics = element('div', 'tool-card__metrics');
+      const uses = element('span', 'tool-card__metric', `▶ ${formatCount(stats.uses)}`); uses.title = `被使用 ${stats.uses} 次`;
+      const favorites = element('span', 'tool-card__metric', `♡ ${formatCount(stats.favorites)}`); favorites.title = `被收藏 ${stats.favorites} 次`;
+      metrics.append(uses, favorites);
+      parts.push(metrics);
+    }
+    parts.push(actions);
+    card.append(...parts); return card;
   }
-  function renderCards(container, tools, favoriteIds, onToggle) { container.replaceChildren(...tools.map((tool) => createToolCard(tool, favoriteIds, onToggle))); }
+  function renderCards(container, tools, favoriteIds, onToggle, options) { container.replaceChildren(...tools.map((tool) => createToolCard(tool, favoriteIds, onToggle, options))); }
   const api = { CATEGORY_NAMES, SUBJECT_NAMES, createToolCard, renderCards };
   root.OETCatalog = api;
   if (typeof module !== 'undefined') module.exports = api;
