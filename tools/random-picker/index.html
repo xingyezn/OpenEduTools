@@ -2,26 +2,35 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="从名单中随机抽取一人，支持滚动揭晓与提示音。"><title>随机点名 · OpenEduTools</title>
+  <meta name="description" content="从名单中随机抽取一人，支持滚动揭晓与候选池管理。"><title>随机点名 · OpenEduTools</title>
   <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
   <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./script.js" defer></script>
 </head>
 <body data-tool-id="random-picker">
   <a class="skip-link" href="#main">跳到主要内容</a>
-  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html">OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../index.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true">O</span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../index.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
   <main id="main" class="tool-layout">
     <nav class="breadcrumbs" aria-label="面包屑"><a href="../../index.html">全部工具</a> / 随机点名</nav>
     <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">CLASSROOM MOMENT</span><h1>随机点名</h1><p>让名字先滚动，再在全班期待中揭晓结果。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">名单仅在本页内存中处理</span></header>
     <div class="tool-sections">
-      <section class="panel" aria-labelledby="input-title">
-        <h2 id="input-title">设置点名</h2>
-        <div class="field"><label for="names">每行一个姓名</label><textarea id="names" placeholder="示例甲&#10;示例乙&#10;示例丙" aria-describedby="name-count"></textarea><span id="name-count" class="small muted">有效人数：0</span></div>
-        <div class="form-grid picker-options"><div class="field"><label for="roll-duration">滚动时长（秒）</label><input id="roll-duration" type="number" min="0" max="10" step="0.5" value="2.5" inputmode="decimal"><span class="small muted">0 秒可立即揭晓，最长 10 秒</span></div><div class="field"><span class="field__label">课堂选项</span><label class="check"><input id="dedupe" type="checkbox" checked>去除重复姓名</label><label class="check"><input id="remove-picked" type="checkbox">抽中后暂时移出</label><label class="check"><input id="sound" type="checkbox">揭晓时播放提示音</label></div></div>
-        <div class="tool-actions"><button id="draw" class="button" type="button">开始点名</button><button id="reset-pool" class="button button--secondary" type="button">重置候选池</button><button id="clear" class="button button--danger" type="button">清空</button></div><p id="status" class="status-line" role="status" aria-live="polite"></p>
+      <nav class="tool-tabs" aria-label="随机工具"><a class="tool-tab is-active" href="./index.html" aria-current="page">随 机 点 名</a><a class="tool-tab" href="../random-group/index.html">随 机 分 组</a></nav>
+      <section class="panel" aria-labelledby="stage-title">
+        <div class="tool-topbar"><span class="tool-brand"><span class="tool-brand__dot" aria-hidden="true"></span>课堂随机点名</span><button class="icon-btn" id="settings-toggle" type="button" aria-expanded="false" aria-controls="settings-panel" title="设置名单" aria-label="设置名单"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button></div>
+        <h2 id="stage-title" class="visually-hidden">点名舞台</h2>
+        <div class="stage"><div id="display" class="stage__display">准备开始</div></div>
+        <div class="roll-actions"><button id="draw" class="button button--cta" type="button">开 始</button><button id="reset-pool" class="button button--ghost" type="button">重 置</button></div>
+        <p id="stats" class="roll-stats"></p>
       </section>
-      <section class="panel result-stage" aria-labelledby="result-title"><div class="stage-label"><h2 id="result-title">点名舞台</h2><span>公平随机 · 悬念揭晓</span></div><div id="result" class="result-box" aria-live="off"><p class="muted">准备好名单后，点击“开始点名”。</p></div></section>
-      <aside class="notice"><strong>课堂提示：</strong>滚动阶段只用于营造参与感，最终结果会在开始时通过无偏随机算法确定。音效默认关闭，开启后仅由浏览器本地合成。</aside>
+      <section id="settings-panel" class="panel settings-panel" aria-labelledby="settings-title" hidden>
+        <h2 id="settings-title">名单与选项</h2>
+        <div class="field"><label for="names">学生名单（每行一个，也可用逗号或空格分隔）</label><textarea id="names" spellcheck="false" placeholder="示例甲&#10;示例乙&#10;示例丙"></textarea><span id="name-count" class="small muted">有效人数：0</span></div>
+        <div class="settings-options"><label class="check"><input id="remove-picked" type="checkbox" checked>不重复抽取</label><label class="check"><input id="sound" type="checkbox">揭晓时播放提示音</label><div class="field field--inline"><label for="roll-duration">滚动时长（秒）</label><input id="roll-duration" type="number" min="0" max="10" step="0.5" value="3" inputmode="decimal"></div></div>
+        <div class="tool-actions"><button id="apply-names" class="button button--secondary" type="button">应用名单</button></div>
+      </section>
+      <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      <aside class="notice"><strong>课堂提示：</strong>滚动阶段只用于营造参与感，最终结果在开始时通过无偏随机算法确定。名单只在当前页面内存中处理，刷新即清除。</aside>
     </div>
     <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
   </main><div class="toast" data-toast role="status" hidden></div>
-</body></html>
+</body>
+</html>

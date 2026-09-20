@@ -1,1 +1,2 @@
-#result.result-box { background: transparent; padding: 0; }
+.group-results { min-height: 11rem; }
+@media (max-width: 35rem) { .group-results { grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); max-height: 19rem; } .btn-group { padding-inline: 1.75rem; } }

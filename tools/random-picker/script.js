@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
   function parseNames(raw, dedupe = true) {
-    const names = String(raw || '').split(/\r?\n/).map((name) => name.trim()).filter(Boolean);
+    const names = String(raw || '').split(/[\s,，、;；/]+/).map((name) => name.trim()).filter(Boolean);
     return dedupe ? [...new Set(names)] : names;
   }
   function secureUint32() { if (root.crypto?.getRandomValues) { const values = new Uint32Array(1); root.crypto.getRandomValues(values); return values[0]; } return Math.floor(Math.random() * 0x100000000); }
@@ -22,19 +22,36 @@
   if (typeof module !== 'undefined') module.exports = api;
   if (typeof document === 'undefined') return;
 
-  const input = document.getElementById('names'); const dedupe = document.getElementById('dedupe'); const remove = document.getElementById('remove-picked'); const sound = document.getElementById('sound');
-  const duration = document.getElementById('roll-duration'); const drawButton = document.getElementById('draw'); const status = document.getElementById('status'); const result = document.getElementById('result'); const count = document.getElementById('name-count');
-  const controlled = [input, dedupe, remove, sound, duration];
-  let pool = []; let sourceKey = ''; let rollTimer = 0; let finishTimer = 0; let audioContext;
-  function current() { return parseNames(input.value, dedupe.checked); }
-  function key() { return `${dedupe.checked}|${input.value}`; }
+  const input = document.getElementById('names'); const dedupe = document.getElementById('remove-picked'); const sound = document.getElementById('sound');
+  const duration = document.getElementById('roll-duration'); const drawButton = document.getElementById('draw'); const status = document.getElementById('status'); const display = document.getElementById('display');
+  const stats = document.getElementById('stats'); const count = document.getElementById('name-count');
+  const settingsToggle = document.getElementById('settings-toggle'); const panel = document.getElementById('settings-panel'); const applyButton = document.getElementById('apply-names');
+  const controlled = [input, dedupe, sound, duration];
+  let pool = []; let picked = []; let sourceKey = ''; let rolling = false; let busy = false; let rollTimer = 0; let finishTimer = 0; let autoTimer = 0; let audioContext;
+
+  function currentNames() { return parseNames(input.value, dedupe.checked); }
+  function sourceSignature() { return `${dedupe.checked}|${input.value}`; }
+  function getPool() { const names = currentNames(); return dedupe.checked ? names.filter((name) => !picked.includes(name)) : names; }
   function setStatus(message, kind = '') { status.textContent = message; status.dataset.kind = kind; }
-  function updateCount() { count.textContent = `有效人数：${current().length}`; }
-  function setBusy(busy) { controlled.forEach((control) => { control.disabled = busy; }); drawButton.disabled = busy; result.classList.toggle('is-rolling', busy); result.setAttribute('aria-busy', String(busy)); }
-  function cancelRoll() { clearInterval(rollTimer); clearTimeout(finishTimer); rollTimer = 0; finishTimer = 0; setBusy(false); }
-  function resetPool(announce = true) { cancelRoll(); pool = current(); sourceKey = key(); if (announce) setStatus(pool.length ? `候选池已重置，共 ${pool.length} 人。` : '请先输入至少一个姓名。', pool.length ? 'success' : 'error'); }
-  function renderRolling(name) { result.replaceChildren(); const label = document.createElement('p'); label.className = 'muted'; label.textContent = '正在随机滚动'; const value = document.createElement('p'); value.className = 'big-result'; value.textContent = name; result.append(label, value); }
-  function renderPicked(name) { result.replaceChildren(); const label = document.createElement('p'); label.className = 'reveal-label'; label.textContent = '本次抽中'; const value = document.createElement('p'); value.className = 'big-result'; value.textContent = name; const remaining = document.createElement('p'); remaining.textContent = remove.checked ? `候选池剩余 ${pool.length} 人` : `名单共 ${current().length} 人`; result.append(label, value, remaining); }
+  function updateCount() { count.textContent = `有效人数：${currentNames().length}`; }
+  function updateStats() {
+    const total = currentNames().length;
+    if (!total) { stats.textContent = '还没有名单，点击右上角设置'; return; }
+    const used = currentNames().filter((name) => picked.includes(name)).length;
+    stats.textContent = `共 ${total} 人 ｜ 已点 ${used} 人 ｜ 剩余 ${Math.max(total - used, 0)} 人`;
+  }
+  function setRollingUI(active) {
+    drawButton.textContent = active ? '停 止' : '开 始';
+    drawButton.classList.toggle('is-stop', active);
+    display.classList.toggle('is-rolling', active);
+  }
+  function cancelTimers() { clearTimeout(rollTimer); clearTimeout(finishTimer); clearTimeout(autoTimer); rollTimer = 0; finishTimer = 0; autoTimer = 0; }
+  function resetPool(announce = true) {
+    cancelTimers(); rolling = false; busy = false; picked = []; pool = currentNames(); sourceKey = sourceSignature();
+    setRollingUI(false); drawButton.disabled = false; display.textContent = '准备开始'; display.classList.remove('is-result', 'is-rolling');
+    updateStats(); updateCount();
+    if (announce) setStatus(pool.length ? `候选池已重置，共 ${pool.length} 人。` : '请先点击右上角设置名单。', pool.length ? 'success' : 'error');
+  }
   function prepareAudio() {
     if (!sound.checked) return;
     try { const AudioContext = root.AudioContext || root.webkitAudioContext; if (!AudioContext) return; audioContext ||= new AudioContext(); if (audioContext.state === 'suspended') audioContext.resume(); } catch { audioContext = undefined; }
@@ -46,24 +63,61 @@
       [659.25, 880].forEach((frequency, index) => { const oscillator = audioContext.createOscillator(); oscillator.type = 'sine'; oscillator.frequency.value = frequency; oscillator.connect(gain); oscillator.start(start + index * 0.1); oscillator.stop(start + 0.42); });
     } catch { /* 音效是可选增强，不影响点名结果。 */ }
   }
-  function finishDraw(chosen) {
-    clearInterval(rollTimer); rollTimer = 0;
-    if (remove.checked) pool.splice(chosen.index, 1);
-    setBusy(false); renderPicked(chosen.picked); result.setAttribute('aria-live', 'polite'); setStatus(`已抽中：${chosen.picked}`, 'success'); playRevealSound();
+  function complete(name) {
+    if (!picked.includes(name)) picked.push(name);
+    cancelTimers(); rolling = false; busy = false;
+    display.textContent = name; display.classList.remove('is-rolling', 'is-result'); void display.offsetWidth; display.classList.add('is-result');
+    drawButton.disabled = false; setRollingUI(false);
+    updateStats();
+    setStatus(`已抽中：${name}`, 'success');
+    playRevealSound();
+    if (dedupe.checked && getPool().length === 0) { setStatus(`已抽中：${name}，全部同学都点过啦，点击「重置」可重新开始。`, 'success'); }
   }
-  function startDraw() {
-    if (finishTimer) return;
-    if (sourceKey !== key()) resetPool(false);
-    if (!pool.length) { setStatus(remove.checked && current().length ? '候选池已抽完，请重置候选池。' : '请先输入至少一个姓名。', 'error'); return; }
+  function stopRoll() {
+    if (!rolling) return;
+    rolling = false; busy = true; cancelTimers();
+    drawButton.disabled = true; display.classList.remove('is-rolling');
+    const chosen = drawCandidate(pool.length ? pool : currentNames());
+    const delays = [70, 90, 115, 145, 185, 235, 300, 380, 480, 600]; let index = 0;
+    const step = () => {
+      const candidates = getPool(); const list = candidates.length ? candidates : currentNames();
+      display.textContent = list.length ? list[unbiasedIndex(list.length)] : chosen.picked;
+      if (index >= delays.length) { complete(chosen.picked); return; }
+      const delay = delays[index]; index += 1; finishTimer = setTimeout(step, delay);
+    };
+    step();
+  }
+  function startRoll() {
+    if (busy) return;
+    if (rolling) { stopRoll(); return; }
+    if (!currentNames().length) { setStatus('请先点击右上角设置名单。', 'error'); openPanel(true); return; }
+    if (sourceKey !== sourceSignature()) resetPool(false);
+    const candidates = getPool();
+    if (!candidates.length) { setStatus('全部同学都被点过啦，点击「重置」重新开始。', 'error'); return; }
     let milliseconds;
     try { milliseconds = validateDuration(duration.value); duration.removeAttribute('aria-invalid'); } catch (error) { duration.setAttribute('aria-invalid', 'true'); setStatus(error.message, 'error'); duration.focus(); return; }
-    prepareAudio(); const chosen = drawCandidate(pool); result.setAttribute('aria-live', 'off'); setBusy(true); setStatus(milliseconds ? '候选名单正在滚动…' : '正在抽取…'); renderRolling(pool[unbiasedIndex(pool.length)]);
-    if (milliseconds === 0) { finishDraw(chosen); return; }
-    rollTimer = setInterval(() => renderRolling(pool[unbiasedIndex(pool.length)]), 75);
-    finishTimer = setTimeout(() => { finishTimer = 0; finishDraw(chosen); }, milliseconds);
+    prepareAudio();
+    const chosen = drawCandidate(candidates);
+    if (milliseconds === 0) { complete(chosen.picked); return; }
+    rolling = true; setRollingUI(true);
+    const loop = () => { if (!rolling) return; const list = getPool(); if (!list.length) { stopRoll(); return; } display.textContent = list[unbiasedIndex(list.length)]; rollTimer = setTimeout(loop, 55); };
+    loop();
+    autoTimer = setTimeout(stopRoll, milliseconds);
   }
-  drawButton.addEventListener('click', startDraw);
-  document.getElementById('reset-pool').addEventListener('click', () => resetPool(true));
-  document.getElementById('clear').addEventListener('click', () => { cancelRoll(); input.value = ''; pool = []; sourceKey = ''; result.replaceChildren(Object.assign(document.createElement('p'), { className: 'muted', textContent: '准备好名单后，点击“开始点名”。' })); updateCount(); setStatus('已清空，名单未被保存。', 'success'); input.focus(); });
-  input.addEventListener('input', updateCount); dedupe.addEventListener('change', updateCount); updateCount();
+  function openPanel(open) {
+    panel.hidden = !open; settingsToggle.setAttribute('aria-expanded', String(open));
+    if (open) { updateCount(); input.focus(); }
+  }
+  drawButton.addEventListener('click', startRoll);
+  document.getElementById('reset-pool').addEventListener('click', () => { resetPool(false); setStatus('已重置。', 'success'); });
+  settingsToggle.addEventListener('click', () => openPanel(panel.hidden));
+  applyButton.addEventListener('click', () => { resetPool(false); setStatus(`名单已应用，共 ${currentNames().length} 人。`, 'success'); openPanel(false); });
+  input.addEventListener('input', updateCount);
+  dedupe.addEventListener('change', () => { updateCount(); updateStats(); });
+  document.addEventListener('keydown', (event) => {
+    const tag = (event.target.tagName || '').toUpperCase();
+    if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(tag)) return;
+    if (event.code === 'Space' || event.code === 'Enter' || event.keyCode === 32 || event.keyCode === 13) { event.preventDefault(); startRoll(); }
+  });
+  resetPool(false); updateCount();
 })(typeof globalThis !== 'undefined' ? globalThis : this);
