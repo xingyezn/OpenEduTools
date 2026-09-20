@@ -6,7 +6,7 @@ const root = path.resolve(import.meta.dirname, '..');
 const outputDir = path.join(root, 'downloads');
 const sharedFiles = [
   'css/tokens.css', 'css/main.css', 'css/components.css', 'css/tool.css',
-  'js/theme.js', 'js/storage.js', 'js/favorites.js', 'js/recent.js', 'js/tool-page.js',
+  'js/theme.js', 'js/storage.js', 'js/favorites.js', 'js/recent.js', 'js/format.js', 'js/tool-page.js',
   'assets/icons/favicon-32.png', 'assets/images/logo.png'
 ];
 

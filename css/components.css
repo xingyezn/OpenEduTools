@@ -70,7 +70,7 @@
 .share-dialog__hint { margin: 0; text-align: center; }
 .tool-card__metrics { display: flex; gap: var(--space-3); color: var(--text-muted); font-size: var(--text-sm); font-weight: 700; }
 .tool-card__metric { display: inline-flex; align-items: center; gap: 0.25rem; }
-.home-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: var(--space-3); margin-top: var(--space-5); }
+.home-stats__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: var(--space-3); }
 .home-stat { display: grid; gap: 0.15rem; padding: var(--space-4); text-align: center; background: var(--surface-glass); border: var(--border-width) solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
 .home-stat strong { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 850; background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .home-stat span { color: var(--text-muted); font-size: var(--text-sm); }

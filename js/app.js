@@ -34,9 +34,12 @@
     const section = byId('stats-section'); if (!section) return;
     const toolCount = byId('stat-tools'); if (toolCount) toolCount.textContent = String(state.tools.length);
     const hero = byId('hero-tool-count'); if (hero) hero.textContent = `${state.tools.length} 个教学微工具`;
-    const summary = stats && stats.summary ? stats.summary : null;
-    if (summary && Number(summary.total_uses) > 0) { byId('stat-uses').textContent = formatCount(summary.total_uses); byId('stat-uses-item').hidden = false; }
-    if (summary && Number(summary.total_favorites) > 0) { byId('stat-favorites').textContent = formatCount(summary.total_favorites); byId('stat-favorites-item').hidden = false; }
+    const summary = stats && stats.summary ? stats.summary : {};
+    byId('stat-uses').textContent = formatCount(summary.total_uses || 0);
+    byId('stat-favorites').textContent = formatCount(summary.total_favorites || 0);
+    byId('stat-opens').textContent = formatCount(summary.total_opens || 0);
+    const updated = byId('stats-updated');
+    if (updated) { const date = stats && stats.updated_at ? new Date(stats.updated_at) : null; updated.textContent = date && !Number.isNaN(date.valueOf()) ? `更新于 ${date.toLocaleString()}` : ''; }
     section.hidden = false;
   }
   function renderRankings(stats) {
@@ -61,7 +64,6 @@
     }
     fill('ranking-week', week, null);
     fill('ranking-favorites', favorites, (entry) => (entry ? entry.favorites : 0));
-    const updated = byId('stats-updated'); if (updated) { const date = stats.updated_at ? new Date(stats.updated_at) : null; updated.textContent = date && !Number.isNaN(date.valueOf()) ? `更新于 ${date.toLocaleString()}` : ''; }
     section.hidden = week.length === 0 && favorites.length === 0;
   }
   async function loadStats() { try { const response = await fetch('./data/stats.json', { cache: 'no-store' }); if (!response.ok) return null; return await response.json(); } catch { return null; } }

@@ -260,16 +260,36 @@
     const themeField = nav.querySelector('.theme-field'); nav.insertBefore(button, themeField || null);
   }
 
+  function formatCount(value) { return root.OETFormat && root.OETFormat.formatCount ? root.OETFormat.formatCount(value) : String(value); }
+  function renderToolStats(container, stats) {
+    container.replaceChildren();
+    for (const [icon, label] of [['▶', `${formatCount(stats.uses)} 次使用`], ['♡', `${formatCount(stats.favorites)} 次收藏`]]) { const span = document.createElement('span'); span.className = 'tool-header__stat'; span.textContent = `${icon} ${label}`; container.append(span); }
+    container.hidden = false;
+  }
+  async function initToolStats(id, offline) {
+    const header = document.querySelector('.tool-header'); if (!header) return;
+    const container = document.createElement('div'); container.className = 'tool-header__stats'; container.hidden = true; container.setAttribute('aria-label', '工具使用统计');
+    header.append(container);
+    if (offline) return;
+    try { const response = await fetch('../../data/stats.json', { cache: 'no-store' }); if (!response.ok) return; const data = await response.json(); const stats = data && data.tools ? data.tools[id] : null; renderToolStats(container, stats || { uses: 0, favorites: 0 }); } catch { /* 统计不可用时静默忽略 */ }
+  }
   function init() {
     initShare();
     const id = document.body.dataset.toolId; if (!id) return;
     root.OpenEduAnalytics?.toolOpen?.(id);
     const favoriteButton = document.querySelector('[data-tool-favorite]');
-    if (favoriteButton && id !== 'sample-tool' && !document.documentElement.hasAttribute('data-offline-bundle')) {
+    const headerRow = document.querySelector('.tool-header__row');
+    const offline = document.documentElement.hasAttribute('data-offline-bundle');
+    if (headerRow && id !== 'sample-tool') {
       const actions = document.createElement('div'); actions.className = 'tool-header__actions';
-      const parent = favoriteButton.parentNode; parent.insertBefore(actions, favoriteButton); actions.append(favoriteButton);
-      const download = document.createElement('a'); download.className = 'button button--secondary'; download.href = `../../downloads/${id}.zip`; download.download = `${id}.zip`; download.textContent = '下载离线包'; actions.append(download);
+      if (favoriteButton && favoriteButton.parentNode === headerRow) headerRow.insertBefore(actions, favoriteButton); else headerRow.append(actions);
+      if (favoriteButton) actions.append(favoriteButton);
+      if (!offline) { const download = document.createElement('a'); download.className = 'button button--secondary'; download.href = `../../downloads/${id}.zip`; download.download = `${id}.zip`; download.textContent = '下载离线包'; actions.append(download); }
+      const shareButton = document.createElement('button'); shareButton.type = 'button'; shareButton.className = 'button button--secondary'; shareButton.dataset.toolShare = ''; shareButton.textContent = '分享';
+      shareButton.addEventListener('click', () => openShareDialog());
+      actions.append(shareButton);
     }
+    initToolStats(id, offline);
     let favorites;
     try { favorites = root.OETFavorites.createFavorites(localStorage); root.OETRecent.createRecent(localStorage).add(id); } catch { showToast('浏览器存储不可用，工具仍可正常使用'); }
     function sync() { if (!favoriteButton || !favorites) return; const active = favorites.get().includes(id); favoriteButton.textContent = active ? '★ 已收藏' : '☆ 收藏'; favoriteButton.setAttribute('aria-pressed', String(active)); }

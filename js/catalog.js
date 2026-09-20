@@ -13,7 +13,7 @@
   function createToolCard(tool, favoriteIds, onToggle, options) {
     const settings = options || {};
     const formatCount = typeof settings.formatCount === 'function' ? settings.formatCount : (value) => String(value);
-    const stats = settings.stats ? settings.stats[tool.id] : null;
+    const stats = settings.stats ? (settings.stats[tool.id] || { uses: 0, favorites: 0 }) : null;
     const card = element('article', 'tool-card');
     const head = element('div', 'tool-card__head');
     const icon = element('span', 'tool-card__icon', ICON_LABELS[tool.icon] || '工'); icon.setAttribute('aria-hidden', 'true');
@@ -36,7 +36,7 @@
     const download = element('a', 'tool-card__download', '下载离线包'); download.href = `downloads/${tool.id}.zip`; download.download = `${tool.id}.zip`; download.setAttribute('aria-label', `下载${tool.name}离线包`);
     actions.append(download);
     const parts = [head, title, description, meta];
-    if (stats && (Number(stats.uses) > 0 || Number(stats.favorites) > 0)) {
+    if (stats) {
       const metrics = element('div', 'tool-card__metrics');
       const uses = element('span', 'tool-card__metric', `▶ ${formatCount(stats.uses)}`); uses.title = `被使用 ${stats.uses} 次`;
       const favorites = element('span', 'tool-card__metric', `♡ ${formatCount(stats.favorites)}`); favorites.title = `被收藏 ${stats.favorites} 次`;
