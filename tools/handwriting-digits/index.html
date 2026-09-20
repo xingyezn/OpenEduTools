@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在浏览器本地采集手写数字样本，生成 50×50 二值图与 0/1 数据并导出。"><title>手写数字收集 · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="handwriting-digits">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true">O</span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../index.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../index.html">全部工具</a> / 手写数字收集</nav>
+    <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">AI DATA LAB</span><h1>手写数字收集</h1><p>为机器学习课采集手写数字样本：每张缩放到 50×50 并转成 0/1 二值数据。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">手写样本仅在本页内存中处理</span></header>
+    <div class="tool-sections">
+      <section class="panel" aria-labelledby="setup-title">
+        <h2 id="setup-title">采集设置</h2>
+        <div class="form-grid">
+          <div class="field"><label for="studentId">学生学号</label><input id="studentId" type="text" autocomplete="off" maxlength="32" placeholder="请输入学号"></div>
+        </div>
+        <dl class="stat-grid hw-stats">
+          <div class="stat"><dt>已收集</dt><dd><span id="collectedCount">0</span>/100 张</dd></div>
+          <div class="stat"><dt>当前序号</dt><dd id="currentIndex">1</dd></div>
+        </dl>
+        <label class="check"><input id="remember" type="checkbox">在本机记住学号与进度（默认关闭，仅保存在浏览器本地）</label>
+        <div class="tool-actions">
+          <button id="selectFolderBtn" class="button button--secondary" type="button" hidden>选择保存文件夹</button>
+          <button id="exportAllBtn" class="button button--secondary" type="button" hidden>导出全部数据</button>
+          <button id="clearAllBtn" class="button button--danger" type="button" hidden>清空所有数据</button>
+        </div>
+        <p id="folderInfo" class="folder-info" hidden>当前保存路径：<b id="folderPath"></b></p>
+        <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section class="panel" aria-labelledby="draw-title">
+        <div class="hw-grid">
+          <div class="hw-draw">
+            <h2 id="draw-title" class="hw-target">请手写数字：<span id="targetNumber" aria-live="polite">0</span></h2>
+            <canvas id="drawingCanvas" class="hw-canvas" width="400" height="400" aria-label="手写画板"></canvas>
+            <div class="canvas-controls"><button id="clearBtn" class="button button--ghost" type="button">清空</button><button id="saveBtn" class="button button--cta" type="button">保存 / 下一个</button></div>
+          </div>
+          <div class="hw-preview">
+            <h3>50×50 预览</h3>
+            <canvas id="previewCanvas" class="preview-canvas" width="50" height="50" aria-label="缩略预览"></canvas>
+            <h4>0/1 数据预览</h4>
+            <pre id="binaryData" class="binary-preview" aria-label="二值数据预览"></pre>
+          </div>
+        </div>
+      </section>
+      <aside class="notice"><strong>使用提示：</strong>在支持文件夹保存的浏览器中可直接写入本地目录，否则会下载 PNG 与 TXT 文件；样本不会上传到任何服务器。刷新页面会清空本次会话，如需保留请先导出。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

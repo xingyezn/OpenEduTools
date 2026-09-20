@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "handwriting-digits",
+  "name": "手写数字收集",
+  "description": "在浏览器本地采集手写数字样本，生成 50×50 二值图与 0/1 数据并导出。",
+  "category": "data-processing",
+  "subjects": ["information-technology", "general"],
+  "tags": ["手写", "数字", "数据采集", "人工智能"],
+  "version": "0.1.0",
+  "status": "beta",
+  "entry": "tools/handwriting-digits/index.html",
+  "icon": "handwriting",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-21",
+  "updatedAt": "2026-09-21"
+}

@@ -29,14 +29,14 @@ V0.1 聚焦一个可公开使用、可持续扩展的最小版本：
 - 统一的工具卡片、详情页、导航、表单和反馈样式；
 - 使用 `tool.json` 管理工具元数据；
 - 响应式布局、键盘操作、基础无障碍和明暗主题；
-- 5 个首批工具：随机点名、随机分组、课堂计时器、文本清洗、成绩统计；
+- 6 个首批工具：随机点名、随机分组、课堂计时器、文本清洗、成绩统计、手写数字收集；
 - 每个工具可下载独立离线包，解压后双击即可使用；
 - GitHub Pages 自动部署；
 - 面向传统开发与 Vibe Coding 的贡献流程。
 
 完整任务见 [V0.1_TASKS.md](V0.1_TASKS.md)。
 
-V0.1 的静态站点、5 个首批工具、元数据工具链、自动化测试和 Pages 工作流已经实现。可直接访问 [线上站点](https://xingyezn.github.io/OpenEduTools/)；当前测试记录见 [docs/TEST_REPORT.md](docs/TEST_REPORT.md)，发布前人工验收项见 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)。
+V0.1 的静态站点、6 个首批工具、元数据工具链、自动化测试和 Pages 工作流已经实现。可直接访问 [线上站点](https://xingyezn.github.io/OpenEduTools/)；当前测试记录见 [docs/TEST_REPORT.md](docs/TEST_REPORT.md)，发布前人工验收项见 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)。
 
 ## 目录结构
 
@@ -123,7 +123,7 @@ npm run check
 npm run build:index
 ```
 
-生成 5 个工具的离线包：
+生成 6 个工具的离线包：
 
 ```bash
 npm run build:downloads
@@ -234,7 +234,7 @@ V0.1 使用以下稳定分类 ID：
 
 ## 路线图
 
-- **V0.1**：门户基础能力、统一规范、5 个示范工具、Pages 部署。
+- **V0.1**：门户基础能力、统一规范、6 个示范工具、Pages 部署。
 - **V0.2**：更多教育工具、导入导出增强、PWA 与离线缓存评估。
 - **V0.3**：多语言、工具模板生成器、自动化可访问性检查。
 
@@ -248,5 +248,5 @@ V0.1 使用以下稳定分类 ID：
 
 1. 将仓库默认分支设为 `main`，在 Settings → Pages 将 Source 选择为 **GitHub Actions**；
 2. 推送到 `main`，`Deploy GitHub Pages` 工作流会先运行完整检查，再上传并发布静态文件；
-3. 在工作流给出的 Pages 地址检查首页、公共页面和 5 个工具；
+3. 在工作流给出的 Pages 地址检查首页、公共页面和 6 个工具；
 4. 按 [发布清单](docs/RELEASE_CHECKLIST.md) 完成人工、跨浏览器和线上验收后创建 `v0.1.0` 标签与 Release。

@@ -8,7 +8,7 @@
     general: '通用', language: '语文与语言', mathematics: '数学', science: '科学', humanities: '人文社科',
     arts: '艺术', 'physical-education': '体育与健康', 'information-technology': '信息科技'
   };
-  const ICON_LABELS = { 'user-search': '点', users: '组', timer: '时', 'text-clean': '文', chart: '数' };
+  const ICON_LABELS = { 'user-search': '点', users: '组', timer: '时', 'text-clean': '文', chart: '数', handwriting: '写' };
   function element(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
   function createToolCard(tool, favoriteIds, onToggle) {
     const card = element('article', 'tool-card');
@@ -19,7 +19,7 @@
     favorite.setAttribute('aria-label', favoriteIds.includes(tool.id) ? `取消收藏${tool.name}` : `收藏${tool.name}`);
     favorite.addEventListener('click', () => onToggle(tool.id));
     head.append(icon, favorite);
-    const title = element('h3', 'tool-card__title'); const link = element('a', '', tool.name); link.href = tool.entry; title.append(link);
+    const title = element('h3', 'tool-card__title'); const link = element('a', '', tool.name); link.href = tool.entry; link.target = '_blank'; link.rel = 'noopener noreferrer'; title.append(link);
     const description = element('p', 'tool-card__description', tool.description);
     const meta = element('div', 'cluster'); meta.append(element('span', 'badge badge--category', CATEGORY_NAMES[tool.category] || tool.category));
     for (const subject of tool.subjects || []) meta.append(element('span', 'badge badge--subject', SUBJECT_NAMES[subject] || subject));

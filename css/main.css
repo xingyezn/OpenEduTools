@@ -6,6 +6,7 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 a { color: var(--primary); text-underline-offset: 0.18em; }
 a:hover { color: var(--primary-hover); }
 img, svg { max-width: 100%; }
+[hidden] { display: none !important; }
 h1, h2, h3 { margin-block: 0 var(--space-3); line-height: var(--line-tight); letter-spacing: -0.02em; }
 h1 { font-size: var(--text-xl); } h2 { font-size: 1.45rem; } h3 { font-size: 1.08rem; }
 p { margin-block: 0 var(--space-4); }

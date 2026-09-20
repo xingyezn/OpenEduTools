@@ -10,7 +10,7 @@
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--space-4); }
 .result-box { min-height: 7rem; padding: var(--space-4); background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--radius-md); }
 .status-line { min-height: 1.7em; margin-top: var(--space-3); color: var(--text-muted); }
-.status-line[data-kind="error"] { color: var(--danger); font-weight: 700; } .status-line[data-kind="success"] { color: var(--success); font-weight: 700; }
+.status-line[data-kind="error"] { color: var(--danger); font-weight: 700; } .status-line[data-kind="success"] { color: var(--success); font-weight: 700; } .status-line[data-kind="warning"] { color: var(--warning); font-weight: 700; }
 .privacy-mark { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--success); font-size: var(--text-sm); font-weight: 700; }
 .privacy-mark::before { content: "✓"; display: grid; width: 1.4rem; height: 1.4rem; place-items: center; border-radius: 50%; background: var(--success-bg); }
 .big-result { font-size: clamp(2rem, 8vw, 4.5rem); font-weight: 850; line-height: 1.15; letter-spacing: -0.035em; overflow-wrap: anywhere; }
