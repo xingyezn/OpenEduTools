@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "noise-meter",
+  "name": "课堂噪音计",
+  "description": "用麦克风实时估算教室音量，提供相对刻度、峰值和过响提醒，音频仅在本地分析。",
+  "category": "classroom-management",
+  "subjects": ["general"],
+  "tags": ["噪音", "音量", "麦克风", "课堂"],
+  "version": "0.1.0",
+  "status": "beta",
+  "entry": "tools/noise-meter/index.html",
+  "icon": "volume",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-21",
+  "updatedAt": "2026-09-21"
+}

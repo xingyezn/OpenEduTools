@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="25 分钟专注加 5 分钟休息的番茄工作法计时器，可自定义时长与自动循环。"><title>番茄钟 · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="pomodoro-timer">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true"></span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../index.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../index.html">全部工具</a> / 番茄钟</nav>
+    <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">FOCUS TIMER</span><h1>番茄钟</h1><p>基于番茄工作法的专注计时器：默认专注 25 分钟、短休息 5 分钟，每完成 4 个番茄进入一次长休息。适合教师备课、批改作业，也适合学生自习。你可以自定义专注与休息时长、开启自动进入下一阶段和到点提示音；计时按时间戳计算，切换标签页也不会漂移，设置只保存在本机浏览器。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">设置仅保存在本机浏览器</span></header>
+    <div class="tool-sections">
+      <section class="panel" aria-labelledby="settings-title">
+        <h2 id="settings-title">计时设置</h2>
+        <div class="form-grid">
+          <div class="field"><label for="focusMin">专注（分钟）</label><input id="focusMin" type="number" min="1" max="180" step="1" value="25" inputmode="numeric"></div>
+          <div class="field"><label for="shortMin">短休息（分钟）</label><input id="shortMin" type="number" min="1" max="60" step="1" value="5" inputmode="numeric"></div>
+          <div class="field"><label for="longMin">长休息（分钟）</label><input id="longMin" type="number" min="1" max="120" step="1" value="15" inputmode="numeric"></div>
+          <div class="field"><label for="rounds">长休息前轮数</label><input id="rounds" type="number" min="1" max="12" step="1" value="4" inputmode="numeric"></div>
+        </div>
+        <div class="settings-options"><label class="check"><input id="autoStart" type="checkbox" checked>自动进入下一阶段</label><label class="check"><input id="sound" type="checkbox" checked>到点播放提示音</label></div>
+        <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section id="pomodoroStage" class="panel pomodoro-stage" aria-labelledby="pomodoro-title" data-phase="focus">
+        <h2 id="pomodoro-title" class="visually-hidden">番茄钟显示</h2>
+        <p id="phaseLabel" class="pomodoro-phase">专注</p>
+        <p id="timerDisplay" class="pomodoro-time">25:00</p>
+        <p class="pomodoro-progress">已完成 <b id="completedCount">0</b> 个番茄</p>
+        <div class="pomodoro-actions"><button id="startBtn" class="button button--cta" type="button">开始</button><button id="skipBtn" class="button button--secondary" type="button">跳过</button><button id="resetBtn" class="button button--secondary" type="button">重置</button><button id="fullscreenBtn" class="button button--secondary" type="button">全屏</button></div>
+      </section>
+      <aside class="notice"><strong>使用建议：</strong>先设置专注和休息时长，点击「开始」进入专注；暂停后再次点击可继续。开启「自动进入下一阶段」会在专注与休息之间自动切换，「跳过」可手动结束当前阶段。到点提示音需要在页面内点击过按钮后才会播放。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

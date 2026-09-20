@@ -8,7 +8,7 @@
     general: '通用', language: '语文与语言', mathematics: '数学', science: '科学', humanities: '人文社科',
     arts: '艺术', 'physical-education': '体育与健康', 'information-technology': '信息科技'
   };
-  const ICON_LABELS = { 'user-search': '点', users: '组', timer: '时', 'text-clean': '文', chart: '数', handwriting: '写' };
+  const ICON_LABELS = { 'user-search': '点', users: '组', timer: '时', 'text-clean': '文', chart: '数', handwriting: '写', volume: '音', clock: '钟' };
   function element(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
   function createToolCard(tool, favoriteIds, onToggle) {
     const card = element('article', 'tool-card');

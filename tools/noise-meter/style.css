@@ -1,0 +1,17 @@
+.noise-stage { display: grid; justify-items: center; gap: var(--space-4); text-align: center; }
+.noise-value { display: flex; align-items: baseline; gap: var(--space-2); margin: 0; }
+.noise-value span { font-size: clamp(3.5rem, 16vw, 7rem); font-weight: 850; line-height: 1; letter-spacing: -0.04em; background: var(--brand-gradient); color: transparent; background-clip: text; -webkit-background-clip: text; }
+.noise-value small { color: var(--text-muted); font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.1em; }
+.noise-meter { position: relative; width: min(100%, 42rem); height: 1.6rem; border-radius: 999px; background: var(--surface-input); border: 1px solid var(--border); }
+.noise-meter__fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 999px; background: var(--success); transition: width 80ms linear, background 200ms ease; }
+.noise-meter__mark { position: absolute; top: -0.4rem; bottom: -0.4rem; width: 2px; background: var(--text); opacity: 0.7; transform: translateX(-1px); }
+.noise-peak { margin: 0; color: var(--text-muted); letter-spacing: 0.04em; }
+.noise-peak b { color: var(--text); }
+.noise-stage[data-state="warn"] .noise-meter__fill { background: var(--warning); }
+.noise-stage[data-state="loud"] .noise-meter__fill { background: var(--danger); }
+.noise-stage[data-state="loud"] { box-shadow: var(--shadow-glow), inset 0 0 0 1px var(--danger); }
+.noise-stage[data-state="loud"] .noise-value span { background: var(--cta-gradient); }
+.noise-actions { display: flex; gap: var(--space-3); }
+.noise-stage:fullscreen { display: grid; align-content: center; justify-items: center; gap: var(--space-6); padding: var(--space-6); background: var(--bg); border: none; border-radius: 0; }
+.noise-stage:fullscreen .noise-value span { font-size: min(30vh, 16rem); }
+.noise-stage:fullscreen .noise-meter { width: min(80vw, 60rem); height: 2.4rem; }

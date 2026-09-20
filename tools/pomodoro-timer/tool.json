@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "pomodoro-timer",
+  "name": "番茄钟",
+  "description": "25 分钟专注加 5 分钟休息的番茄工作法计时器，可自定义时长、自动循环并提示。",
+  "category": "classroom-management",
+  "subjects": ["general"],
+  "tags": ["番茄钟", "专注", "计时", "自习"],
+  "version": "0.1.0",
+  "status": "beta",
+  "entry": "tools/pomodoro-timer/index.html",
+  "icon": "timer",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-21",
+  "updatedAt": "2026-09-21"
+}

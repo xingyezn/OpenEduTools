@@ -26,7 +26,7 @@
     "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
     "status": { "enum": ["experimental", "beta", "stable", "deprecated"] },
     "entry": { "type": "string", "pattern": "^tools/[a-z0-9]+(?:-[a-z0-9]+)*/index\\.html$" },
-    "icon": { "type": "string", "enum": ["user-search", "users", "timer", "text-clean", "chart", "handwriting"] },
+    "icon": { "type": "string", "enum": ["user-search", "users", "timer", "text-clean", "chart", "handwriting", "volume", "clock"] },
     "offline": { "const": true },
     "dataPolicy": { "const": "local-only" },
     "featured": { "type": "boolean" },

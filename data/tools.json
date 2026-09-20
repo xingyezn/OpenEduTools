@@ -30,6 +30,31 @@
     },
     {
       "$schema": "../../schemas/tool.schema.json",
+      "id": "fullscreen-clock",
+      "name": "全屏时钟",
+      "description": "课堂上或考试时全屏显示时间与日期，支持 12/24 小时制、秒显示和结束倒计时提醒。",
+      "category": "classroom-management",
+      "subjects": [
+        "general"
+      ],
+      "tags": [
+        "时钟",
+        "全屏",
+        "考试",
+        "课堂"
+      ],
+      "version": "0.1.0",
+      "status": "beta",
+      "entry": "tools/fullscreen-clock/index.html",
+      "icon": "clock",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": false,
+      "createdAt": "2026-09-21",
+      "updatedAt": "2026-09-21"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
       "id": "handwriting-digits",
       "name": "手写数字收集",
       "description": "在浏览器本地采集手写数字样本，生成 50×50 二值图与 0/1 数据并导出。",
@@ -48,6 +73,56 @@
       "status": "beta",
       "entry": "tools/handwriting-digits/index.html",
       "icon": "handwriting",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": false,
+      "createdAt": "2026-09-21",
+      "updatedAt": "2026-09-21"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
+      "id": "noise-meter",
+      "name": "课堂噪音计",
+      "description": "用麦克风实时估算教室音量，提供相对刻度、峰值和过响提醒，音频仅在本地分析。",
+      "category": "classroom-management",
+      "subjects": [
+        "general"
+      ],
+      "tags": [
+        "噪音",
+        "音量",
+        "麦克风",
+        "课堂"
+      ],
+      "version": "0.1.0",
+      "status": "beta",
+      "entry": "tools/noise-meter/index.html",
+      "icon": "volume",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": false,
+      "createdAt": "2026-09-21",
+      "updatedAt": "2026-09-21"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
+      "id": "pomodoro-timer",
+      "name": "番茄钟",
+      "description": "25 分钟专注加 5 分钟休息的番茄工作法计时器，可自定义时长、自动循环并提示。",
+      "category": "classroom-management",
+      "subjects": [
+        "general"
+      ],
+      "tags": [
+        "番茄钟",
+        "专注",
+        "计时",
+        "自习"
+      ],
+      "version": "0.1.0",
+      "status": "beta",
+      "entry": "tools/pomodoro-timer/index.html",
+      "icon": "timer",
       "offline": true,
       "dataPolicy": "local-only",
       "featured": false,

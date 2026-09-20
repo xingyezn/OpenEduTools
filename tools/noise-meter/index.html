@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="用麦克风实时估算教室音量，提供相对刻度、峰值和过响提醒。"><title>课堂噪音计 · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="noise-meter">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true"></span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../index.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../index.html">全部工具</a> / 课堂噪音计</nav>
+    <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">CLASSROOM SOUND</span><h1>课堂噪音计</h1><p>使用浏览器麦克风实时估算教室的响度，用 0–100 的相对刻度和颜色条呈现当前音量，并记录峰值、在超过阈值时提示“太吵了”。它不能替代经过校准的分贝仪，数值只用于课堂上的相对比较；声音只在本机即时分析，不录音、不保存、不上传。首次使用需要允许麦克风权限，并建议在 https 或 localhost 下打开。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">音频仅在本机实时分析，不录制、不上传</span></header>
+    <div class="tool-sections">
+      <section class="panel" aria-labelledby="control-title">
+        <h2 id="control-title">测量设置</h2>
+        <div class="form-grid">
+          <div class="field"><label for="threshold">过响阈值（0–100）</label><input id="threshold" type="number" min="1" max="100" step="1" value="60" inputmode="numeric"><span class="small muted">当前音量持续高于该值时提示“太吵了”。</span></div>
+        </div>
+        <div class="tool-actions"><button id="startBtn" class="button button--cta" type="button">开始测量</button><button id="stopBtn" class="button button--secondary" type="button" disabled>停止</button><button id="resetPeakBtn" class="button button--quiet" type="button">重置峰值</button></div>
+        <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section id="meterStage" class="panel noise-stage" aria-labelledby="meter-title" data-state="idle">
+        <h2 id="meter-title" class="visually-hidden">音量显示</h2>
+        <p class="noise-value"><span id="levelValue">0</span><small>相对音量</small></p>
+        <div class="noise-meter" role="img" aria-label="音量指示条"><span id="meterFill" class="noise-meter__fill"></span><span id="thresholdMark" class="noise-meter__mark" title="过响阈值"></span></div>
+        <p class="noise-peak">本次峰值 <b id="peakValue">0</b> ｜ 状态 <b id="noiseState">待机</b></p>
+        <div class="noise-actions"><button id="fullscreenBtn" class="button button--secondary" type="button">全屏</button></div>
+      </section>
+      <aside class="notice"><strong>使用建议：</strong>先保持教室安静，点击「开始测量」让数值稳定几秒，再根据班级情况调整阈值。绿色表示安静、黄色表示接近阈值、红色表示过响。请在允许麦克风的环境中使用；直接双击本地文件打开时浏览器通常不提供麦克风。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

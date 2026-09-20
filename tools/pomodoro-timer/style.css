@@ -1,0 +1,10 @@
+.pomodoro-stage { display: grid; justify-items: center; gap: var(--space-3); text-align: center; padding-block: clamp(1.5rem, 5vw, 3rem); }
+.pomodoro-phase { margin: 0; padding: 0.35rem 1.1rem; border-radius: 999px; background: var(--surface-soft); color: var(--text-muted); font-weight: 800; letter-spacing: 0.14em; }
+.pomodoro-stage[data-phase="focus"] .pomodoro-phase { background: var(--accent); color: var(--text); }
+.pomodoro-stage[data-phase="long"] .pomodoro-phase { background: var(--success-bg); color: var(--success); }
+.pomodoro-time { font: 800 clamp(3rem, 17vw, 9rem)/1 var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.04em; background: var(--brand-gradient); color: transparent; background-clip: text; -webkit-background-clip: text; }
+.pomodoro-progress { margin: 0; color: var(--text-muted); letter-spacing: 0.04em; }
+.pomodoro-progress b { color: var(--text); }
+.pomodoro-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-top: var(--space-2); }
+.pomodoro-stage:fullscreen { align-content: center; gap: var(--space-5); padding: var(--space-6); background: var(--bg); border: none; border-radius: 0; }
+.pomodoro-stage:fullscreen .pomodoro-time { font-size: min(26vw, 20rem); }

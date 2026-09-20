@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="课堂上或考试时全屏显示时间与日期，支持 12/24 小时制和结束倒计时。"><title>全屏时钟 · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="fullscreen-clock">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true"></span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../index.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../index.html">全部工具</a> / 全屏时钟</nav>
+    <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">CLASSROOM CLOCK</span><h1>全屏时钟</h1><p>为课堂和考试准备的大字时钟：实时显示当前时间，可选 24/12 小时制、秒和日期；设置考试结束时间后，还会显示剩余时间，并在到达时给出提示。适合投影到教室大屏或全屏展示，时间直接取自本机设备，不需要联网，也不会记录任何数据。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">不联网，时间来自本机设备</span></header>
+    <div class="tool-sections">
+      <section class="panel" aria-labelledby="settings-title">
+        <h2 id="settings-title">显示设置</h2>
+        <div class="form-grid">
+          <div class="field"><span class="field__label">显示选项</span><label class="check"><input id="use24" type="checkbox" checked>24 小时制</label><label class="check"><input id="showSeconds" type="checkbox" checked>显示秒</label><label class="check"><input id="showDate" type="checkbox" checked>显示日期</label></div>
+          <div class="field"><label for="endTime">考试结束时间（可选）</label><input id="endTime" type="time"><span class="small muted">留空则只显示当前时间；到点后会提示“时间到”。</span></div>
+        </div>
+        <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section id="clockStage" class="panel clock-stage" aria-labelledby="clock-title">
+        <h2 id="clock-title" class="visually-hidden">时钟显示</h2>
+        <time id="clockTime" class="clock-time">00:00:00</time>
+        <p id="clockDate" class="clock-date"></p>
+        <p id="clockCountdown" class="clock-countdown" hidden></p>
+        <div class="clock-actions"><button id="fullscreenBtn" class="button button--secondary" type="button">全屏</button></div>
+      </section>
+      <aside class="notice"><strong>使用建议：</strong>点击「全屏」后按 Esc 可退出；全屏时按 F11 可进一步进入浏览器全屏。考试场景可设置结束时间，剩余时间会自动更新，到达后显示“时间到”。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

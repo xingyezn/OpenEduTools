@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "fullscreen-clock",
+  "name": "全屏时钟",
+  "description": "课堂上或考试时全屏显示时间与日期，支持 12/24 小时制、秒显示和结束倒计时提醒。",
+  "category": "classroom-management",
+  "subjects": ["general"],
+  "tags": ["时钟", "全屏", "考试", "课堂"],
+  "version": "0.1.0",
+  "status": "beta",
+  "entry": "tools/fullscreen-clock/index.html",
+  "icon": "clock",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-21",
+  "updatedAt": "2026-09-21"
+}

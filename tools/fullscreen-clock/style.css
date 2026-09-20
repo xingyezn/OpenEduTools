@@ -1,0 +1,11 @@
+.clock-stage { display: grid; justify-items: center; gap: var(--space-3); text-align: center; padding-block: clamp(1.5rem, 5vw, 3rem); }
+.clock-time { font: 800 clamp(3rem, 16vw, 9rem)/1 var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.04em; background: var(--brand-gradient); color: transparent; background-clip: text; -webkit-background-clip: text; }
+.clock-date { margin: 0; color: var(--text-muted); font-size: clamp(1rem, 3vw, 1.5rem); letter-spacing: 0.08em; }
+.clock-countdown { margin: 0; padding: 0.4rem 1.1rem; border-radius: 999px; background: var(--surface-soft); color: var(--text-muted); font-size: clamp(1rem, 3vw, 1.4rem); letter-spacing: 0.06em; }
+.clock-countdown b { color: var(--text); font-variant-numeric: tabular-nums; }
+.clock-countdown.is-done { background: var(--danger-bg); color: var(--danger); font-weight: 800; }
+.clock-actions { display: flex; gap: var(--space-3); margin-top: var(--space-2); }
+.clock-stage:fullscreen { align-content: center; gap: var(--space-5); padding: var(--space-6); background: var(--bg); border: none; border-radius: 0; }
+.clock-stage:fullscreen .clock-time { font-size: min(26vw, 20rem); }
+.clock-stage:fullscreen .clock-date { font-size: min(4vw, 2.4rem); }
+.clock-stage:fullscreen .clock-countdown { font-size: min(4vw, 2.2rem); }
