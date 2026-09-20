@@ -9,6 +9,7 @@
 .preview-canvas { width: 9rem; height: 9rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: #fff; image-rendering: pixelated; }
 .binary-preview { width: 100%; max-height: 14rem; margin: 0; overflow: auto; padding: var(--space-3); border-radius: var(--radius-sm); background: rgb(0 0 0 / 0.45); color: #7cf59a; font-family: var(--font-mono); font-size: 0.5rem; line-height: 1.15; white-space: pre; }
 .hw-stats { margin-block: var(--space-4); }
+.hw-hint { margin-top: var(--space-3); color: var(--text-muted); font-size: var(--text-sm); }
 .folder-info { margin-top: var(--space-3); color: var(--text-muted); font-size: var(--text-sm); word-break: break-all; }
 .folder-info b { color: var(--primary); }
 .hw-stage:fullscreen { display: grid; align-content: center; justify-items: center; gap: var(--space-5); padding: var(--space-6); background: var(--bg); border: none; border-radius: 0; box-shadow: none; overflow: auto; }

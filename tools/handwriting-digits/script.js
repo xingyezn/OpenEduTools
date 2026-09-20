@@ -24,7 +24,7 @@
   if (typeof module !== 'undefined') module.exports = api;
   if (typeof document === 'undefined') return;
 
-  const elements = Object.fromEntries(['studentId', 'maxCount', 'maxCountLabel', 'drawingCanvas', 'previewCanvas', 'targetNumber', 'collectedCount', 'currentIndex', 'binaryData', 'status', 'clearBtn', 'saveBtn', 'startBtn', 'fullscreenBtn', 'collectionStage', 'exportAllBtn', 'clearAllBtn', 'selectFolderBtn', 'folderInfo', 'folderPath', 'remember'].map((id) => [id, document.getElementById(id)]));
+  const elements = Object.fromEntries(['studentId', 'maxCount', 'maxCountLabel', 'drawingCanvas', 'previewCanvas', 'targetNumber', 'collectedCount', 'currentIndex', 'binaryData', 'status', 'startHint', 'clearBtn', 'saveBtn', 'startBtn', 'fullscreenBtn', 'collectionStage', 'exportAllBtn', 'clearAllBtn', 'selectFolderBtn', 'folderInfo', 'folderPath', 'remember'].map((id) => [id, document.getElementById(id)]));
   const drawCtx = elements.drawingCanvas.getContext('2d');
   const previewCtx = elements.previewCanvas.getContext('2d');
   const state = { studentId: '', currentIndex: 1, maxCount: CONFIG.DEFAULT_COUNT, collectedData: [], isDrawing: false, collecting: false, currentTarget: 0, directoryHandle: null, useFileSystemAPI: false };
@@ -79,10 +79,17 @@
     elements.saveBtn.disabled = !state.collecting || done;
     elements.saveBtn.textContent = done ? `已完成 ${state.maxCount} 张` : '保存 / 下一个';
     elements.startBtn.textContent = state.collecting ? '结束收集' : '开始收集';
-    elements.startBtn.disabled = state.collecting ? false : !canStart();
+    elements.startBtn.disabled = false;
     elements.startBtn.title = state.collecting || canStart() ? '' : '请先填写学号并选择保存文件夹';
+    elements.startHint.textContent = startHint();
     const hasData = state.collectedData.length > 0;
     elements.exportAllBtn.hidden = !hasData; elements.clearAllBtn.hidden = !hasData;
+  }
+  function startHint() {
+    if (state.collecting) return '收集进行中：书写完成后点击「保存 / 下一个」。';
+    if (!state.studentId) return '请先填写学生学号。';
+    if (state.useFileSystemAPI && !state.directoryHandle) return '请选择保存文件夹后再开始收集。';
+    return '准备就绪，点击「开始收集」。';
   }
   function persistSettings() {
     if (!elements.remember.checked) { try { localStorage.removeItem(CONFIG.STORAGE_KEY); } catch { /* 存储不可用时忽略 */ } return; }
@@ -112,7 +119,21 @@
       elements.folderPath.textContent = handle.name; elements.folderInfo.hidden = false;
       setStatus(`已选择保存文件夹：${handle.name}`, 'success');
       updateUI();
-    } catch (error) { if (error.name !== 'AbortError') setStatus(`选择文件夹失败：${error.message}`, 'error'); }
+      return true;
+    } catch (error) {
+      if (error.name === 'AbortError') setStatus('已取消选择文件夹。', 'warning');
+      else setStatus(`选择文件夹失败：${error.message}`, 'error');
+      return false;
+    }
+  }
+  async function handleStart() {
+    if (state.collecting) { stopCollecting(); return; }
+    if (!state.studentId) { setStatus('请先填写学生学号。', 'warning'); elements.studentId.focus(); return; }
+    if (state.useFileSystemAPI && !state.directoryHandle) {
+      setStatus('请选择保存文件夹后再开始收集。', 'warning');
+      if (!(await selectFolder())) return;
+    }
+    startCollecting();
   }
   function startCollecting() {
     if (!canStart()) { setStatus('请先填写学号并选择保存文件夹。', 'warning'); return; }
@@ -198,14 +219,14 @@
     setStatus('已清空本次会话数据。', 'info');
   }
   function init() {
-    setupCanvas(); checkFileSystemSupport(); loadSettings(); generateTargetNumber(); updateUI(); clearCanvas(false);
+    setupCanvas(); checkFileSystemSupport(); loadSettings(); elements.maxCount.value = String(state.maxCount); generateTargetNumber(); updateUI(); clearCanvas(false);
     elements.drawingCanvas.addEventListener('pointerdown', startDrawing);
     elements.drawingCanvas.addEventListener('pointermove', draw);
     elements.drawingCanvas.addEventListener('pointerup', stopDrawing);
     elements.drawingCanvas.addEventListener('pointercancel', stopDrawing);
     elements.clearBtn.addEventListener('click', () => clearCanvas(true));
     elements.saveBtn.addEventListener('click', saveCurrent);
-    elements.startBtn.addEventListener('click', () => { if (state.collecting) stopCollecting(); else startCollecting(); });
+    elements.startBtn.addEventListener('click', handleStart);
     elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
     elements.exportAllBtn.addEventListener('click', exportAllData);
     elements.clearAllBtn.addEventListener('click', clearAllData);

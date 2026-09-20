@@ -6,7 +6,7 @@
   "category": "data-processing",
   "subjects": ["information-technology", "general"],
   "tags": ["手写", "数字", "数据采集", "人工智能"],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "status": "beta",
   "entry": "tools/handwriting-digits/index.html",
   "icon": "handwriting",
