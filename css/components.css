@@ -41,6 +41,9 @@
 .tool-card__actions { position: relative; z-index: 1; display: flex; margin-top: auto; padding-top: var(--space-2); border-top: 1px solid var(--border); }
 .tool-card__download { font-size: var(--text-sm); font-weight: 700; text-decoration: none; }
 .tool-card__download::before { content: "↓ "; }
+.tool-card__tools { display: flex; align-items: center; gap: var(--space-2); }
+.tool-card__share { position: relative; z-index: 1; min-height: 2.75rem; padding: 0.4rem 0.9rem; border: var(--border-width) solid var(--border); border-radius: 999px; background: var(--surface); color: var(--text); cursor: pointer; font-weight: 700; transition: border-color 150ms ease, background 150ms ease; }
+.tool-card__share:hover { border-color: var(--accent-strong); background: var(--surface-soft); }
 .favorite-button { position: relative; z-index: 1; min-width: 2.75rem; min-height: 2.75rem; border: var(--border-width) solid var(--border); border-radius: 50%; background: var(--surface); color: var(--text); cursor: pointer; font-size: 1.25rem; }
 .favorite-button[aria-pressed="true"] { background: var(--warning-bg); border-color: var(--warning); color: var(--warning); }
 .empty-state { padding: var(--space-6); text-align: center; border: var(--border-width) dashed var(--border); border-radius: var(--radius-lg); background: var(--surface-glass); color: var(--text-muted); }

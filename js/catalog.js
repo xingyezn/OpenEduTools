@@ -14,11 +14,16 @@
     const card = element('article', 'tool-card');
     const head = element('div', 'tool-card__head');
     const icon = element('span', 'tool-card__icon', ICON_LABELS[tool.icon] || '工'); icon.setAttribute('aria-hidden', 'true');
+    const tools = element('div', 'tool-card__tools');
+    const share = element('button', 'tool-card__share', '分享');
+    share.type = 'button'; share.setAttribute('aria-label', `分享${tool.name}`);
+    share.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); if (!root.OETToolPage) return; root.OETToolPage.openShareDialog({ url: new URL(tool.entry, location.href).href, title: tool.name, description: tool.description }); });
     const favorite = element('button', 'favorite-button', favoriteIds.includes(tool.id) ? '★' : '☆');
     favorite.type = 'button'; favorite.dataset.toolId = tool.id; favorite.setAttribute('aria-pressed', String(favoriteIds.includes(tool.id)));
     favorite.setAttribute('aria-label', favoriteIds.includes(tool.id) ? `取消收藏${tool.name}` : `收藏${tool.name}`);
     favorite.addEventListener('click', () => onToggle(tool.id));
-    head.append(icon, favorite);
+    tools.append(share, favorite);
+    head.append(icon, tools);
     const title = element('h3', 'tool-card__title'); const link = element('a', '', tool.name); link.href = tool.entry; link.target = '_blank'; link.rel = 'noopener noreferrer'; title.append(link);
     const description = element('p', 'tool-card__description', tool.description);
     const meta = element('div', 'cluster'); meta.append(element('span', 'badge badge--category', CATEGORY_NAMES[tool.category] || tool.category));

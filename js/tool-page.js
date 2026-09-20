@@ -193,8 +193,16 @@
     for (let y = 0; y < size; y += 1) for (let x = 0; x < size; x += 1) if (modules[y][x]) context.fillRect((x + quiet) * scale, (y + quiet) * scale, scale, scale);
   }
   function shareTitle() { return document.querySelector('.tool-header h1')?.textContent?.trim() || document.title.replace(/\s*·\s*OpenEduTools\s*$/, ''); }
-  function openShareDialog() {
-    const url = location.href; const title = shareTitle();
+  function shareDescription() { const meta = document.querySelector('meta[name="description"]'); return meta ? String(meta.getAttribute('content') || '').trim() : ''; }
+  function shareHeading(title) { return /^OpenEduTools/i.test(title) ? title : `OpenEduTools · ${title}`; }
+  function buildShareText(info) { return [shareHeading(info.title), String(info.description || '').trim(), info.url].filter(Boolean).join('\n'); }
+  function resolveShareInfo(info) {
+    const provided = info || {};
+    return { url: provided.url || location.href, title: provided.title || shareTitle(), description: provided.description !== undefined ? String(provided.description).trim() : shareDescription() };
+  }
+  function openShareDialog(info) {
+    const context = resolveShareInfo(info);
+    const url = context.url; const title = context.title; const text = buildShareText(context);
     const qr = encodeQr(url, url.length > 110 ? 'L' : 'M');
     const overlay = document.createElement('div'); overlay.className = 'share-dialog'; overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); overlay.setAttribute('aria-label', '分享');
     const panel = document.createElement('div'); panel.className = 'share-dialog__panel';
@@ -205,8 +213,8 @@
     const titleNode = document.createElement('p'); titleNode.className = 'share-dialog__title'; titleNode.textContent = title;
     const urlRow = document.createElement('div'); urlRow.className = 'share-dialog__url';
     const urlInput = document.createElement('input'); urlInput.type = 'text'; urlInput.readOnly = true; urlInput.value = url; urlInput.setAttribute('aria-label', '页面网址');
-    const copyButton = document.createElement('button'); copyButton.type = 'button'; copyButton.className = 'button'; copyButton.textContent = '复制链接';
-    copyButton.addEventListener('click', async () => { if (await copyText(url)) { urlInput.select(); } });
+    const copyButton = document.createElement('button'); copyButton.type = 'button'; copyButton.className = 'button'; copyButton.textContent = '复制链接与简介';
+    copyButton.addEventListener('click', async () => { if (await copyText(text)) { urlInput.select(); } });
     urlRow.append(urlInput, copyButton);
     const body = document.createElement('div'); body.className = 'share-dialog__body';
     const qrBox = document.createElement('div'); qrBox.className = 'share-qr';
@@ -219,16 +227,16 @@
       const note = document.createElement('p'); note.className = 'small muted'; note.textContent = '网址较长，无法生成二维码，请使用复制链接或系统分享。'; qrBox.append(note);
     }
     const links = document.createElement('div'); links.className = 'share-links';
-    const shareLinks = buildShareLinks(url, title);
+    const shareLinks = buildShareLinks(url, shareHeading(title));
     const targets = [['weibo', '微博'], ['qzone', 'QQ空间'], ['qq', 'QQ好友'], ['x', 'X'], ['facebook', 'Facebook'], ['linkedin', 'LinkedIn'], ['telegram', 'Telegram'], ['whatsapp', 'WhatsApp'], ['reddit', 'Reddit']];
     for (const [key, label] of targets) { const anchor = document.createElement('a'); anchor.className = 'share-link'; anchor.href = shareLinks[key]; anchor.target = '_blank'; anchor.rel = 'noopener noreferrer'; anchor.textContent = label; links.append(anchor); }
     const xiaohongshu = document.createElement('button'); xiaohongshu.type = 'button'; xiaohongshu.className = 'share-link'; xiaohongshu.textContent = '小红书';
-    xiaohongshu.addEventListener('click', async () => { if (await copyText(`${title} ${url}`)) showToast('已复制链接，请在小红书 App 中粘贴发布'); });
+    xiaohongshu.addEventListener('click', async () => { if (await copyText(text)) showToast('已复制链接与简介，请在小红书 App 中粘贴发布'); });
     links.append(xiaohongshu);
     const mail = document.createElement('a'); mail.className = 'share-link'; mail.href = shareLinks.email; mail.textContent = '邮件'; links.append(mail);
     if (navigator.share) {
       const native = document.createElement('button'); native.type = 'button'; native.className = 'button button--secondary'; native.textContent = '系统分享';
-      native.addEventListener('click', () => navigator.share({ title, text: title, url }).catch(() => {}));
+      native.addEventListener('click', () => navigator.share({ title: shareHeading(title), text: context.description || title, url }).catch(() => {}));
       links.append(native);
     }
     const hint = document.createElement('p'); hint.className = 'share-dialog__hint small muted'; hint.textContent = '微信、小红书等未提供网页分享的 App，可复制链接或二维码后到 App 内粘贴；YouTube、B 站等视频平台需上传视频，无法直接分享网址。';
@@ -265,7 +273,7 @@
     if (favoriteButton) favoriteButton.addEventListener('click', () => { const result = favorites?.toggle(id); sync(); showToast(result?.saved === false ? '收藏仅在本页有效，浏览器存储不可用' : (result?.value.includes(id) ? '已收藏' : '已取消收藏')); });
     sync();
   }
-  const api = { showToast, copyText, downloadText, downloadDataUrl, utf8Bytes, encodeQr, buildShareLinks, openShareDialog };
+  const api = { showToast, copyText, downloadText, downloadDataUrl, utf8Bytes, encodeQr, buildShareLinks, buildShareText, openShareDialog };
   root.OETToolPage = api;
   if (typeof module !== 'undefined') module.exports = api;
   if (typeof document !== 'undefined') { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init(); }

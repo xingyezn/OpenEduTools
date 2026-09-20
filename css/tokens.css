@@ -7,7 +7,7 @@
   --line-tight: 1.2; --line-normal: 1.65;
   --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.5rem; --space-6: 2rem; --space-8: 3rem;
   --radius-sm: 0.45rem; --radius-md: 0.85rem; --radius-lg: 1.25rem; --radius-xl: 1.75rem; --radius-pill: 999px;
-  --border-width: 1px; --content-width: 74rem; --reading-width: 48rem; --z-toast: 20;
+  --border-width: 1px; --content-width: 74rem; --reading-width: 48rem; --z-toast: 60;
   --bg: #0d0b1a;
   --page-gradient: radial-gradient(circle at 18% 0%, #3b2a7a 0%, #1a1730 45%, #0d0b1a 100%);
   --surface: rgb(255 255 255 / 0.055); --surface-solid: #1a1730; --surface-glass: rgb(255 255 255 / 0.055); --surface-soft: rgb(255 255 255 / 0.09); --surface-input: rgb(0 0 0 / 0.26);

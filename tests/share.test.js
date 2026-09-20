@@ -45,6 +45,15 @@ test('二维码对超长内容返回空并正确编码 UTF-8', () => {
   assert.deepEqual(toolPage.utf8Bytes('中'), [0xe4, 0xb8, 0xad]);
 });
 
+test('复制文案包含平台名、工具描述和网址', () => {
+  const tool = toolPage.buildShareText({ title: '课堂噪音计', description: '用麦克风实时估算教室音量。', url: 'https://example.com/tools/noise-meter/index.html' });
+  assert.equal(tool, 'OpenEduTools · 课堂噪音计\n用麦克风实时估算教室音量。\nhttps://example.com/tools/noise-meter/index.html');
+  const site = toolPage.buildShareText({ title: 'OpenEduTools · 教师微工具', description: '免费开源。', url: 'https://example.com/' });
+  assert.equal(site, 'OpenEduTools · 教师微工具\n免费开源。\nhttps://example.com/');
+  const noDescription = toolPage.buildShareText({ title: '全屏时钟', description: '', url: 'https://example.com/x' });
+  assert.equal(noDescription, 'OpenEduTools · 全屏时钟\nhttps://example.com/x');
+});
+
 test('分享链接对网址和标题进行编码', () => {
   const links = toolPage.buildShareLinks('https://example.com/a b', '标题 & 测试');
   assert.ok(links.weibo.startsWith('https://service.weibo.com/share/share.php?url='));
