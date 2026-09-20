@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "random-picker",
+  "name": "随机点名",
+  "description": "从逐行名单中随机抽取一人，可暂时移出已抽中人员。",
+  "category": "classroom-management",
+  "tags": ["点名", "随机", "名单", "课堂"],
+  "version": "0.1.0",
+  "status": "stable",
+  "entry": "tools/random-picker/index.html",
+  "icon": "user-search",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": true,
+  "createdAt": "2026-09-20",
+  "updatedAt": "2026-09-20"
+}

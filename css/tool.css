@@ -1,0 +1,23 @@
+.tool-layout { width: min(100% - 2rem, 60rem); margin-inline: auto; padding-block: var(--space-5) var(--space-8); }
+.breadcrumbs { margin-bottom: var(--space-4); }
+.tool-header { display: grid; gap: var(--space-3); margin-bottom: var(--space-5); }
+.tool-header__row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.tool-header p { color: var(--text-muted); }
+.tool-sections { display: grid; gap: var(--space-5); }
+.tool-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--space-4); }
+.result-box { min-height: 7rem; padding: var(--space-4); background: var(--surface-soft); border-radius: var(--radius-md); }
+.status-line { min-height: 1.7em; margin-top: var(--space-3); color: var(--text-muted); }
+.status-line[data-kind="error"] { color: var(--danger); font-weight: 700; }
+.status-line[data-kind="success"] { color: var(--success); font-weight: 700; }
+.privacy-mark { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--success); font-size: var(--text-sm); font-weight: 700; }
+.privacy-mark::before { content: "✓"; }
+.big-result { font-size: clamp(2rem, 8vw, 4.5rem); font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: var(--space-3); }
+.stat { padding: var(--space-3); background: var(--surface); border: var(--border-width) solid var(--border); border-radius: var(--radius-md); }
+.stat dt { color: var(--text-muted); font-size: var(--text-sm); }
+.stat dd { margin: 0; font-size: 1.4rem; font-weight: 750; }
+.group-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--space-3); }
+.group-card { padding: var(--space-4); background: var(--surface); border: var(--border-width) solid var(--border); border-radius: var(--radius-md); }
+.group-card ol { margin-bottom: 0; padding-left: 1.5rem; }
+@media (max-width: 32rem) { .tool-header__row { align-items: stretch; flex-direction: column; } .tool-header__row .favorite-button { align-self: flex-start; } }

@@ -1,0 +1,8 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const score = require('../tools/score-statistics/script.js');
+
+test('CSV 解析处理引号、逗号、换行和转义引号', () => { assert.deepEqual(score.parseCSV('"a,b","c""d"\r\n"line1\nline2",x'),[['a,b','c"d'],['line1\nline2','x']]); assert.throws(()=>score.parseCSV('"unclosed'),/未闭合/); });
+test('分数输入支持标题、单列引号和边界，拒绝空值、多列和非法值', () => { assert.deepEqual(score.parseScores('分数\n0\n60.5\n100'),[0,60.5,100]); assert.deepEqual(score.parseScores('"88"\n"90"'),[88,90]); assert.throws(()=>score.parseScores(''),/至少一个/); assert.throws(()=>score.parseScores('80\n\n90'),/为空/); assert.throws(()=>score.parseScores('姓名,分数\n甲,90'),/单列/); assert.throws(()=>score.parseScores('101'),/超出/); assert.throws(()=>score.parseScores('九十'),/有效数字/); });
+test('描述统计、及格率、分数段和舍入正确', () => { const bands=score.parseBands('优秀:90-100\n良好:80-90\n及格:60-80\n待提高:0-60',0,100); const stats=score.calculateStatistics([0,59.5,60,80,90,100],60,bands,100); assert.deepEqual({count:stats.count,average:stats.average,median:stats.median,highest:stats.highest,lowest:stats.lowest,passRate:stats.passRate,unclassified:stats.unclassified},{count:6,average:64.92,median:70,highest:100,lowest:0,passRate:66.67,unclassified:0}); assert.deepEqual(stats.distribution.map((item)=>item.count),[2,1,1,2]); assert.equal(score.calculateStatistics([88],60,bands,100).median,88); assert.throws(()=>score.parseBands('甲:0-70\n乙:60-100',0,100),/重叠/); });
+test('导出只含汇总，不含原始分数', () => { const stats=score.calculateStatistics([60,90],60,[{label:'全部',min:0,max:100}],100); const csv=score.exportSummary(stats); assert.match(csv,/有效人数,2/); assert.doesNotMatch(csv,/60,90/); });

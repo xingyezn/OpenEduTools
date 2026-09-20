@@ -1,0 +1,16 @@
+(function (root) {
+  'use strict';
+  const KEY = 'openEduTools:theme';
+  const allowed = new Set(['system', 'light', 'dark']);
+  const scriptUrl = typeof document !== 'undefined' ? document.currentScript?.src : '';
+  if (scriptUrl && !document.querySelector('link[rel~="icon"]')) { const icon = document.createElement('link'); icon.rel = 'icon'; icon.type = 'image/svg+xml'; icon.href = new URL('../assets/icons/favicon.svg', scriptUrl).href; document.head.append(icon); }
+  function safeGet() { try { const value = localStorage.getItem(KEY); return allowed.has(value) ? value : 'system'; } catch { return 'system'; } }
+  function apply(value) { const theme = allowed.has(value) ? value : 'system'; if (theme === 'system') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme = theme; return theme; }
+  function save(value) { const theme = apply(value); try { localStorage.setItem(KEY, theme); } catch { /* non-blocking */ } return theme; }
+  function init() {
+    const value = apply(safeGet());
+    document.querySelectorAll('[data-theme-select]').forEach((select) => { select.value = value; select.addEventListener('change', () => save(select.value)); });
+  }
+  root.OETTheme = { apply, save, safeGet };
+  if (typeof document !== 'undefined') { apply(safeGet()); if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init(); }
+})(typeof globalThis !== 'undefined' ? globalThis : this);

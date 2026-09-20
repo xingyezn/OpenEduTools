@@ -1,0 +1,6 @@
+.timer-stage { text-align: center; }
+.timer-display { display: block; font: 800 var(--text-display)/1 var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.05em; padding-block: var(--space-5); }
+.timer-actions { justify-content: center; }
+.timer-finished { color: var(--danger); font-size: var(--text-xl); font-weight: 800; }
+.timer-stage:fullscreen { display: grid; place-content: center; gap: var(--space-5); background: var(--bg); }
+.timer-stage:fullscreen .timer-display { font-size: min(20vw, 12rem); }

@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "tools/*/tool.json",
+  "tools": [
+    {
+      "$schema": "../../schemas/tool.schema.json",
+      "id": "classroom-timer",
+      "name": "课堂计时器",
+      "description": "提供防漂移的课堂倒计时与正计时，并支持大字展示。",
+      "category": "general",
+      "tags": [
+        "计时器",
+        "倒计时",
+        "课堂",
+        "活动"
+      ],
+      "version": "0.1.0",
+      "status": "stable",
+      "entry": "tools/classroom-timer/index.html",
+      "icon": "timer",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": true,
+      "createdAt": "2026-09-20",
+      "updatedAt": "2026-09-20"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
+      "id": "random-group",
+      "name": "随机分组",
+      "description": "将逐行名单按组数或每组人数随机、均衡地分组。",
+      "category": "classroom-management",
+      "tags": [
+        "分组",
+        "随机",
+        "名单",
+        "课堂"
+      ],
+      "version": "0.1.0",
+      "status": "stable",
+      "entry": "tools/random-group/index.html",
+      "icon": "users",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": true,
+      "createdAt": "2026-09-20",
+      "updatedAt": "2026-09-20"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
+      "id": "random-picker",
+      "name": "随机点名",
+      "description": "从逐行名单中随机抽取一人，可暂时移出已抽中人员。",
+      "category": "classroom-management",
+      "tags": [
+        "点名",
+        "随机",
+        "名单",
+        "课堂"
+      ],
+      "version": "0.1.0",
+      "status": "stable",
+      "entry": "tools/random-picker/index.html",
+      "icon": "user-search",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": true,
+      "createdAt": "2026-09-20",
+      "updatedAt": "2026-09-20"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
+      "id": "score-statistics",
+      "name": "成绩统计",
+      "description": "验证一列分数并计算描述统计、及格率与自定义分数段。",
+      "category": "assessment",
+      "tags": [
+        "成绩",
+        "统计",
+        "分数",
+        "及格率",
+        "CSV"
+      ],
+      "version": "0.1.0",
+      "status": "stable",
+      "entry": "tools/score-statistics/index.html",
+      "icon": "chart",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": true,
+      "createdAt": "2026-09-20",
+      "updatedAt": "2026-09-20"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
+      "id": "text-cleaner",
+      "name": "文本清洗",
+      "description": "组合常用清理操作，预览文本变化并复制或下载结果。",
+      "category": "text-processing",
+      "tags": [
+        "文本",
+        "清洗",
+        "去重",
+        "排版"
+      ],
+      "version": "0.1.0",
+      "status": "stable",
+      "entry": "tools/text-cleaner/index.html",
+      "icon": "text-clean",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": true,
+      "createdAt": "2026-09-20",
+      "updatedAt": "2026-09-20"
+    }
+  ]
+}

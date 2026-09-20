@@ -1,0 +1,28 @@
+name: Bug 报告
+description: 报告可复现的功能、兼容性或无障碍问题
+title: "[Bug] "
+labels: ["type:bug"]
+body:
+  - type: input
+    id: page
+    attributes: { label: 工具或页面 }
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes: { label: 复现步骤 }
+    validations: { required: true }
+  - type: textarea
+    id: result
+    attributes: { label: 预期与实际结果 }
+    validations: { required: true }
+  - type: input
+    id: environment
+    attributes: { label: 浏览器、系统与设备 }
+    validations: { required: true }
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 数据确认
+      options:
+        - label: 描述、截图和示例均已脱敏
+          required: true

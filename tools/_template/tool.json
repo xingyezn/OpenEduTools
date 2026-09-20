@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "sample-tool",
+  "name": "示例工具",
+  "description": "用一句话说明输入、操作与用户可以得到的结果。",
+  "category": "general",
+  "tags": ["示例", "工具"],
+  "version": "0.1.0",
+  "status": "experimental",
+  "entry": "tools/sample-tool/index.html",
+  "icon": "timer",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-20",
+  "updatedAt": "2026-09-20"
+}

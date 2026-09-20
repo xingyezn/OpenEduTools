@@ -1,0 +1,21 @@
+{
+  "name": "open-edu-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "免费、开源、无需登录、浏览器本地运行的教师微工具集合。",
+  "scripts": {
+    "build:index": "node scripts/build-tools-index.mjs",
+    "check:index": "node scripts/build-tools-index.mjs --check",
+    "validate": "node scripts/validate-tools.mjs",
+    "check:paths": "node scripts/check-paths.mjs",
+    "check:privacy": "node scripts/check-privacy.mjs",
+    "smoke:chrome": "node scripts/browser-smoke.mjs --browser=chrome",
+    "smoke:edge": "node scripts/browser-smoke.mjs --browser=edge",
+    "test": "node --test tests/*.test.js",
+    "check": "npm run validate && npm run check:index && npm test && npm run check:paths && npm run check:privacy"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

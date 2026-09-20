@@ -1,0 +1,15 @@
+{
+  "id": "Invalid ID",
+  "name": "坏示例",
+  "category": "unknown",
+  "tags": ["重复", "重复"],
+  "version": "one",
+  "status": "ready",
+  "entry": "/index.html",
+  "icon": "🔥",
+  "offline": false,
+  "dataPolicy": "network-required",
+  "featured": "yes",
+  "createdAt": "2026-99-99",
+  "updatedAt": "today"
+}

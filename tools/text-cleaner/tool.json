@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "text-cleaner",
+  "name": "文本清洗",
+  "description": "组合常用清理操作，预览文本变化并复制或下载结果。",
+  "category": "text-processing",
+  "tags": ["文本", "清洗", "去重", "排版"],
+  "version": "0.1.0",
+  "status": "stable",
+  "entry": "tools/text-cleaner/index.html",
+  "icon": "text-clean",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": true,
+  "createdAt": "2026-09-20",
+  "updatedAt": "2026-09-20"
+}

@@ -1,0 +1,22 @@
+(function (root) {
+  'use strict';
+  function parseNames(raw, dedupe = true) { const names = String(raw || '').split(/\r?\n/).map((value) => value.trim()).filter(Boolean); return dedupe ? [...new Set(names)] : names; }
+  function secureUint32() { if (root.crypto?.getRandomValues) { const values = new Uint32Array(1); root.crypto.getRandomValues(values); return values[0]; } return Math.floor(Math.random() * 0x100000000); }
+  function unbiasedIndex(length, randomUint32 = secureUint32) { if (!Number.isInteger(length) || length < 1) throw new RangeError('范围必须大于 0'); const range = 0x100000000; const limit = range - range % length; let value; do { value = randomUint32(); } while (!Number.isInteger(value) || value < 0 || value >= limit); return value % length; }
+  function shuffle(items, randomIndex = unbiasedIndex) { const result = [...items]; for (let index = result.length - 1; index > 0; index -= 1) { const other = randomIndex(index + 1); [result[index], result[other]] = [result[other], result[index]]; } return result; }
+  function groupBalanced(items, groupCount) { if (!Number.isInteger(groupCount) || groupCount < 1) throw new RangeError('组数必须是正整数'); if (items.length === 0) return []; const count = Math.min(groupCount, items.length); const groups = Array.from({ length: count }, () => []); items.forEach((item, index) => groups[index % count].push(item)); return groups; }
+  function runGrouping(names, mode, amount, randomIndex) { if (!names.length) throw new Error('请先输入至少一个姓名'); if (!Number.isInteger(amount) || amount < 1) throw new Error('数量必须是大于 0 的整数'); const groupCount = mode === 'size' ? Math.ceil(names.length / amount) : amount; return groupBalanced(shuffle(names, randomIndex), groupCount); }
+  function formatGroups(groups) { return groups.map((group, index) => `第 ${index + 1} 组（${group.length} 人）\n${group.join('\n')}`).join('\n\n'); }
+  const api = { parseNames, unbiasedIndex, shuffle, groupBalanced, runGrouping, formatGroups };
+  if (typeof module !== 'undefined') module.exports = api;
+  if (typeof document === 'undefined') return;
+  const input = document.getElementById('names'); const dedupe = document.getElementById('dedupe'); const mode = document.getElementById('mode'); const amount = document.getElementById('amount'); const status = document.getElementById('status'); const result = document.getElementById('result'); const copy = document.getElementById('copy'); let lastGroups = [];
+  function names() { return parseNames(input.value, dedupe.checked); }
+  function setStatus(message, kind = '') { status.textContent = message; status.dataset.kind = kind; }
+  function update() { document.getElementById('name-count').textContent = `有效人数：${names().length}`; document.getElementById('amount-label').textContent = mode.value === 'count' ? '组数' : '每组人数'; }
+  function render(groups) { const grid = document.createElement('div'); grid.className = 'group-grid'; groups.forEach((group, index) => { const card = document.createElement('section'); card.className = 'group-card'; const title = document.createElement('h3'); title.textContent = `第 ${index + 1} 组 · ${group.length} 人`; const list = document.createElement('ol'); group.forEach((name) => { const item = document.createElement('li'); item.textContent = name; list.append(item); }); card.append(title, list); grid.append(card); }); result.replaceChildren(grid); }
+  document.getElementById('group').addEventListener('click', () => { try { lastGroups = runGrouping(names(), mode.value, Number(amount.value)); render(lastGroups); copy.disabled = false; const sizes = lastGroups.map((group) => group.length); setStatus(`已分为 ${lastGroups.length} 组，每组 ${Math.min(...sizes)}–${Math.max(...sizes)} 人。`, 'success'); } catch (error) { lastGroups = []; copy.disabled = true; setStatus(error.message, 'error'); } });
+  copy.addEventListener('click', () => root.OETToolPage.copyText(formatGroups(lastGroups)));
+  document.getElementById('clear').addEventListener('click', () => { input.value = ''; lastGroups = []; copy.disabled = true; result.replaceChildren(Object.assign(document.createElement('p'), { className: 'muted', textContent: '分组结果会显示在这里。' })); update(); setStatus('已清空，名单未被保存。', 'success'); input.focus(); });
+  input.addEventListener('input', update); dedupe.addEventListener('change', update); mode.addEventListener('change', update); update();
+})(typeof globalThis !== 'undefined' ? globalThis : this);

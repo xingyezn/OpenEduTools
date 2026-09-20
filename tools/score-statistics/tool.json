@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "score-statistics",
+  "name": "成绩统计",
+  "description": "验证一列分数并计算描述统计、及格率与自定义分数段。",
+  "category": "assessment",
+  "tags": ["成绩", "统计", "分数", "及格率", "CSV"],
+  "version": "0.1.0",
+  "status": "stable",
+  "entry": "tools/score-statistics/index.html",
+  "icon": "chart",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": true,
+  "createdAt": "2026-09-20",
+  "updatedAt": "2026-09-20"
+}

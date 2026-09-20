@@ -1,0 +1,2 @@
+.options { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--space-3); margin-top: var(--space-4); padding: var(--space-4); border: var(--border-width) solid var(--border); border-radius: var(--radius-md); }
+.options legend { padding-inline: var(--space-2); font-weight: 700; }
