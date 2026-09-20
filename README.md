@@ -2,6 +2,8 @@
 
 > 免费、开源、无需登录、浏览器本地运行的教师微工具集合。
 
+**[在线使用 OpenEduTools](https://xingyezn.github.io/OpenEduTools/)** · [GitHub 源代码仓库](https://github.com/xingyezn/OpenEduTools)
+
 ![OpenEduTools 首页](assets/images/home.png)
 
 OpenEduTools 面向一线教师、教育管理人员、教育研究者、师范生与研究生，解决备课、课堂教学、班级管理、成绩评价、科研辅助、文本与数据处理中的“小而烦”问题。
@@ -22,18 +24,19 @@ OpenEduTools 面向一线教师、教育管理人员、教育研究者、师范�
 
 V0.1 聚焦一个可公开使用、可持续扩展的最小版本：
 
-- 工具首页、搜索、分类筛选；
+- 工具首页、跨名称/介绍/标签的模糊搜索、功能与学科筛选；
 - 收藏与最近使用（仅保存在浏览器 `localStorage`）；
 - 统一的工具卡片、详情页、导航、表单和反馈样式；
 - 使用 `tool.json` 管理工具元数据；
 - 响应式布局、键盘操作、基础无障碍和明暗主题；
 - 5 个首批工具：随机点名、随机分组、课堂计时器、文本清洗、成绩统计；
+- 每个工具可下载独立离线包，解压后双击即可使用；
 - GitHub Pages 自动部署；
 - 面向传统开发与 Vibe Coding 的贡献流程。
 
 完整任务见 [V0.1_TASKS.md](V0.1_TASKS.md)。
 
-V0.1 的静态站点、5 个首批工具、元数据工具链、自动化测试和 Pages 工作流已经实现。线上地址由仓库所有者在 GitHub Pages 中启用工作流后确定；当前测试记录见 [docs/TEST_REPORT.md](docs/TEST_REPORT.md)，发布前人工验收项见 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)。
+V0.1 的静态站点、5 个首批工具、元数据工具链、自动化测试和 Pages 工作流已经实现。可直接访问 [线上站点](https://xingyezn.github.io/OpenEduTools/)；当前测试记录见 [docs/TEST_REPORT.md](docs/TEST_REPORT.md)，发布前人工验收项见 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)。
 
 ## 目录结构
 
@@ -61,6 +64,7 @@ OpenEduTools/
 │   └── tool-page.js           # 工具页公共行为
 ├── data/
 │   └── tools.json             # 供首页读取的工具索引
+├── downloads/                 # 自动生成的单工具离线 ZIP
 ├── tools/
 │   └── <tool-id>/
 │       ├── index.html
@@ -119,7 +123,13 @@ npm run check
 npm run build:index
 ```
 
-完整检查包含元数据、索引同步、18 项核心单元测试、关键相对路径以及静态隐私/网络规则。运行网站本身不需要 Node.js 或安装依赖。
+生成 5 个工具的离线包：
+
+```bash
+npm run build:downloads
+```
+
+完整检查包含元数据、索引和离线包同步、核心单元测试、关键相对路径以及静态隐私/网络规则。运行网站本身不需要 Node.js 或安装依赖。
 
 本机已安装 Chrome 或 Edge 时，可在静态服务器运行期间执行真实浏览器烟雾测试：
 
@@ -151,6 +161,7 @@ tools/random-picker/
   "name": "随机点名",
   "description": "从学生名单中公平地随机抽取一人。",
   "category": "classroom-management",
+  "subjects": ["general"],
   "tags": ["点名", "随机", "名单"],
   "version": "0.1.0",
   "status": "stable",
@@ -183,6 +194,8 @@ V0.1 使用以下稳定分类 ID：
 
 新增分类需要先通过 Issue 讨论，避免近义分类重复。
 
+工具还可标注通用、语文与语言、数学、科学、人文社科、艺术、体育与健康、信息科技等学科。功能分类描述“做什么”，学科分类描述“适合什么课堂”，两者可以组合筛选。
+
 ## 隐私说明
 
 - 默认不收集账号、姓名、联系方式或教学数据。
@@ -203,7 +216,7 @@ V0.1 使用以下稳定分类 ID：
 
 首次贡献前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [TOOL_SPEC.md](TOOL_SPEC.md)。AI 可以帮助写代码，但贡献者仍需对隐私、安全、版权和可用性负责。
 
-新增工具可复制 `tools/_template/`，将目录名、`tool.json` 的 `id`/`entry` 与页面 `data-tool-id` 一并替换，再运行 `npm run build:index` 和 `npm run check`。
+新增工具可复制 `tools/_template/`，将目录名、`tool.json` 的 `id`/`entry` 与页面 `data-tool-id` 一并替换，再运行 `npm run build:index`、`npm run build:downloads` 和 `npm run check`。
 
 ## 技术边界
 

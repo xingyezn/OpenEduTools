@@ -58,6 +58,7 @@ tools/<tool-id>/
   "name": "随机分组",
   "description": "将名单随机分成指定组数或每组指定人数。",
   "category": "classroom-management",
+  "subjects": ["general"],
   "tags": ["分组", "随机", "名单", "课堂"],
   "version": "0.1.0",
   "status": "stable",
@@ -80,6 +81,7 @@ tools/<tool-id>/
 | `name` | string | 是 | 面向用户的中文名称，2–20 个字符，避免“万能”“最好”等宣传词 |
 | `description` | string | 是 | 一句话说明输入、动作或结果，建议 15–60 个中文字符 |
 | `category` | string | 是 | 必须取自稳定分类 ID |
+| `subjects` | string[] | 是 | 1–4 个学科 ID；跨学科工具使用 `general` |
 | `tags` | string[] | 是 | 2–8 个可搜索词；去重，不使用 `#` |
 | `version` | string | 是 | 语义化版本 `MAJOR.MINOR.PATCH` |
 | `status` | string | 是 | `experimental`、`beta`、`stable` 或 `deprecated` |
@@ -102,6 +104,19 @@ data-processing
 text-processing
 ai-assistance
 general
+```
+
+学科 ID：
+
+```text
+general
+language
+mathematics
+science
+humanities
+arts
+physical-education
+information-technology
 ```
 
 ### 3.3 单一来源
@@ -235,7 +250,7 @@ openEduTools:tool:<tool-id>:settings
 
 首页目录行为：
 
-- 搜索范围至少包括 `name`、`description`、`tags`；
+- 搜索范围至少包括 `name`、`description`、`tags`、功能分类和学科分类，并容忍少量错字或不连续关键词；
 - 搜索对大小写不敏感，并对首尾空格做归一化；
 - 分类筛选和搜索可以组合；
 - 无结果时提供清除条件的操作；
@@ -243,6 +258,14 @@ openEduTools:tool:<tool-id>:settings
 - 最近使用按工具 ID 去重，以最新访问时间排序，V0.1 最多保留 10 条；
 - 已删除或未知工具 ID 必须被安全忽略；
 - 隐私模式或存储不可用时，核心浏览与工具功能仍可使用。
+
+### 8.1 单工具离线包
+
+- `tool.json` 仍是唯一元数据源，离线 ZIP 由 `npm run build:downloads` 统一生成，不手工编辑；
+- 压缩包保留工具页所依赖的 `tools/`、`css/`、`js/` 和图标相对目录；
+- 教师解压完整目录后可直接双击根目录 `index.html` 进入工具；
+- 离线包不得新增联网依赖、真实数据或与源码不同步的实现；
+- `npm run check:downloads` 必须能发现缺失或过期的压缩包。
 
 ## 9. 隐私、安全与网络
 

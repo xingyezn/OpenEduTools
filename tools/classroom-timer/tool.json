@@ -4,8 +4,9 @@
   "name": "课堂计时器",
   "description": "提供防漂移的课堂倒计时与正计时，并支持大字展示。",
   "category": "general",
+  "subjects": ["general", "physical-education"],
   "tags": ["计时器", "倒计时", "课堂", "活动"],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "status": "stable",
   "entry": "tools/classroom-timer/index.html",
   "icon": "timer",
@@ -13,5 +14,5 @@
   "dataPolicy": "local-only",
   "featured": true,
   "createdAt": "2026-09-20",
-  "updatedAt": "2026-09-20"
+  "updatedAt": "2026-09-21"
 }

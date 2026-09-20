@@ -4,6 +4,7 @@
   "name": "示例工具",
   "description": "用于验证工具元数据结构的虚构示例。",
   "category": "general",
+  "subjects": ["general"],
   "tags": ["示例", "测试"],
   "version": "0.1.0",
   "status": "experimental",

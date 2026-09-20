@@ -4,8 +4,9 @@
   "name": "成绩统计",
   "description": "验证一列分数并计算描述统计、及格率与自定义分数段。",
   "category": "assessment",
+  "subjects": ["mathematics", "general"],
   "tags": ["成绩", "统计", "分数", "及格率", "CSV"],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "status": "stable",
   "entry": "tools/score-statistics/index.html",
   "icon": "chart",
@@ -13,5 +14,5 @@
   "dataPolicy": "local-only",
   "featured": true,
   "createdAt": "2026-09-20",
-  "updatedAt": "2026-09-20"
+  "updatedAt": "2026-09-21"
 }

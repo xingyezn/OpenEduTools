@@ -10,6 +10,11 @@
   function init() {
     const value = apply(safeGet());
     document.querySelectorAll('[data-theme-select]').forEach((select) => { select.value = value; select.addEventListener('change', () => save(select.value)); });
+    document.querySelectorAll('.site-nav').forEach((nav) => {
+      if (nav.querySelector('[data-github-link]')) return;
+      const link = document.createElement('a'); link.href = 'https://github.com/xingyezn/OpenEduTools'; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.dataset.githubLink = ''; link.textContent = 'GitHub ↗';
+      const themeField = nav.querySelector('.theme-field'); nav.insertBefore(link, themeField || null);
+    });
   }
   root.OETTheme = { apply, save, safeGet };
   if (typeof document !== 'undefined') { apply(safeGet()); if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init(); }

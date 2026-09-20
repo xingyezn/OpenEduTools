@@ -16,6 +16,11 @@
   function init() {
     const id = document.body.dataset.toolId; if (!id) return;
     const favoriteButton = document.querySelector('[data-tool-favorite]');
+    if (favoriteButton && id !== 'sample-tool' && !document.documentElement.hasAttribute('data-offline-bundle')) {
+      const actions = document.createElement('div'); actions.className = 'tool-header__actions';
+      const parent = favoriteButton.parentNode; parent.insertBefore(actions, favoriteButton); actions.append(favoriteButton);
+      const download = document.createElement('a'); download.className = 'button button--secondary'; download.href = `../../downloads/${id}.zip`; download.download = `${id}.zip`; download.textContent = '下载离线包'; actions.append(download);
+    }
     let favorites;
     try { favorites = root.OETFavorites.createFavorites(localStorage); root.OETRecent.createRecent(localStorage).add(id); } catch { showToast('浏览器存储不可用，工具仍可正常使用'); }
     function sync() { if (!favoriteButton || !favorites) return; const active = favorites.get().includes(id); favoriteButton.textContent = active ? '★ 已收藏' : '☆ 收藏'; favoriteButton.setAttribute('aria-pressed', String(active)); }

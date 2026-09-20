@@ -2,6 +2,7 @@
   "id": "Invalid ID",
   "name": "坏示例",
   "category": "unknown",
+  "subjects": ["unknown", "unknown"],
   "tags": ["重复", "重复"],
   "version": "one",
   "status": "ready",

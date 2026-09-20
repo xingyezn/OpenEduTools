@@ -4,8 +4,9 @@
   "name": "随机分组",
   "description": "将逐行名单按组数或每组人数随机、均衡地分组。",
   "category": "classroom-management",
+  "subjects": ["general"],
   "tags": ["分组", "随机", "名单", "课堂"],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "status": "stable",
   "entry": "tools/random-group/index.html",
   "icon": "users",
@@ -13,5 +14,5 @@
   "dataPolicy": "local-only",
   "featured": true,
   "createdAt": "2026-09-20",
-  "updatedAt": "2026-09-20"
+  "updatedAt": "2026-09-21"
 }
