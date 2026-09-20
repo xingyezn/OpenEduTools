@@ -11,4 +11,8 @@
 .hw-stats { margin-block: var(--space-4); }
 .folder-info { margin-top: var(--space-3); color: var(--text-muted); font-size: var(--text-sm); word-break: break-all; }
 .folder-info b { color: var(--primary); }
+.hw-stage:fullscreen { display: grid; align-content: center; justify-items: center; gap: var(--space-5); padding: var(--space-6); background: var(--bg); border: none; border-radius: 0; box-shadow: none; overflow: auto; }
+.hw-stage:fullscreen .hw-grid { width: min(100%, 72rem); grid-template-columns: minmax(0, 1fr) minmax(0, 20rem); }
+.hw-stage:fullscreen .hw-canvas { width: min(56vh, 42vw); }
+.hw-stage:fullscreen .binary-preview { max-height: 40vh; }
 @media (max-width: 52rem) { .hw-grid { grid-template-columns: 1fr; } .hw-preview { width: 100%; } }

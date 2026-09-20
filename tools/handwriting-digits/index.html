@@ -17,13 +17,15 @@
         <h2 id="setup-title">采集设置</h2>
         <div class="form-grid">
           <div class="field"><label for="studentId">学生学号</label><input id="studentId" type="text" autocomplete="off" maxlength="32" placeholder="请输入学号"></div>
+          <div class="field"><label for="maxCount">收集数量</label><input id="maxCount" type="number" min="1" max="999" step="1" value="100" inputmode="numeric"></div>
         </div>
         <dl class="stat-grid hw-stats">
-          <div class="stat"><dt>已收集</dt><dd><span id="collectedCount">0</span>/100 张</dd></div>
+          <div class="stat"><dt>已收集</dt><dd><span id="collectedCount">0</span>/<span id="maxCountLabel">100</span> 张</dd></div>
           <div class="stat"><dt>当前序号</dt><dd id="currentIndex">1</dd></div>
         </dl>
         <label class="check"><input id="remember" type="checkbox">在本机记住学号与进度（默认关闭，仅保存在浏览器本地）</label>
         <div class="tool-actions">
+          <button id="startBtn" class="button button--cta" type="button" disabled>开始收集</button>
           <button id="selectFolderBtn" class="button button--secondary" type="button" hidden>选择保存文件夹</button>
           <button id="exportAllBtn" class="button button--secondary" type="button" hidden>导出全部数据</button>
           <button id="clearAllBtn" class="button button--danger" type="button" hidden>清空所有数据</button>
@@ -31,12 +33,12 @@
         <p id="folderInfo" class="folder-info" hidden>当前保存路径：<b id="folderPath"></b></p>
         <p id="status" class="status-line" role="status" aria-live="polite"></p>
       </section>
-      <section class="panel" aria-labelledby="draw-title">
+      <section id="collectionStage" class="panel hw-stage" aria-labelledby="draw-title">
         <div class="hw-grid">
           <div class="hw-draw">
             <h2 id="draw-title" class="hw-target">请手写数字：<span id="targetNumber" aria-live="polite">0</span></h2>
             <canvas id="drawingCanvas" class="hw-canvas" width="400" height="400" aria-label="手写画板"></canvas>
-            <div class="canvas-controls"><button id="clearBtn" class="button button--ghost" type="button">清空</button><button id="saveBtn" class="button button--cta" type="button">保存 / 下一个</button></div>
+            <div class="canvas-controls"><button id="clearBtn" class="button button--ghost" type="button">清空</button><button id="saveBtn" class="button button--cta" type="button" disabled>保存 / 下一个</button><button id="fullscreenBtn" class="button button--secondary" type="button">全屏</button></div>
           </div>
           <div class="hw-preview">
             <h3>50×50 预览</h3>
@@ -46,7 +48,7 @@
           </div>
         </div>
       </section>
-      <aside class="notice"><strong>使用提示：</strong>在支持文件夹保存的浏览器中可直接写入本地目录，否则会下载 PNG 与 TXT 文件；样本不会上传到任何服务器。刷新页面会清空本次会话，如需保留请先导出。</aside>
+      <aside class="notice"><strong>使用提示：</strong>先填写学号并选择保存文件夹，再点击「开始收集」；收集时可点击「全屏」放大书写区域。支持文件夹保存的浏览器会直接写入本地目录，否则下载 PNG 与 TXT；样本不会上传到任何服务器，刷新页面会清空本次会话，如需保留请先导出。</aside>
     </div>
     <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
   </main><div class="toast" data-toast role="status" hidden></div>
