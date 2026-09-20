@@ -161,13 +161,28 @@
 
   /* ================= 分享 ================= */
   function buildShareLinks(url, title) {
-    const encodedUrl = encodeURIComponent(url); const encodedTitle = encodeURIComponent(title);
+    const encodedUrl = encodeURIComponent(url); const encodedTitle = encodeURIComponent(title); const combined = encodeURIComponent(`${title} ${url}`);
     return {
       weibo: `https://service.weibo.com/share/share.php?url=${encodedUrl}&title=${encodedTitle}`,
       qzone: `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${encodedUrl}&title=${encodedTitle}`,
       qq: `https://connect.qq.com/widget/shareqq/index.html?url=${encodedUrl}&title=${encodedTitle}`,
+      x: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
+      whatsapp: `https://api.whatsapp.com/send?text=${combined}`,
+      reddit: `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
       email: `mailto:?subject=${encodedTitle}&body=${encodedUrl}`
     };
+  }
+  async function copyCanvasImage(canvas) {
+    try {
+      if (!navigator.clipboard || typeof ClipboardItem === 'undefined') throw new Error('unsupported');
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      showToast('二维码已复制到剪贴板');
+      return true;
+    } catch { showToast('当前浏览器不支持复制图片，请改用截图或系统分享'); return false; }
   }
   function drawQr(canvas, modules) {
     const size = modules.length; const quiet = 4; const scale = 6; const dimension = (size + quiet * 2) * scale;
@@ -197,23 +212,26 @@
     const qrBox = document.createElement('div'); qrBox.className = 'share-qr';
     if (qr) {
       const canvas = document.createElement('canvas'); canvas.className = 'share-qr__canvas'; canvas.setAttribute('aria-label', '页面二维码'); drawQr(canvas, qr.modules);
-      const download = document.createElement('button'); download.type = 'button'; download.className = 'button button--secondary'; download.textContent = '下载二维码';
-      download.addEventListener('click', () => downloadDataUrl('share-qr.png', canvas.toDataURL('image/png')));
-      qrBox.append(canvas, download);
+      const copyQr = document.createElement('button'); copyQr.type = 'button'; copyQr.className = 'button button--secondary'; copyQr.textContent = '复制二维码';
+      copyQr.addEventListener('click', () => copyCanvasImage(canvas));
+      qrBox.append(canvas, copyQr);
     } else {
       const note = document.createElement('p'); note.className = 'small muted'; note.textContent = '网址较长，无法生成二维码，请使用复制链接或系统分享。'; qrBox.append(note);
     }
     const links = document.createElement('div'); links.className = 'share-links';
-    const targets = [['weibo', '微博'], ['qzone', 'QQ空间'], ['qq', 'QQ好友']];
     const shareLinks = buildShareLinks(url, title);
+    const targets = [['weibo', '微博'], ['qzone', 'QQ空间'], ['qq', 'QQ好友'], ['x', 'X'], ['facebook', 'Facebook'], ['linkedin', 'LinkedIn'], ['telegram', 'Telegram'], ['whatsapp', 'WhatsApp'], ['reddit', 'Reddit']];
     for (const [key, label] of targets) { const anchor = document.createElement('a'); anchor.className = 'share-link'; anchor.href = shareLinks[key]; anchor.target = '_blank'; anchor.rel = 'noopener noreferrer'; anchor.textContent = label; links.append(anchor); }
+    const xiaohongshu = document.createElement('button'); xiaohongshu.type = 'button'; xiaohongshu.className = 'share-link'; xiaohongshu.textContent = '小红书';
+    xiaohongshu.addEventListener('click', async () => { if (await copyText(`${title} ${url}`)) showToast('已复制链接，请在小红书 App 中粘贴发布'); });
+    links.append(xiaohongshu);
     const mail = document.createElement('a'); mail.className = 'share-link'; mail.href = shareLinks.email; mail.textContent = '邮件'; links.append(mail);
     if (navigator.share) {
       const native = document.createElement('button'); native.type = 'button'; native.className = 'button button--secondary'; native.textContent = '系统分享';
       native.addEventListener('click', () => navigator.share({ title, text: title, url }).catch(() => {}));
       links.append(native);
     }
-    const hint = document.createElement('p'); hint.className = 'share-dialog__hint small muted'; hint.textContent = '微信中可长按识别或「扫一扫」二维码；也可先复制链接再粘贴。';
+    const hint = document.createElement('p'); hint.className = 'share-dialog__hint small muted'; hint.textContent = '微信、小红书等未提供网页分享的 App，可复制链接或二维码后到 App 内粘贴；YouTube、B 站等视频平台需上传视频，无法直接分享网址。';
     body.append(qrBox, links);
     panel.append(head, titleNode, urlRow, body, hint); overlay.append(panel);
     const previous = document.activeElement;

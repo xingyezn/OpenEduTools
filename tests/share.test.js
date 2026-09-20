@@ -53,4 +53,10 @@ test('分享链接对网址和标题进行编码', () => {
   assert.ok(links.qzone.includes('sns.qzone.qq.com'));
   assert.ok(links.qq.includes('connect.qq.com'));
   assert.ok(links.email.startsWith('mailto:?subject='));
+  assert.ok(links.x.startsWith('https://twitter.com/intent/tweet?'));
+  assert.ok(links.facebook.includes('facebook.com/sharer'));
+  assert.ok(links.linkedin.includes('linkedin.com/sharing'));
+  assert.ok(links.telegram.startsWith('https://t.me/share/url?'));
+  assert.ok(links.whatsapp.includes('api.whatsapp.com/send'));
+  assert.ok(links.reddit.includes('reddit.com/submit'));
 });
