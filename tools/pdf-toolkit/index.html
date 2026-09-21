@@ -21,7 +21,7 @@
       </section>
       <section id="workbar" class="panel pdf-workbar" hidden>
         <div class="pdf-modes" role="tablist" aria-label="处理方式"><button class="pdf-mode is-active" data-mode="merge" type="button" role="tab" aria-selected="true">合并</button><button class="pdf-mode" data-mode="extract" type="button" role="tab" aria-selected="false">提取页面</button><button class="pdf-mode" data-mode="edit" type="button" role="tab" aria-selected="false">编辑页面</button></div>
-        <div id="fileChips" class="pdf-chips"></div>
+        <div class="pdf-workbar__row"><div id="fileChips" class="pdf-chips"></div><button id="fullscreenBtn" class="button button--secondary" type="button">全屏</button></div>
       </section>
       <div id="pdfBody" class="pdf-body" hidden>
         <aside class="pdf-rail" id="rail" aria-label="缩略图"></aside>
@@ -37,6 +37,7 @@
             <p id="editInfo" class="small muted">尚未载入</p>
             <div class="tool-actions"><button id="textToolBtn" class="button button--secondary" type="button">添加文字</button><button id="imageToolBtn" class="button button--secondary" type="button">添加图片</button></div>
             <div class="form-grid"><div class="field"><label for="textSize">字号</label><input id="textSize" type="number" min="6" max="96" value="18" inputmode="numeric"></div><div class="field"><label for="textColor">颜色</label><input id="textColor" type="color" value="#111111"></div></div>
+            <div class="field"><label for="fontSelect">字体</label><select id="fontSelect"><option value="helvetica">无衬线 Helvetica</option><option value="times">衬线 Times</option><option value="courier">等宽 Courier</option></select></div>
             <div class="field"><label for="imageInput">图片文件（PNG / JPG）</label><input id="imageInput" type="file" accept="image/png,image/jpeg"></div>
             <p class="small muted">选工具后点击页面放置，可拖动位置、拖动右下角缩放、双击改字、点 × 删除。</p>
             <hr>

@@ -3,6 +3,7 @@
 .pdf-drop.is-over { border-color: var(--accent-strong); background: var(--surface-soft); }
 .pdf-drop__title { margin: 0; font-size: 1.15rem; font-weight: 800; }
 .pdf-workbar { display: grid; gap: var(--space-3); }
+.pdf-workbar__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .pdf-modes { display: flex; gap: 6px; padding: 5px; border-radius: 15px; background: var(--surface-input); border: 1px solid var(--border); }
 .pdf-mode { flex: 1; padding: 0.7rem 0; font-family: inherit; font-weight: 700; color: var(--text-muted); background: transparent; border: none; border-radius: 11px; cursor: pointer; transition: color 160ms ease, background 160ms ease; }
 .pdf-mode:hover { color: var(--text); }
@@ -40,10 +41,11 @@
 .pdf-overlay:hover .pdf-overlay__remove { display: grid; }
 .pdf-overlay__resize { position: absolute; right: -0.4rem; bottom: -0.4rem; width: 0.85rem; height: 0.85rem; background: var(--primary); border: 1px solid #fff; border-radius: 2px; cursor: nwse-resize; display: none; }
 .pdf-overlay--image:hover .pdf-overlay__resize { display: block; }
-.pdf-overlay--existing { color: transparent; border: 1px dashed transparent; cursor: text; }
+.pdf-overlay--existing { color: transparent; border: 1px dashed transparent; cursor: text; line-height: 1.25; }
 .pdf-overlay--existing:hover { border-color: var(--secondary); }
 .pdf-overlay--existing[contenteditable="true"] { color: #111; background: rgb(255 255 255 / 0.92); border-color: var(--primary); outline: none; }
-.pdf-overlay--existing.is-edited { border-color: var(--warning); }
+.pdf-overlay--existing.is-edited { color: #111; background: #fff; border-color: transparent; padding: 0 2px; }
+.pdf-overlay--existing.is-edited:hover { border-color: var(--accent-strong); }
 .pdf-image-list { display: grid; gap: var(--space-2); }
 .pdf-image-item { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); gap: var(--space-2); align-items: center; padding: var(--space-2); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
 .pdf-image-item img { width: 3.5rem; height: 3.5rem; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: 4px; }
@@ -58,5 +60,9 @@
 .pdf-side .tool-actions { margin-top: 0; }
 .pdf-side hr { border: none; border-top: 1px solid var(--border); margin: 0; }
 .pdf-side .field input[type="color"] { min-height: 2.75rem; padding: 0.25rem; }
-@media (max-width: 64rem) { .pdf-body { grid-template-columns: 7rem minmax(0, 1fr); } .pdf-side { grid-column: 1 / -1; } }
-@media (max-width: 40rem) { .pdf-body { grid-template-columns: 1fr; } .pdf-rail { grid-auto-flow: column; grid-auto-columns: 5.5rem; overflow-x: auto; overflow-y: hidden; max-height: none; } }
+#pdfBody:fullscreen { grid-template-columns: 9.5rem minmax(0, 1fr) 17rem; align-items: stretch; height: 100vh; gap: var(--space-4); padding: var(--space-4); background: var(--bg); overflow: hidden; }
+#pdfBody:fullscreen .pdf-rail, #pdfBody:fullscreen .pdf-side { max-height: 100%; overflow-y: auto; }
+#pdfBody:fullscreen .pdf-canvas-wrap { min-height: 0; }
+#pdfBody:fullscreen .pdf-canvas { max-height: 88vh; }
+@media (max-width: 64rem) { .pdf-body { grid-template-columns: 7rem minmax(0, 1fr); } .pdf-side { grid-column: 1 / -1; } #pdfBody:fullscreen { grid-template-columns: 7rem minmax(0, 1fr); } #pdfBody:fullscreen .pdf-side { grid-column: 1 / -1; } }
+@media (max-width: 40rem) { .pdf-body { grid-template-columns: 1fr; } .pdf-rail { grid-auto-flow: column; grid-auto-columns: 5.5rem; overflow-x: auto; overflow-y: hidden; max-height: none; } #pdfBody:fullscreen { grid-template-columns: 1fr; } }

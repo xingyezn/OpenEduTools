@@ -47,6 +47,7 @@
     return output;
   }
   function hexToRgb(hex) { const match = /^#?([0-9a-f]{6})$/i.exec(String(hex || '')); if (!match) return [0, 0, 0]; const value = parseInt(match[1], 16); return [((value >> 16) & 0xff) / 255, ((value >> 8) & 0xff) / 255, (value & 0xff) / 255]; }
+  const FONTS = { helvetica: { pdf: 'Helvetica', css: '"Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif' }, times: { pdf: 'TimesRoman', css: '"Times New Roman", Times, serif' }, courier: { pdf: 'Courier', css: '"Courier New", Courier, monospace' } };
   function matMul(m1, m2) { return [m1[0] * m2[0] + m1[2] * m2[1], m1[1] * m2[0] + m1[3] * m2[1], m1[0] * m2[2] + m1[2] * m2[3], m1[1] * m2[2] + m1[3] * m2[3], m1[0] * m2[4] + m1[2] * m2[5] + m1[4], m1[1] * m2[4] + m1[3] * m2[5] + m1[5]]; }
   function canvasToBytes(canvas, type, quality) { return new Promise((resolve) => canvas.toBlob((blob) => { if (!blob) { resolve(null); return; } blob.arrayBuffer().then((buffer) => resolve(new Uint8Array(buffer))); }, type, quality)); }
 
@@ -71,7 +72,7 @@
   if (typeof module !== 'undefined') module.exports = api;
   if (typeof document === 'undefined') return;
 
-  const ids = ['fileInput', 'pickBtn', 'dropzone', 'workbar', 'fileChips', 'pdfBody', 'rail', 'prevPage', 'nextPage', 'pageInfo', 'stageHint', 'stageCanvas', 'overlayLayer', 'stageEmpty', 'side', 'sideMerge', 'sideExtract', 'sideEdit', 'mergeCount', 'mergeBtn', 'clearBtn', 'extractCount', 'extractBtn', 'selectAllBtn', 'clearSelBtn', 'splitAllBtn', 'editInfo', 'textToolBtn', 'imageToolBtn', 'textSize', 'textColor', 'imageInput', 'editTextToggle', 'imageList', 'replaceImageInput', 'rotateBtn', 'deleteBtn', 'exportBtn', 'resetEditBtn', 'status'];
+  const ids = ['fileInput', 'pickBtn', 'dropzone', 'workbar', 'fullscreenBtn', 'fileChips', 'pdfBody', 'rail', 'prevPage', 'nextPage', 'pageInfo', 'stageHint', 'stageCanvas', 'overlayLayer', 'stageEmpty', 'side', 'sideMerge', 'sideExtract', 'sideEdit', 'mergeCount', 'mergeBtn', 'clearBtn', 'extractCount', 'extractBtn', 'selectAllBtn', 'clearSelBtn', 'splitAllBtn', 'editInfo', 'textToolBtn', 'imageToolBtn', 'textSize', 'textColor', 'fontSelect', 'imageInput', 'editTextToggle', 'imageList', 'replaceImageInput', 'rotateBtn', 'deleteBtn', 'exportBtn', 'resetEditBtn', 'status'];
   const elements = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
   const state = { files: [], fileSeq: 0, mode: 'merge', activeId: null, page: 1, pageCount: 0, pageSize: { width: 595, height: 842 }, selection: new Set(), viewDoc: null, viewport: null, pendingTool: null, editImage: null, mergePages: [], mergeSeq: 0, editDoc: null, editDocId: null, editPreviewBytes: null, editFont: null, overlays: [], overlaySeq: 0, textPages: new Map(), imagesByPage: new Map(), editTextMode: false, replaceTarget: null, summary: { rotated: 0, removed: 0 }, fileDocs: new Map() };
 
@@ -79,6 +80,7 @@
   if (pdfjs && pdfjs.GlobalWorkerOptions) pdfjs.GlobalWorkerOptions.workerSrc = new URL('./vendor/pdf.worker.min.js', location.href).href;
 
   function setStatus(message, kind = '') { elements.status.textContent = message; elements.status.dataset.kind = kind; }
+  function selectedFont() { return FONTS[(elements.fontSelect && elements.fontSelect.value) || 'helvetica'] || FONTS.helvetica; }
   function downloadBytes(filename, bytes, mime) { const blob = new Blob([bytes], { type: mime }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = filename; link.click(); setTimeout(() => URL.revokeObjectURL(url), 0); }
   function readFileBytes(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(new Uint8Array(reader.result)); reader.onerror = () => reject(new Error('读取文件失败')); reader.readAsArrayBuffer(file); }); }
   function activeFile() { return state.files.find((file) => file.id === state.activeId) || null; }
@@ -295,7 +297,7 @@
   }
   function createOverlayNode(overlay, scale) {
     const node = document.createElement('div'); node.className = `pdf-overlay pdf-overlay--${overlay.type}`; node.dataset.id = overlay.id;
-    if (overlay.type === 'text') { node.textContent = overlay.text; node.style.color = overlay.color; node.style.fontSize = `${overlay.size * scale.y}px`; node.addEventListener('dblclick', (event) => { event.stopPropagation(); startEditText(overlay, node); }); }
+    if (overlay.type === 'text') { node.textContent = overlay.text; node.style.color = overlay.color; node.style.fontFamily = selectedFont().css; node.style.fontSize = `${overlay.size * scale.y}px`; node.addEventListener('dblclick', (event) => { event.stopPropagation(); startEditText(overlay, node); }); }
     else { const img = document.createElement('img'); img.src = overlay.url; img.alt = ''; img.draggable = false; node.append(img); const handle = document.createElement('span'); handle.className = 'pdf-overlay__resize'; handle.title = '拖动缩放'; handle.addEventListener('pointerdown', (event) => startResize(overlay, event)); node.append(handle); }
     const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'pdf-overlay__remove'; remove.textContent = '×'; remove.setAttribute('aria-label', '删除'); remove.addEventListener('pointerdown', (event) => event.stopPropagation()); remove.addEventListener('click', (event) => { event.stopPropagation(); state.overlays = state.overlays.filter((item) => item !== overlay); renderOverlays(); updateEditInfo(); });
     node.append(remove);
@@ -307,9 +309,10 @@
     const node = document.createElement('div'); node.className = `pdf-overlay pdf-overlay--existing${item.newStr !== undefined && item.newStr !== item.str ? ' is-edited' : ''}`;
     node.textContent = item.newStr !== undefined ? item.newStr : item.str;
     const point = state.viewport.convertToViewportPoint(item.x, item.y);
+    node.style.fontFamily = selectedFont().css;
     node.style.fontSize = `${item.size * scale.y}px`;
     node.style.left = `${point[0] * scale.x}px`;
-    node.style.top = `${point[1] * scale.y - item.size * scale.y}px`;
+    node.style.top = `${point[1] * scale.y - item.size * scale.y * 0.95}px`;
     node.style.minWidth = `${item.width * scale.x}px`;
     node.addEventListener('dblclick', (event) => { event.stopPropagation(); startEditExistingText(item, node); });
     return node;
@@ -360,6 +363,9 @@
   elements.dropzone.addEventListener('dragleave', () => elements.dropzone.classList.remove('is-over'));
   elements.dropzone.addEventListener('drop', (event) => { event.preventDefault(); elements.dropzone.classList.remove('is-over'); if (event.dataTransfer && event.dataTransfer.files.length) addFiles(event.dataTransfer.files); });
   for (const button of elements.workbar.querySelectorAll('.pdf-mode')) button.addEventListener('click', () => { state.mode = button.dataset.mode; for (const other of elements.workbar.querySelectorAll('.pdf-mode')) { const active = other === button; other.classList.toggle('is-active', active); other.setAttribute('aria-selected', String(active)); } applyMode(); });
+  elements.fullscreenBtn.addEventListener('click', () => { const body = elements.pdfBody; try { if (document.fullscreenElement) { if (document.exitFullscreen) document.exitFullscreen().catch(() => {}); } else if (body.requestFullscreen) body.requestFullscreen().catch(() => root.OETToolPage.showToast('无法进入全屏，可使用浏览器缩放。')); else root.OETToolPage.showToast('当前浏览器不支持全屏，可使用浏览器缩放。'); } catch { root.OETToolPage.showToast('当前浏览器不支持全屏，可使用浏览器缩放。'); } });
+  document.addEventListener('fullscreenchange', () => { elements.fullscreenBtn.textContent = document.fullscreenElement ? '退出全屏' : '全屏'; if (state.viewDoc) renderStage(); });
+  elements.fontSelect.addEventListener('change', renderOverlays);
   elements.prevPage.addEventListener('click', () => { state.page -= 1; renderStage(); renderRail(); });
   elements.nextPage.addEventListener('click', () => { state.page += 1; renderStage(); renderRail(); });
   elements.stageCanvas.addEventListener('click', (event) => {
@@ -453,7 +459,7 @@
           if (item.newStr === undefined || item.newStr === item.str) continue;
           if (!/^[\x20-\x7e]*$/.test(item.newStr)) { skipped += 1; continue; }
           page.drawRectangle({ x: item.x - 1, y: item.y - item.height * 0.25, width: Math.max(item.width, item.newStr.length * item.size * 0.5) + 2, height: item.height * 1.3, color: root.PDFLib.rgb(1, 1, 1) });
-          font ||= await exportDoc.embedFont(StandardFonts.Helvetica);
+          font ||= await exportDoc.embedFont(StandardFonts[selectedFont().pdf]);
           page.drawText(item.newStr, { x: item.x, y: item.y, size: item.size, font, color: root.PDFLib.rgb(0, 0, 0) });
         }
       }
@@ -466,7 +472,7 @@
       }
       for (const overlay of state.overlays) {
         const page = pages[overlay.page - 1]; if (!page) continue;
-        if (overlay.type === 'text') { if (!overlay.text) continue; font ||= await exportDoc.embedFont(StandardFonts.Helvetica); page.drawText(overlay.text, { x: overlay.x, y: overlay.y, size: overlay.size, font, color: root.PDFLib.rgb(...hexToRgb(overlay.color)) }); }
+        if (overlay.type === 'text') { if (!overlay.text) continue; font ||= await exportDoc.embedFont(StandardFonts[selectedFont().pdf]); page.drawText(overlay.text, { x: overlay.x, y: overlay.y, size: overlay.size, font, color: root.PDFLib.rgb(...hexToRgb(overlay.color)) }); }
         else { const image = overlay.imageType === 'image/png' ? await exportDoc.embedPng(overlay.bytes) : await exportDoc.embedJpg(overlay.bytes); page.drawImage(image, { x: overlay.x, y: overlay.y, width: overlay.width, height: overlay.height }); }
       }
       const bytes = await exportDoc.save(); downloadBytes('edited.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(`已导出（${formatBytes(bytes.length)}）${skipped ? `，${skipped} 处中文未重绘` : ''}。`, 'success');
