@@ -12,43 +12,58 @@
   <main id="main" class="tool-layout">
     <nav class="breadcrumbs" aria-label="面包屑"><a href="../../index.html">全部工具</a> / 图片处理</nav>
     <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">IMAGE STUDIO</span><h1>图片处理</h1><p>在浏览器本地完成常用图片处理：自由裁切、按比例裁切、一寸两寸等证件照规格裁切，旋转与翻转，亮度/对比度/饱和度等基础调色，并按需要的格式、尺寸和质量导出。图片不会上传到任何服务器；可以直接选择文件，也可以拖入或粘贴图片。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">图片仅在本页内存中处理</span></header>
-    <div class="tool-sections img-layout">
-      <section class="panel img-stage-panel" aria-labelledby="stage-title">
-        <div class="img-toolbar"><button id="loadBtn" class="button button--cta" type="button">选择图片</button><input id="fileInput" class="visually-hidden" type="file" accept="image/*"><button id="rotateLeftBtn" class="button button--secondary" type="button">左转 90°</button><button id="rotateRightBtn" class="button button--secondary" type="button">右转 90°</button><button id="flipHBtn" class="button button--secondary" type="button">水平翻转</button><button id="flipVBtn" class="button button--secondary" type="button">垂直翻转</button><button id="resetImageBtn" class="button button--ghost" type="button">重置</button></div>
-        <h2 id="stage-title" class="visually-hidden">图片与裁切</h2>
-        <div id="stage" class="img-stage">
-          <div id="canvasWrap" class="img-canvas-wrap" hidden>
-            <canvas id="stageCanvas"></canvas>
-            <div id="cropBox" class="crop-box"><span class="crop-handle" data-handle="nw"></span><span class="crop-handle" data-handle="n"></span><span class="crop-handle" data-handle="ne"></span><span class="crop-handle" data-handle="e"></span><span class="crop-handle" data-handle="se"></span><span class="crop-handle" data-handle="s"></span><span class="crop-handle" data-handle="sw"></span><span class="crop-handle" data-handle="w"></span></div>
+    <div id="workspace" class="tool-sections img-layout">
+      <div class="img-col img-col--main">
+        <section class="panel img-stage-panel" aria-labelledby="stage-title">
+          <div class="img-toolbar"><button id="loadBtn" class="button button--cta" type="button">选择图片</button><input id="fileInput" class="visually-hidden" type="file" accept="image/*"><button id="rotateLeftBtn" class="button button--secondary" type="button">左转 90°</button><button id="rotateRightBtn" class="button button--secondary" type="button">右转 90°</button><button id="flipHBtn" class="button button--secondary" type="button">水平翻转</button><button id="flipVBtn" class="button button--secondary" type="button">垂直翻转</button><button id="resetImageBtn" class="button button--ghost" type="button">重置</button><button id="fullscreenBtn" class="button button--secondary" type="button">全屏</button></div>
+          <h2 id="stage-title" class="visually-hidden">图片与裁切</h2>
+          <div id="stage" class="img-stage">
+            <div id="canvasWrap" class="img-canvas-wrap" hidden>
+              <canvas id="stageCanvas"></canvas>
+              <div id="cropBox" class="crop-box"><span class="crop-handle" data-handle="nw"></span><span class="crop-handle" data-handle="n"></span><span class="crop-handle" data-handle="ne"></span><span class="crop-handle" data-handle="e"></span><span class="crop-handle" data-handle="se"></span><span class="crop-handle" data-handle="s"></span><span class="crop-handle" data-handle="sw"></span><span class="crop-handle" data-handle="w"></span></div>
+            </div>
+            <p id="stageEmpty" class="img-empty">选择、拖入或粘贴一张图片开始</p>
           </div>
-          <p id="stageEmpty" class="img-empty">选择、拖入或粘贴一张图片开始</p>
-        </div>
-        <p id="imageMeta" class="img-meta"></p>
-      </section>
-      <section class="panel img-controls" aria-labelledby="controls-title">
-        <h2 id="controls-title" class="visually-hidden">处理设置</h2>
-        <div class="img-group"><h3>裁切</h3><div class="form-grid"><div class="field"><label for="ratioSelect">裁切比例</label><select id="ratioSelect"></select></div><div class="field"><label for="specSelect">证件照规格</label><select id="specSelect"></select></div></div></div>
-        <div class="img-group"><h3>调色</h3><div class="img-sliders">
-          <label class="img-slider"><span>亮度</span><input id="brightness" type="range" min="50" max="150" value="100"><output id="brightnessValue">100</output></label>
-          <label class="img-slider"><span>对比度</span><input id="contrast" type="range" min="50" max="150" value="100"><output id="contrastValue">100</output></label>
-          <label class="img-slider"><span>饱和度</span><input id="saturate" type="range" min="0" max="200" value="100"><output id="saturateValue">100</output></label>
-          <label class="img-slider"><span>色调</span><input id="hue" type="range" min="-180" max="180" value="0"><output id="hueValue">0</output></label>
-          <label class="img-slider"><span>灰度</span><input id="grayscale" type="range" min="0" max="100" value="0"><output id="grayscaleValue">0</output></label>
-          <label class="img-slider"><span>复古</span><input id="sepia" type="range" min="0" max="100" value="0"><output id="sepiaValue">0</output></label>
-        </div><div class="tool-actions"><button id="resetAdjustBtn" class="button button--quiet" type="button">重置调色</button></div></div>
-        <div class="img-group"><h3>导出</h3><div class="form-grid">
-          <div class="field"><label for="formatSelect">格式</label><select id="formatSelect"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></div>
-          <div class="field"><label for="sizeMode">输出尺寸</label><select id="sizeMode"><option value="crop">裁切尺寸</option><option value="spec">证件规格</option><option value="custom">自定义</option></select></div>
-          <div class="field"><label for="quality">质量</label><input id="quality" type="range" min="50" max="100" value="92"><span class="small muted">JPEG / WebP 质量：<b id="qualityValue">92</b></span></div>
-        </div>
-        <div class="form-grid"><div class="field"><label for="customWidth">宽（px）</label><input id="customWidth" type="number" min="1" max="10000" value="800" inputmode="numeric"></div><div class="field"><label for="customHeight">高（px）</label><input id="customHeight" type="number" min="1" max="10000" value="600" inputmode="numeric"></div></div>
-        <label class="check"><input id="keepRatio" type="checkbox" checked>自定义尺寸保持裁切比例</label>
-        <div class="field"><label for="fileName">文件名</label><input id="fileName" type="text" value="edited-image" maxlength="60"></div>
-        <div class="img-result"><h3>结果预览</h3><canvas id="previewCanvas" class="img-preview-canvas"></canvas><p id="outputInfo" class="small muted">尚未载入图片</p></div>
-        <div class="tool-actions"><button id="downloadBtn" class="button button--cta" type="button" disabled>下载图片</button><button id="copyImageBtn" class="button button--secondary" type="button" disabled>复制到剪贴板</button></div>
-        <p id="status" class="status-line" role="status" aria-live="polite"></p>
-      </section>
-      <aside class="notice"><strong>使用提示：</strong>拖动画框可移动裁切区域，拖动八个控制点可调整大小；选择「裁切比例」或「证件照规格」后会自动约束比例。证件照按 300 dpi 换算为像素（一寸 295×413、二寸 413×579 等）。导出在本地完成，不会上传图片；PNG 支持透明，JPEG 会用白色填充透明区域。</aside>
+          <p id="imageMeta" class="img-meta"></p>
+        </section>
+        <section class="panel" aria-labelledby="crop-title">
+          <h3 id="crop-title">裁切</h3>
+          <div class="form-grid"><div class="field"><label for="ratioSelect">裁切比例</label><select id="ratioSelect"></select></div><div class="field"><label for="specSelect">证件照规格</label><select id="specSelect"></select></div></div>
+        </section>
+        <section class="panel" aria-labelledby="adjust-title">
+          <h3 id="adjust-title">调色</h3>
+          <div class="img-sliders">
+            <label class="img-slider"><span>亮度</span><input id="brightness" type="range" min="50" max="150" value="100"><output id="brightnessValue">100</output></label>
+            <label class="img-slider"><span>对比度</span><input id="contrast" type="range" min="50" max="150" value="100"><output id="contrastValue">100</output></label>
+            <label class="img-slider"><span>饱和度</span><input id="saturate" type="range" min="0" max="200" value="100"><output id="saturateValue">100</output></label>
+            <label class="img-slider"><span>色调</span><input id="hue" type="range" min="-180" max="180" value="0"><output id="hueValue">0</output></label>
+            <label class="img-slider"><span>灰度</span><input id="grayscale" type="range" min="0" max="100" value="0"><output id="grayscaleValue">0</output></label>
+            <label class="img-slider"><span>复古</span><input id="sepia" type="range" min="0" max="100" value="0"><output id="sepiaValue">0</output></label>
+          </div>
+          <div class="tool-actions"><button id="resetAdjustBtn" class="button button--quiet" type="button">重置调色</button></div>
+        </section>
+      </div>
+      <div class="img-col img-col--side">
+        <section class="panel img-result" aria-labelledby="preview-title">
+          <h3 id="preview-title">结果预览</h3>
+          <canvas id="previewCanvas" class="img-preview-canvas"></canvas>
+          <p id="outputInfo" class="small muted">尚未载入图片</p>
+        </section>
+        <section class="panel" aria-labelledby="export-title">
+          <h3 id="export-title">导出设置</h3>
+          <div class="form-grid">
+            <div class="field"><label for="formatSelect">格式</label><select id="formatSelect"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></div>
+            <div class="field"><label for="sizeMode">输出尺寸</label><select id="sizeMode"><option value="crop">裁切尺寸</option><option value="spec">证件规格</option><option value="custom">自定义</option></select></div>
+            <div class="field"><label for="quality">质量</label><input id="quality" type="range" min="50" max="100" value="90"><span class="small muted">JPEG / WebP 质量：<b id="qualityValue">90</b></span></div>
+          </div>
+          <div class="form-grid"><div class="field"><label for="customWidth">宽（px）</label><input id="customWidth" type="number" min="1" max="10000" value="800" inputmode="numeric"></div><div class="field"><label for="customHeight">高（px）</label><input id="customHeight" type="number" min="1" max="10000" value="600" inputmode="numeric"></div></div>
+          <label class="check"><input id="keepRatio" type="checkbox" checked>自定义尺寸保持裁切比例</label>
+          <div class="field"><label for="fileName">文件名</label><input id="fileName" type="text" value="edited-image" maxlength="60"></div>
+          <div class="tool-actions"><button id="downloadBtn" class="button button--cta" type="button" disabled>下载图片</button><button id="copyImageBtn" class="button button--secondary" type="button" disabled>复制到剪贴板</button></div>
+          <p id="status" class="status-line" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+      <aside class="notice"><strong>使用提示：</strong>拖动画框可移动裁切区域，拖动八个控制点可调整大小；选择「裁切比例」或「证件照规格」后会自动约束比例。证件照按 300 dpi 换算为像素（一寸 295×413、二寸 413×579 等）。为避免导出比原图更大，照片类图片默认按原格式导出（通常 JPEG 比 PNG 小很多）；PNG 支持透明，JPEG 会用白色填充透明区域。</aside>
     </div>
     <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
   </main><div class="toast" data-toast role="status" hidden></div>

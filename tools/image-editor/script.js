@@ -101,11 +101,11 @@
   if (typeof module !== 'undefined') module.exports = api;
   if (typeof document === 'undefined') return;
 
-  const elements = Object.fromEntries(['loadBtn', 'fileInput', 'rotateLeftBtn', 'rotateRightBtn', 'flipHBtn', 'flipVBtn', 'resetImageBtn', 'stage', 'canvasWrap', 'stageCanvas', 'cropBox', 'stageEmpty', 'imageMeta', 'ratioSelect', 'specSelect', 'brightness', 'brightnessValue', 'contrast', 'contrastValue', 'saturate', 'saturateValue', 'hue', 'hueValue', 'grayscale', 'grayscaleValue', 'sepia', 'sepiaValue', 'resetAdjustBtn', 'formatSelect', 'sizeMode', 'quality', 'qualityValue', 'customWidth', 'customHeight', 'keepRatio', 'fileName', 'previewCanvas', 'outputInfo', 'downloadBtn', 'copyImageBtn', 'status'].map((id) => [id, document.getElementById(id)]));
+  const elements = Object.fromEntries(['loadBtn', 'fileInput', 'rotateLeftBtn', 'rotateRightBtn', 'flipHBtn', 'flipVBtn', 'resetImageBtn', 'fullscreenBtn', 'workspace', 'stage', 'canvasWrap', 'stageCanvas', 'cropBox', 'stageEmpty', 'imageMeta', 'ratioSelect', 'specSelect', 'brightness', 'brightnessValue', 'contrast', 'contrastValue', 'saturate', 'saturateValue', 'hue', 'hueValue', 'grayscale', 'grayscaleValue', 'sepia', 'sepiaValue', 'resetAdjustBtn', 'formatSelect', 'sizeMode', 'quality', 'qualityValue', 'customWidth', 'customHeight', 'keepRatio', 'fileName', 'previewCanvas', 'outputInfo', 'downloadBtn', 'copyImageBtn', 'status'].map((id) => [id, document.getElementById(id)]));
   const context = elements.stageCanvas.getContext('2d');
   const previewContext = elements.previewCanvas.getContext('2d');
   const state = { image: null, file: null, working: null, workingW: 0, workingH: 0, crop: { x: 0, y: 0, width: 0, height: 0 }, orientation: { rotate: 0, flipH: false, flipV: false }, aspect: null, spec: null, adjust: { brightness: 1, contrast: 1, saturate: 1, hue: 0, grayscale: 0, sepia: 0 } };
-  let drag = null; let previewTimer = 0; let sizeTimer = 0; let sizeToken = 0;
+  let drag = null; let previewTimer = 0; let sizeTimer = 0; let sizeToken = 0; let lastSize = '';
 
   function setStatus(message, kind = '') { elements.status.textContent = message; elements.status.dataset.kind = kind; }
   function setControlsEnabled(enabled) { elements.downloadBtn.disabled = !enabled; elements.copyImageBtn.disabled = !enabled; }
@@ -174,25 +174,31 @@
     ctx.filter = 'none';
   }
   function formatLabel() { return elements.formatSelect.options[elements.formatSelect.selectedIndex].textContent; }
+  function outputText(output, sizeText) { return `${output.width} × ${output.height} px · ${formatLabel()} · ${sizeText}`; }
   function renderPreview() {
     if (!state.working) return;
     const output = currentOutput();
     const preview = fitDimensions(output.width, output.height, 480, 480);
     drawCrop(elements.previewCanvas, preview.width, preview.height);
-    elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${formatLabel()} · 计算大小…`;
+    elements.outputInfo.textContent = outputText(output, lastSize ? `预估约 ${lastSize}` : '计算大小…');
     const token = (sizeToken += 1);
     clearTimeout(sizeTimer);
-    sizeTimer = setTimeout(() => estimateSize(output, token), 200);
+    sizeTimer = setTimeout(() => estimateSize(output, token), 120);
   }
   async function estimateSize(output, token) {
-    if (output.width * output.height > 24000000) { if (token === sizeToken) elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${formatLabel()} · 尺寸过大，未估算`; return; }
+    if (output.width * output.height > 24000000) { if (token === sizeToken) elements.outputInfo.textContent = outputText(output, '尺寸过大，未估算'); return; }
     try {
       const blob = await exportBlob(false);
       if (token !== sizeToken || !blob) return;
-      elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${formatLabel()} · 预估约 ${formatBytes(blob.size)}`;
-    } catch { if (token === sizeToken) elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${formatLabel()}`; }
+      lastSize = formatBytes(blob.size);
+      const original = state.file ? state.file.size : 0;
+      const warn = original && blob.size > original ? `（大于原图 ${formatBytes(original)}）` : '';
+      elements.outputInfo.textContent = outputText(output, `预估约 ${lastSize}${warn}`);
+      elements.outputInfo.dataset.warn = warn ? 'true' : 'false';
+    } catch { if (token === sizeToken) elements.outputInfo.textContent = outputText(output, '无法估算'); }
   }
-  function schedulePreview() { clearTimeout(previewTimer); previewTimer = setTimeout(renderPreview, 120); }
+  function schedulePreview() { clearTimeout(previewTimer); previewTimer = setTimeout(renderPreview, 60); }
+  function syncQualityState() { elements.quality.disabled = elements.formatSelect.value === 'image/png'; }
   function loadFile(file) {
     if (!file || !/^image\//.test(file.type)) { setStatus('请选择图片文件。', 'error'); return; }
     const reader = new FileReader();
@@ -204,6 +210,9 @@
     const image = new Image();
     image.onload = () => {
       state.image = image; state.file = file || null; state.orientation = { rotate: 0, flipH: false, flipV: false };
+      const type = file && file.type ? file.type : '';
+      elements.formatSelect.value = type === 'image/jpeg' ? 'image/jpeg' : (type === 'image/webp' ? 'image/webp' : 'image/png');
+      syncQualityState(); lastSize = '';
       buildWorking(); resetCrop(); updateMeta(); syncCropBox(); renderPreview(); setControlsEnabled(true);
       elements.canvasWrap.hidden = false; elements.stageEmpty.hidden = true;
       setStatus('图片已载入，可拖动裁切框或调整参数。', 'success');
@@ -221,8 +230,16 @@
     state.adjust = { brightness: 1, contrast: 1, saturate: 1, hue: 0, grayscale: 0, sepia: 0 };
     elements.brightness.value = '100'; elements.contrast.value = '100'; elements.saturate.value = '100'; elements.hue.value = '0'; elements.grayscale.value = '0'; elements.sepia.value = '0';
     elements.ratioSelect.value = 'free'; elements.specSelect.value = ''; state.aspect = null; state.spec = null;
-    elements.sizeMode.value = 'crop'; elements.formatSelect.value = 'image/png';
+    elements.sizeMode.value = 'crop'; elements.formatSelect.value = 'image/png'; syncQualityState(); lastSize = '';
     applyOrientation(); updateSliderOutputs(); setStatus('已重置。', 'info');
+  }
+  function toggleFullscreen() {
+    const workspace = elements.workspace;
+    try {
+      if (document.fullscreenElement) { if (document.exitFullscreen) document.exitFullscreen().catch(() => {}); }
+      else if (workspace.requestFullscreen) workspace.requestFullscreen().catch(() => root.OETToolPage.showToast('无法进入全屏，可使用浏览器缩放。'));
+      else root.OETToolPage.showToast('当前浏览器不支持全屏，可使用浏览器缩放。');
+    } catch { root.OETToolPage.showToast('当前浏览器不支持全屏，可使用浏览器缩放。'); }
   }
   function updateSliderOutputs() {
     elements.brightnessValue.textContent = elements.brightness.value;
@@ -317,7 +334,10 @@
   for (const id of ['brightness', 'contrast', 'saturate', 'hue', 'grayscale', 'sepia']) elements[id].addEventListener('input', readAdjust);
   elements.resetAdjustBtn.addEventListener('click', () => { state.adjust = { brightness: 1, contrast: 1, saturate: 1, hue: 0, grayscale: 0, sepia: 0 }; elements.brightness.value = '100'; elements.contrast.value = '100'; elements.saturate.value = '100'; elements.hue.value = '0'; elements.grayscale.value = '0'; elements.sepia.value = '0'; readAdjust(); });
   elements.quality.addEventListener('input', updateSliderOutputs);
-  for (const id of ['formatSelect', 'sizeMode', 'customWidth', 'customHeight', 'keepRatio']) elements[id].addEventListener('change', schedulePreview);
+  elements.formatSelect.addEventListener('change', () => { syncQualityState(); lastSize = ''; schedulePreview(); });
+  for (const id of ['sizeMode', 'customWidth', 'customHeight', 'keepRatio']) elements[id].addEventListener('change', schedulePreview);
+  elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
+  document.addEventListener('fullscreenchange', () => { elements.fullscreenBtn.textContent = document.fullscreenElement ? '退出全屏' : '全屏'; syncCropBox(); renderPreview(); });
   elements.downloadBtn.addEventListener('click', downloadImage);
   elements.copyImageBtn.addEventListener('click', copyImage);
   elements.cropBox.addEventListener('pointerdown', onCropPointerDown);
@@ -329,5 +349,5 @@
   document.addEventListener('paste', (event) => { const items = event.clipboardData && event.clipboardData.items; if (!items) return; for (const item of items) if (/^image\//.test(item.type)) { const file = item.getAsFile(); if (file) { loadFile(file); break; } } });
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => syncCropBox()).observe(elements.canvasWrap);
   root.addEventListener('resize', syncCropBox);
-  updateSliderOutputs();
+  updateSliderOutputs(); syncQualityState();
 })(typeof globalThis !== 'undefined' ? globalThis : this);
