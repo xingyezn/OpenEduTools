@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-22T00:01:55+08:00",
+  "updated_at": "2026-09-22T00:04:13+08:00",
   "summary": {
     "total_opens": 14,
     "total_uses": 6,
@@ -72,14 +72,7 @@
       "most_used": [
         "handwriting-digits",
         "fullscreen-clock",
-        "markdown-to-word",
-        "classroom-timer",
-        "image-editor",
-        "noise-meter",
-        "pomodoro-timer",
-        "random-group",
-        "random-picker",
-        "score-statistics"
+        "markdown-to-word"
       ],
       "most_favorited": [
         "classroom-timer",
@@ -90,22 +83,14 @@
         "noise-meter",
         "pomodoro-timer",
         "random-group",
-        "random-picker",
-        "score-statistics"
+        "random-picker"
       ]
     },
     "last_7_days": {
       "most_used": [
         "handwriting-digits",
         "fullscreen-clock",
-        "markdown-to-word",
-        "classroom-timer",
-        "image-editor",
-        "noise-meter",
-        "pomodoro-timer",
-        "random-group",
-        "random-picker",
-        "score-statistics"
+        "markdown-to-word"
       ],
       "most_favorited": [
         "classroom-timer",
@@ -116,8 +101,7 @@
         "noise-meter",
         "pomodoro-timer",
         "random-group",
-        "random-picker",
-        "score-statistics"
+        "random-picker"
       ]
     }
   }
