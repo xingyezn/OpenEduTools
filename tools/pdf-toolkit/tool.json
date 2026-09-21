@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "pdf-toolkit",
+  "name": "PDF 工具箱",
+  "description": "在浏览器本地合并、拆分、旋转、删除 PDF 页面，并添加文字或图片后导出。",
+  "category": "data-processing",
+  "subjects": ["general", "information-technology"],
+  "tags": ["PDF", "合并", "拆分", "编辑"],
+  "version": "0.1.0",
+  "status": "beta",
+  "entry": "tools/pdf-toolkit/index.html",
+  "icon": "pdf",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-21",
+  "updatedAt": "2026-09-21"
+}

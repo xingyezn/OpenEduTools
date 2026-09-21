@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在浏览器本地合并、拆分、旋转、删除 PDF 页面，并添加文字或图片后导出。"><title>PDF 工具箱 · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/analytics.js" defer></script><script src="../../js/format.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./vendor/pdf-lib.min.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="pdf-toolkit">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true"></span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../index.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../index.html">全部工具</a> / PDF 工具箱</nav>
+    <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">PDF TOOLKIT</span><h1>PDF 工具箱</h1><p>在浏览器本地处理 PDF：合并多个文件、按页码拆分或提取页面、旋转与删除页面，并在页面上添加文字或图片，最后导出新的 PDF。所有文件只在本机处理，不会上传；文字使用内置字体，仅支持英文、数字和常用符号，中文需在源文件中已存在（无法原地修改已有文字）。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">PDF 仅在本页内存中处理</span></header>
+    <div class="tool-sections pdf-layout">
+      <section class="panel" aria-label="功能切换">
+        <div class="pdf-tabs" role="tablist"><button id="tabMerge" class="pdf-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="panelMerge">合并 PDF</button><button id="tabSplit" class="pdf-tab" type="button" role="tab" aria-selected="false" aria-controls="panelSplit">拆分 / 提取</button><button id="tabEdit" class="pdf-tab" type="button" role="tab" aria-selected="false" aria-controls="panelEdit">页面编辑</button></div>
+      </section>
+      <section id="panelMerge" class="panel pdf-panel" role="tabpanel" aria-labelledby="tabMerge">
+        <h2>合并 PDF</h2>
+        <p class="small muted">选择多个 PDF，用「上移 / 下移」调整顺序后合并为一个文件。</p>
+        <div class="field"><label for="mergeInput">选择 PDF（可多选）</label><input id="mergeInput" type="file" accept="application/pdf,.pdf" multiple></div>
+        <ul id="mergeList" class="pdf-list"><li class="pdf-list__empty">尚未选择文件</li></ul>
+        <div class="tool-actions"><button id="mergeBtn" class="button button--cta" type="button" disabled>合并并下载</button><button id="mergeClear" class="button button--ghost" type="button">清空</button></div>
+        <p id="mergeStatus" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section id="panelSplit" class="panel pdf-panel" role="tabpanel" aria-labelledby="tabSplit" hidden>
+        <h2>拆分 / 提取</h2>
+        <p class="small muted">载入一个 PDF，提取指定页面为新文件，或把每一页拆成单独文件打包下载。</p>
+        <div class="field"><label for="splitInput">选择一个 PDF</label><input id="splitInput" type="file" accept="application/pdf,.pdf"></div>
+        <p id="splitInfo" class="small muted">尚未载入</p>
+        <div class="field"><label for="splitRange">页码范围（如 1-3,5）</label><input id="splitRange" type="text" placeholder="1-3,5" inputmode="numeric"></div>
+        <div class="tool-actions"><button id="extractBtn" class="button button--cta" type="button" disabled>提取为新 PDF</button><button id="splitAllBtn" class="button button--secondary" type="button" disabled>每页拆分（ZIP）</button></div>
+        <p id="splitStatus" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section id="panelEdit" class="panel pdf-panel" role="tabpanel" aria-labelledby="tabEdit" hidden>
+        <h2>页面编辑</h2>
+        <p class="small muted">载入一个 PDF 后可累积执行多种操作，最后统一导出。坐标以页面左下角为原点、单位为 pt（1 pt ≈ 1/72 英寸，A4 约 595×842 pt）。</p>
+        <div class="field"><label for="editInput">载入一个 PDF</label><input id="editInput" type="file" accept="application/pdf,.pdf"></div>
+        <p id="editInfo" class="small muted">尚未载入</p>
+        <div class="pdf-grid">
+          <fieldset class="pdf-group"><legend>页面操作</legend>
+            <div class="form-grid"><div class="field"><label for="rotateRange">旋转页码范围</label><input id="rotateRange" type="text" placeholder="1,3-5" inputmode="numeric"></div><div class="field"><label for="rotateAngle">角度</label><select id="rotateAngle"><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></div></div>
+            <div class="tool-actions"><button id="rotateBtn" class="button button--secondary" type="button" disabled>应用旋转</button></div>
+            <div class="field"><label for="removeRange">删除页码范围</label><input id="removeRange" type="text" placeholder="2,4" inputmode="numeric"></div>
+            <div class="tool-actions"><button id="removeBtn" class="button button--danger" type="button" disabled>删除页面</button></div>
+          </fieldset>
+          <fieldset class="pdf-group"><legend>添加文字</legend>
+            <div class="field"><label for="textContent">文字（英文/数字）</label><input id="textContent" type="text" placeholder="Hello" maxlength="200"></div>
+            <div class="form-grid"><div class="field"><label for="textPage">页码</label><input id="textPage" type="number" min="1" value="1" inputmode="numeric"></div><div class="field"><label for="textSize">字号</label><input id="textSize" type="number" min="6" max="96" value="18" inputmode="numeric"></div><div class="field"><label for="textX">X（pt）</label><input id="textX" type="number" value="50" inputmode="numeric"></div><div class="field"><label for="textY">Y（pt）</label><input id="textY" type="number" value="50" inputmode="numeric"></div><div class="field"><label for="textColor">颜色</label><input id="textColor" type="color" value="#111111"></div></div>
+            <div class="tool-actions"><button id="addTextBtn" class="button button--secondary" type="button" disabled>添加文字</button></div>
+          </fieldset>
+          <fieldset class="pdf-group"><legend>添加图片</legend>
+            <div class="field"><label for="imageInput">图片（PNG / JPG）</label><input id="imageInput" type="file" accept="image/png,image/jpeg"></div>
+            <div class="form-grid"><div class="field"><label for="imagePage">页码</label><input id="imagePage" type="number" min="1" value="1" inputmode="numeric"></div><div class="field"><label for="imageWidth">宽度（pt）</label><input id="imageWidth" type="number" min="10" value="200" inputmode="numeric"></div><div class="field"><label for="imageX">X（pt）</label><input id="imageX" type="number" value="50" inputmode="numeric"></div><div class="field"><label for="imageY">Y（pt）</label><input id="imageY" type="number" value="50" inputmode="numeric"></div></div>
+            <div class="tool-actions"><button id="addImageBtn" class="button button--secondary" type="button" disabled>添加图片</button></div>
+          </fieldset>
+        </div>
+        <div class="tool-actions"><button id="exportBtn" class="button button--cta" type="button" disabled>导出 PDF</button><button id="resetEditBtn" class="button button--ghost" type="button" disabled>撤销全部修改</button></div>
+        <p id="editStatus" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <aside class="notice"><strong>说明：</strong>本工具内置本地版 <a href="./vendor/pdf-lib.LICENSE.md" target="_blank" rel="noopener noreferrer">pdf-lib</a>（MIT）完成 PDF 读写，全程离线。已加密或损坏的 PDF 可能无法处理；「编辑文字」为在页面上新增文字，无法修改 PDF 中已有的文字。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

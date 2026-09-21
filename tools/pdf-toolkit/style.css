@@ -1,0 +1,19 @@
+.pdf-tabs { display: flex; gap: 6px; padding: 5px; border-radius: 15px; background: var(--surface-input); border: 1px solid var(--border); }
+.pdf-tab { flex: 1; padding: 0.75rem 0; font-family: inherit; font-size: var(--text-base); font-weight: 700; letter-spacing: 0.08em; color: var(--text-muted); background: transparent; border: none; border-radius: 11px; cursor: pointer; transition: color 180ms ease, background 180ms ease, box-shadow 180ms ease; }
+.pdf-tab:hover { color: var(--text); }
+.pdf-tab.is-active { color: #fff; background: linear-gradient(135deg, rgb(124 58 237 / 0.9), rgb(79 124 255 / 0.9)); box-shadow: 0 12px 28px -12px rgb(124 58 237 / 1); }
+.pdf-panel { display: grid; gap: var(--space-3); align-content: start; }
+.pdf-panel h2 { margin: 0; }
+.pdf-list { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.pdf-list__empty { color: var(--text-muted); font-size: var(--text-sm); }
+.pdf-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+.pdf-item__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.pdf-item__meta { color: var(--text-muted); font-size: var(--text-xs); }
+.pdf-item__actions { display: flex; gap: var(--space-1); }
+.pdf-item__actions button { min-width: 2rem; min-height: 2rem; padding: 0 var(--space-2); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-soft); color: var(--text); cursor: pointer; }
+.pdf-item__actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+.pdf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--space-4); align-items: start; }
+.pdf-group { display: grid; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); }
+.pdf-group legend { padding-inline: var(--space-2); font-weight: 700; }
+.pdf-group .field input[type="color"] { min-height: 2.75rem; padding: 0.25rem; }
+@media (max-width: 32rem) { .pdf-tab { font-size: var(--text-sm); letter-spacing: 0.02em; } }

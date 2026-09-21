@@ -54,6 +54,18 @@ async function toolIds() {
 
 async function readEntry(source, target = source) { return { name: target, data: await readFile(path.join(root, source)) }; }
 
+async function collectDirectory(baseDir, relative = '') {
+  const dir = path.join(baseDir, relative);
+  const items = await readdir(dir, { withFileTypes: true });
+  const result = [];
+  for (const item of items) {
+    const next = path.join(relative, item.name);
+    if (item.isDirectory()) result.push(...await collectDirectory(baseDir, next));
+    else result.push({ relative: next.replaceAll('\\', '/'), data: await readFile(path.join(baseDir, next)) });
+  }
+  return result;
+}
+
 export async function collectToolPackage(id) {
   const prefix = `OpenEduTools-${id}`; const toolDir = path.join(root, 'tools', id); const files = await readdir(toolDir);
   const entries = [];
@@ -71,6 +83,7 @@ export async function collectToolPackage(id) {
     }
     entries.push({ name: `${prefix}/tools/${id}/${file}`, data });
   }
+  if (files.includes('vendor')) for (const file of await collectDirectory(toolDir, 'vendor')) entries.push({ name: `${prefix}/tools/${id}/${file.relative}`, data: file.data });
   for (const file of sharedFiles) entries.push(await readEntry(file, `${prefix}/${file}`));
   return entries;
 }
