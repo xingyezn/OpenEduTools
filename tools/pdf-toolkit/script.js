@@ -334,7 +334,7 @@
   }
   function createOverlayNode(overlay, scale) {
     const node = document.createElement('div'); node.className = `pdf-overlay pdf-overlay--${overlay.type}`; node.dataset.id = overlay.id;
-    if (overlay.type === 'text') { node.textContent = overlay.text; node.style.color = overlay.color; node.style.fontFamily = selectedFont().css; node.style.fontSize = `${overlay.size * scale.y}px`; node.addEventListener('dblclick', (event) => { event.stopPropagation(); startEditText(overlay, node); }); }
+    if (overlay.type === 'text') { const span = document.createElement('span'); span.className = 'pdf-overlay__text'; span.textContent = overlay.text; node.append(span); node.style.color = overlay.color; node.style.fontFamily = selectedFont().css; node.style.fontSize = `${overlay.size * scale.y}px`; node.addEventListener('dblclick', (event) => { event.stopPropagation(); startEditText(overlay, node); }); }
     else { const img = document.createElement('img'); img.src = overlay.url; img.alt = ''; img.draggable = false; node.append(img); const handle = document.createElement('span'); handle.className = 'pdf-overlay__resize'; handle.title = '拖动缩放'; handle.addEventListener('pointerdown', (event) => startResize(overlay, event)); node.append(handle); }
     const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'pdf-overlay__remove'; remove.textContent = '×'; remove.setAttribute('aria-label', '删除'); remove.addEventListener('pointerdown', (event) => event.stopPropagation()); remove.addEventListener('click', (event) => { event.stopPropagation(); state.overlays = state.overlays.filter((item) => item !== overlay); renderOverlays(); updateEditInfo(); });
     node.append(remove);
@@ -382,7 +382,7 @@
     for (const overlay of state.overlays) if (overlay.page === state.page) elements.overlayLayer.append(createOverlayNode(overlay, scale));
   }
   function startDrag(overlay, node, event) {
-    if (node.getAttribute('contenteditable') === 'true' || event.button !== 0) return;
+    if (event.button !== 0 || node.querySelector('[contenteditable="true"]')) return;
     event.preventDefault();
     const rect = elements.stageCanvas.getBoundingClientRect(); const scale = overlayScale();
     const start = state.viewport.convertToPdfPoint((event.clientX - rect.left) / scale.x, (event.clientY - rect.top) / scale.y);
@@ -400,11 +400,12 @@
     window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
   }
   function startEditText(overlay, node) {
-    node.setAttribute('contenteditable', 'true'); node.focus();
-    const range = document.createRange(); range.selectNodeContents(node); const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
-    const commit = () => { node.removeAttribute('contenteditable'); overlay.text = node.textContent.trim(); node.removeEventListener('blur', commit); node.removeEventListener('keydown', onKey); if (!overlay.text) { state.overlays = state.overlays.filter((item) => item !== overlay); renderOverlays(); } updateEditInfo(); };
-    const onKey = (event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); node.blur(); } };
-    node.addEventListener('blur', commit); node.addEventListener('keydown', onKey);
+    const span = node.querySelector('.pdf-overlay__text') || node;
+    span.setAttribute('contenteditable', 'true'); span.focus();
+    const range = document.createRange(); range.selectNodeContents(span); const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
+    const commit = () => { span.removeAttribute('contenteditable'); overlay.text = span.textContent.trim(); span.removeEventListener('blur', commit); span.removeEventListener('keydown', onKey); if (!overlay.text) { state.overlays = state.overlays.filter((item) => item !== overlay); renderOverlays(); } updateEditInfo(); };
+    const onKey = (event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); span.blur(); } };
+    span.addEventListener('blur', commit); span.addEventListener('keydown', onKey);
   }
   function startEditExistingText(item, node) {
     node.setAttribute('contenteditable', 'true'); node.focus();
