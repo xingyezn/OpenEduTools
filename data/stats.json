@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-09-22T00:04:13+08:00",
+  "updated_at": "2026-09-22T05:25:08+08:00",
   "summary": {
-    "total_opens": 14,
-    "total_uses": 6,
+    "total_opens": 22,
+    "total_uses": 23,
     "total_favorites": 9
   },
   "tools": {
@@ -25,14 +25,14 @@
       "shares": 0
     },
     "image-editor": {
-      "opens": 1,
-      "uses": 0,
+      "opens": 3,
+      "uses": 5,
       "favorites": 1,
       "shares": 0
     },
     "markdown-to-word": {
-      "opens": 1,
-      "uses": 1,
+      "opens": 2,
+      "uses": 2,
       "favorites": 1,
       "shares": 0
     },
@@ -40,6 +40,12 @@
       "opens": 0,
       "uses": 0,
       "favorites": 1,
+      "shares": 0
+    },
+    "pdf-toolkit": {
+      "opens": 5,
+      "uses": 11,
+      "favorites": 0,
       "shares": 0
     },
     "pomodoro-timer": {
@@ -70,9 +76,11 @@
   "rankings": {
     "all_time": {
       "most_used": [
+        "pdf-toolkit",
+        "image-editor",
         "handwriting-digits",
-        "fullscreen-clock",
-        "markdown-to-word"
+        "markdown-to-word",
+        "fullscreen-clock"
       ],
       "most_favorited": [
         "classroom-timer",
@@ -88,9 +96,11 @@
     },
     "last_7_days": {
       "most_used": [
+        "pdf-toolkit",
+        "image-editor",
         "handwriting-digits",
-        "fullscreen-clock",
-        "markdown-to-word"
+        "markdown-to-word",
+        "fullscreen-clock"
       ],
       "most_favorited": [
         "classroom-timer",
