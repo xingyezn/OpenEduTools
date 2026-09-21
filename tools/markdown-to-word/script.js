@@ -47,6 +47,8 @@
   const SYMBOLS = { cdot: '⋅', times: '×', div: '÷', pm: '±', mp: '∓', le: '≤', leq: '≤', ge: '≥', geq: '≥', ne: '≠', neq: '≠', approx: '≈', equiv: '≡', sim: '∼', propto: '∝', to: '→', rightarrow: '→', Rightarrow: '⇒', leftarrow: '←', Leftarrow: '⇐', leftrightarrow: '↔', infty: '∞', partial: '∂', nabla: '∇', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', supset: '⊃', cup: '∪', cap: '∩', forall: '∀', exists: '∃', emptyset: '∅', dots: '…', ldots: '…', cdots: '⋯', degree: '°', angle: '∠', perp: '⊥', parallel: '∥', star: '⋆', ast: '∗', circ: '∘', bullet: '•', prime: '′' };
   const NARY = { sum: '∑', prod: '∏', int: '∫', oint: '∮', iint: '∬', bigcup: '⋃', bigcap: '⋂' };
   const FUNCTIONS = new Set(['sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'arcsin', 'arccos', 'arctan', 'sinh', 'cosh', 'tanh', 'log', 'ln', 'lg', 'exp', 'lim', 'max', 'min', 'sup', 'inf', 'det', 'dim', 'gcd', 'mod']);
+  const MATH_ENVS = new Set(['equation', 'equation*', 'align', 'align*', 'aligned', 'gather', 'gather*', 'multline', 'multline*', 'displaymath', 'math', 'eqnarray', 'eqnarray*', 'split', 'cases', 'matrix', 'pmatrix', 'bmatrix', 'vmatrix']);
+  const SINGLE_MATH_ENVS = new Set(['equation', 'equation*', 'math', 'displaymath']);
   const ACCENT_MATHML = { hat: '^', bar: '‾', vec: '→', dot: '˙', ddot: '¨', tilde: '~' };
   const ACCENT_OMML = { hat: '\u0302', bar: '\u0304', vec: '\u20d7', dot: '\u0307', ddot: '\u0308', tilde: '\u0303' };
   const SPACE_WIDTH = { ',': '0.167em', ';': '0.278em', '!': '-0.167em', ' ': '0.25em', quad: '1em', qquad: '2em' };
@@ -168,10 +170,20 @@
     function parseEnvironment() {
       let env = '';
       if (peek() && peek().type === '{') { pos += 1; while (pos < tokens.length && tokens[pos].type !== '}') { const token = tokens[pos]; env += token.type === 'char' ? token.value : (token.type === 'command' ? token.name : ''); pos += 1; } if (peek()) pos += 1; }
+      const readEnd = () => { pos += 1; if (peek() && peek().type === '{') { pos += 1; while (pos < tokens.length && tokens[pos].type !== '}') pos += 1; if (peek()) pos += 1; } };
+      if (SINGLE_MATH_ENVS.has(env)) {
+        const body = [];
+        while (pos < tokens.length) {
+          const token = tokens[pos];
+          if (token.type === 'command' && token.name === 'end') { readEnd(); break; }
+          body.push(parseElement());
+        }
+        return { type: 'group', body };
+      }
       const rows = []; let cells = []; let cell = [];
       while (pos < tokens.length) {
         const token = tokens[pos];
-        if (token.type === 'command' && token.name === 'end') { pos += 1; if (peek() && peek().type === '{') { pos += 1; while (pos < tokens.length && tokens[pos].type !== '}') pos += 1; if (peek()) pos += 1; } break; }
+        if (token.type === 'command' && token.name === 'end') { readEnd(); break; }
         if (token.type === 'command' && token.name === '\\') { pos += 1; cells.push(cell); cell = []; rows.push(cells); cells = []; continue; }
         if (token.type === '&') { pos += 1; cells.push(cell); cell = []; continue; }
         cell.push(parseElement());
@@ -285,8 +297,10 @@
   function parseInline(text) {
     const nodes = []; const source = String(text || ''); let index = 0;
     const patterns = [
+      { re: /^\$\$([\s\S]+?)\$\$/, type: 'math' },
+      { re: /^\\\[([\s\S]+?)\\\]/, type: 'math' },
       { re: /^\$([^$]+)\$/, type: 'math' },
-      { re: /^\\\((.+?)\\\)/, type: 'math' },
+      { re: /^\\\(([\s\S]+?)\\\)/, type: 'math' },
       { re: /^`([^`]+)`/, type: 'code' },
       { re: /^\*\*([\s\S]+?)\*\*/, type: 'strong' },
       { re: /^__([\s\S]+?)__/, type: 'strong' },
@@ -349,6 +363,12 @@
         blocks.push({ type: 'code', lang, value: code.join('\n') }); continue;
       }
       const trimmed = line.trim();
+      const envStart = /^\\begin\{([a-zA-Z*]+)\}/.exec(trimmed);
+      if (envStart && MATH_ENVS.has(envStart[1])) {
+        const closeToken = `\\end{${envStart[1]}}`; const collected = [];
+        while (index < lines.length) { const current = lines[index]; collected.push(current); index += 1; if (current.includes(closeToken)) break; }
+        blocks.push({ type: 'math', tex: collected.join('\n') }); continue;
+      }
       if (trimmed.startsWith('$$') || trimmed.startsWith('\\[')) {
         const openToken = trimmed.startsWith('$$') ? '$$' : '\\['; const closeToken = trimmed.startsWith('$$') ? '$$' : '\\]';
         let rest = trimmed.slice(openToken.length);

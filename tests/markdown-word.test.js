@@ -19,6 +19,15 @@ test('Markdown 渲染为 HTML 并包含 MathML 公式', () => {
   assert.ok(html.includes('<math'));
 });
 
+test('兼容大模型常见的公式定界符与数学环境', () => {
+  const sample = ['行内 \\(a^2\\) 与 $x_1$', '', '\\[ E = mc^2 \\]', '', '\\begin{equation}', '\\frac{1}{3}', '\\end{equation}', '', '\\begin{align}', 'a &= b \\\\', 'c &= d', '\\end{align}'].join('\n');
+  const mathBlocks = md.parseMarkdown(sample).filter((block) => block.type === 'math');
+  assert.ok(mathBlocks.length >= 3);
+  assert.ok(md.parseMarkdown(sample).find((block) => block.type === 'paragraph').inline.some((node) => node.type === 'math'));
+  assert.ok(md.latexToOmml('\\begin{align}a &= b \\\\ c &= d\\end{align}').includes('<m:m>'));
+  assert.ok(md.renderMarkdownHtml(sample).includes('<math'));
+});
+
 test('LaTeX 公式转换为 MathML 与 OMML', () => {
   const fraction = md.latexToMathML('\\frac{a}{b}');
   assert.ok(fraction.includes('<mfrac>'));

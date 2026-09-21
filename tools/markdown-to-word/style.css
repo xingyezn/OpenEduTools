@@ -1,8 +1,11 @@
+.md-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+.md-layout > .notice { grid-column: 1 / -1; }
+.md-pane { display: grid; align-content: start; }
 .md-toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-4); }
 .md-toolbar h2 { margin: 0; }
 .md-actions { margin-top: 0; }
-.md-input { min-height: 22rem; font-family: var(--font-mono); font-size: 0.92rem; line-height: 1.6; }
-.md-preview { min-width: 0; overflow-x: auto; color: var(--text); line-height: 1.75; overflow-wrap: anywhere; }
+.md-input { min-height: 32rem; font-family: var(--font-mono); font-size: 0.92rem; line-height: 1.6; }
+.md-preview { min-width: 0; max-height: 32rem; overflow: auto; color: var(--text); line-height: 1.75; overflow-wrap: anywhere; }
 .md-preview h1, .md-preview h2, .md-preview h3, .md-preview h4 { margin-block: var(--space-4) var(--space-3); }
 .md-preview h1 { font-size: 1.7rem; }
 .md-preview h2 { font-size: 1.35rem; }
@@ -22,4 +25,5 @@
 .md-math-block { overflow-x: auto; margin-bottom: var(--space-4); text-align: center; }
 .md-math { white-space: nowrap; }
 .md-preview math { font-size: 1.05em; }
+@media (max-width: 52rem) { .md-layout { grid-template-columns: 1fr; } .md-input, .md-preview { min-height: 20rem; max-height: none; } }
 @media (max-width: 30rem) { .md-actions { width: 100%; } }
