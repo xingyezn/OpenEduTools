@@ -69,188 +69,248 @@
   if (typeof module !== 'undefined') module.exports = api;
   if (typeof document === 'undefined') return;
 
-  const ids = ['tabMerge', 'tabSplit', 'tabEdit', 'panelMerge', 'panelSplit', 'panelEdit', 'mergeInput', 'mergeList', 'mergeBtn', 'mergeClear', 'mergeStatus', 'splitInput', 'splitInfo', 'splitRange', 'extractBtn', 'splitAllBtn', 'splitStatus', 'splitPrev', 'splitNext', 'splitPageInfo', 'splitCanvas', 'splitEmpty', 'editInput', 'editInfo', 'editPrev', 'editNext', 'editPageInfo', 'editCanvas', 'editEmpty', 'rotateRange', 'rotateAngle', 'rotateBtn', 'removeRange', 'removeBtn', 'textContent', 'textPage', 'textSize', 'textX', 'textY', 'textColor', 'addTextBtn', 'imageInput', 'imagePage', 'imageWidth', 'imageX', 'imageY', 'addImageBtn', 'exportBtn', 'resetEditBtn', 'editStatus'];
+  const ids = ['fileInput', 'pickBtn', 'dropzone', 'workbar', 'fileChips', 'pdfBody', 'rail', 'prevPage', 'nextPage', 'pageInfo', 'stageHint', 'stageCanvas', 'stageEmpty', 'side', 'sideMerge', 'sideExtract', 'sideEdit', 'mergeCount', 'mergeBtn', 'clearBtn', 'extractCount', 'extractBtn', 'selectAllBtn', 'clearSelBtn', 'splitAllBtn', 'editInfo', 'textContent', 'textSize', 'textColor', 'placeTextBtn', 'imageInput', 'imageWidth', 'placeImageBtn', 'rotateBtn', 'deleteBtn', 'exportBtn', 'resetEditBtn', 'status'];
   const elements = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
-  const state = { mergeFiles: [], splitBytes: null, splitCount: 0, splitPage: 1, editBytes: null, editDoc: null, editPreviewBytes: null, editPage: 1, editViewport: null, editFont: null, editImage: null, editSummary: { rotated: 0, removed: 0, texts: 0, images: 0 } };
+  const state = { files: [], fileSeq: 0, mode: 'merge', activeId: null, page: 1, pageCount: 0, selection: new Set(), viewDoc: null, viewport: null, pendingTool: null, editDoc: null, editDocId: null, editPreviewBytes: null, editFont: null, editImage: null, summary: { rotated: 0, removed: 0, texts: 0, images: 0 }, fileDocs: new Map() };
 
   const pdfjs = root.pdfjsLib;
   if (pdfjs && pdfjs.GlobalWorkerOptions) pdfjs.GlobalWorkerOptions.workerSrc = new URL('./vendor/pdf.worker.min.js', location.href).href;
 
-  function setStatus(node, message, kind = '') { node.textContent = message; node.dataset.kind = kind; }
+  function setStatus(message, kind = '') { elements.status.textContent = message; elements.status.dataset.kind = kind; }
   function downloadBytes(filename, bytes, mime) { const blob = new Blob([bytes], { type: mime }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = filename; link.click(); setTimeout(() => URL.revokeObjectURL(url), 0); }
   function readFileBytes(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(new Uint8Array(reader.result)); reader.onerror = () => reject(new Error('读取文件失败')); reader.readAsArrayBuffer(file); }); }
+  function activeFile() { return state.files.find((file) => file.id === state.activeId) || null; }
 
-  async function renderPdfPage(bytes, pageNumber, canvas, maxWidth) {
-    if (!pdfjs) throw new Error('预览组件未加载');
-    const document = await pdfjs.getDocument({ data: bytes.slice(), isEvalSupported: false }).promise;
-    const page = await document.getPage(pageNumber);
+  async function loadPdfDoc(bytes) { if (!pdfjs) throw new Error('预览组件未加载'); return await pdfjs.getDocument({ data: bytes.slice(), isEvalSupported: false }).promise; }
+  async function getFileDoc(file) { if (state.fileDocs.has(file.id)) return state.fileDocs.get(file.id); const doc = await loadPdfDoc(file.bytes); state.fileDocs.set(file.id, doc); return doc; }
+  async function renderPageToCanvas(doc, pageNumber, canvas, maxWidth) {
+    const page = await doc.getPage(pageNumber);
     const base = page.getViewport({ scale: 1 });
-    const scale = Math.max(0.1, Math.min(maxWidth / base.width, 2.5));
+    const scale = Math.max(0.05, Math.min(maxWidth / base.width, 2.5));
     const viewport = page.getViewport({ scale });
     canvas.width = Math.max(1, Math.floor(viewport.width)); canvas.height = Math.max(1, Math.floor(viewport.height));
-    canvas.hidden = false;
     await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-    return { document, page, viewport };
+    return { viewport };
   }
 
-  function switchTab(name) {
-    const map = { merge: [elements.tabMerge, elements.panelMerge], split: [elements.tabSplit, elements.panelSplit], edit: [elements.tabEdit, elements.panelEdit] };
-    for (const [key, [tab, panel]] of Object.entries(map)) { const active = key === name; tab.classList.toggle('is-active', active); tab.setAttribute('aria-selected', String(active)); panel.hidden = !active; }
+  function renderChips() {
+    elements.fileChips.replaceChildren(...state.files.map((file) => { const chip = document.createElement('button'); chip.type = 'button'; chip.className = `pdf-chip${file.id === state.activeId ? ' is-active' : ''}`; const span = document.createElement('span'); span.textContent = file.name; chip.append(span); chip.addEventListener('click', () => switchActive(file.id)); return chip; }));
   }
-  elements.tabMerge.addEventListener('click', () => switchTab('merge'));
-  elements.tabSplit.addEventListener('click', () => switchTab('split'));
-  elements.tabEdit.addEventListener('click', () => switchTab('edit'));
-
-  async function renderMergeThumb(entry, canvas) { try { await renderPdfPage(entry.bytes, 1, canvas, 56); } catch { /* 缩略图失败时忽略 */ } }
-  function renderMergeList() {
-    if (!state.mergeFiles.length) { elements.mergeList.replaceChildren(Object.assign(document.createElement('li'), { className: 'pdf-list__empty', textContent: '尚未选择文件' })); elements.mergeBtn.disabled = true; return; }
-    elements.mergeList.replaceChildren(...state.mergeFiles.map((entry, index) => {
-      const item = document.createElement('li'); item.className = 'pdf-item';
-      const thumb = document.createElement('canvas'); thumb.className = 'pdf-thumb'; renderMergeThumb(entry, thumb);
-      const info = document.createElement('div'); const name = document.createElement('div'); name.className = 'pdf-item__name'; name.textContent = entry.name; const meta = document.createElement('div'); meta.className = 'pdf-item__meta'; meta.textContent = `${formatBytes(entry.bytes.length)}　第 ${index + 1} 个`; info.append(name, meta);
-      const actions = document.createElement('div'); actions.className = 'pdf-item__actions';
-      const up = document.createElement('button'); up.type = 'button'; up.textContent = '↑'; up.setAttribute('aria-label', '上移'); up.disabled = index === 0; up.addEventListener('click', () => { const [moved] = state.mergeFiles.splice(index, 1); state.mergeFiles.splice(index - 1, 0, moved); renderMergeList(); });
-      const down = document.createElement('button'); down.type = 'button'; down.textContent = '↓'; down.setAttribute('aria-label', '下移'); down.disabled = index === state.mergeFiles.length - 1; down.addEventListener('click', () => { const [moved] = state.mergeFiles.splice(index, 1); state.mergeFiles.splice(index + 1, 0, moved); renderMergeList(); });
-      const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = '×'; remove.setAttribute('aria-label', '移除'); remove.addEventListener('click', () => { state.mergeFiles.splice(index, 1); renderMergeList(); });
-      actions.append(up, down, remove); item.append(thumb, info, actions); return item;
-    }));
-    elements.mergeBtn.disabled = state.mergeFiles.length < 1;
+  function renderSide() {
+    elements.sideMerge.hidden = state.mode !== 'merge';
+    elements.sideExtract.hidden = state.mode !== 'extract';
+    elements.sideEdit.hidden = state.mode !== 'edit';
+    if (state.mode === 'merge') elements.mergeCount.textContent = `共 ${state.files.length} 个文件`;
+    if (state.mode === 'extract') elements.extractCount.textContent = `已选 ${state.selection.size} / ${state.pageCount} 页`;
+    if (state.mode === 'edit') updateEditInfo();
   }
-  elements.mergeInput.addEventListener('change', async (event) => {
-    const files = [...event.target.files].filter((file) => /\.pdf$/i.test(file.name) || file.type === 'application/pdf');
-    event.target.value = '';
-    if (!files.length) { setStatus(elements.mergeStatus, '请选择 PDF 文件。', 'error'); return; }
-    try { for (const file of files) state.mergeFiles.push({ name: file.name, bytes: await readFileBytes(file) }); renderMergeList(); setStatus(elements.mergeStatus, `已添加 ${files.length} 个文件，共 ${state.mergeFiles.length} 个。`, 'success'); } catch (error) { setStatus(elements.mergeStatus, error.message, 'error'); }
-  });
-  elements.mergeClear.addEventListener('click', () => { state.mergeFiles = []; renderMergeList(); setStatus(elements.mergeStatus, '已清空。', 'info'); });
-  elements.mergeBtn.addEventListener('click', async () => {
-    if (!state.mergeFiles.length) return;
-    elements.mergeBtn.disabled = true; setStatus(elements.mergeStatus, '正在合并…', 'info');
-    try { const bytes = await mergePdfs(state.mergeFiles.map((entry) => entry.bytes)); downloadBytes('merged.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(elements.mergeStatus, `已合并 ${state.mergeFiles.length} 个文件（${formatBytes(bytes.length)}）。`, 'success'); }
-    catch (error) { setStatus(elements.mergeStatus, `合并失败：${error.message}`, 'error'); }
-    finally { elements.mergeBtn.disabled = state.mergeFiles.length < 1; }
-  });
-
-  async function renderSplitPreview() {
-    if (!state.splitBytes) { elements.splitCanvas.hidden = true; elements.splitEmpty.hidden = false; elements.splitPageInfo.textContent = '—'; return; }
-    state.splitPage = Math.min(Math.max(1, state.splitPage), state.splitCount);
-    elements.splitPageInfo.textContent = `${state.splitPage} / ${state.splitCount}`;
-    try { await renderPdfPage(state.splitBytes, state.splitPage, elements.splitCanvas, 720); elements.splitEmpty.hidden = true; }
-    catch (error) { elements.splitCanvas.hidden = true; elements.splitEmpty.hidden = false; elements.splitEmpty.textContent = `预览失败：${error.message}`; }
-  }
-  elements.splitInput.addEventListener('change', async (event) => {
-    const file = event.target.files && event.target.files[0]; event.target.value = '';
-    if (!file) return;
-    try { state.splitBytes = await readFileBytes(file); const doc = await loadDocument(state.splitBytes); state.splitCount = doc.getPageCount(); state.splitPage = 1; elements.splitInfo.textContent = `${file.name}　共 ${state.splitCount} 页`; elements.extractBtn.disabled = false; elements.splitAllBtn.disabled = false; setStatus(elements.splitStatus, '已载入，可提取或拆分。', 'success'); renderSplitPreview(); }
-    catch (error) { state.splitBytes = null; state.splitCount = 0; elements.splitInfo.textContent = '尚未载入'; elements.extractBtn.disabled = true; elements.splitAllBtn.disabled = true; renderSplitPreview(); setStatus(elements.splitStatus, `无法读取 PDF：${error.message}`, 'error'); }
-  });
-  elements.splitPrev.addEventListener('click', () => { state.splitPage -= 1; renderSplitPreview(); });
-  elements.splitNext.addEventListener('click', () => { state.splitPage += 1; renderSplitPreview(); });
-  elements.extractBtn.addEventListener('click', async () => {
-    if (!state.splitBytes) return;
-    try { const indices = parsePageRanges(elements.splitRange.value, state.splitCount); const bytes = await extractPages(state.splitBytes, indices); downloadBytes('extracted.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(elements.splitStatus, `已提取 ${indices.length} 页（${formatBytes(bytes.length)}）。`, 'success'); }
-    catch (error) { setStatus(elements.splitStatus, error.message, 'error'); }
-  });
-  elements.splitAllBtn.addEventListener('click', async () => {
-    if (!state.splitBytes) return;
-    elements.splitAllBtn.disabled = true; setStatus(elements.splitStatus, '正在拆分…', 'info');
-    try { const pages = await splitToPages(state.splitBytes); const files = pages.map((bytes, index) => ({ name: `page-${String(index + 1).padStart(3, '0')}.pdf`, data: bytes })); const zip = zipStore(files); downloadBytes('pdf-pages.zip', zip, 'application/zip'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(elements.splitStatus, `已拆分为 ${pages.length} 个文件并打包下载。`, 'success'); }
-    catch (error) { setStatus(elements.splitStatus, `拆分失败：${error.message}`, 'error'); }
-    finally { elements.splitAllBtn.disabled = false; }
-  });
-
   function updateEditInfo() {
     if (!state.editDoc) { elements.editInfo.textContent = '尚未载入'; return; }
-    const summary = state.editSummary; const parts = [`共 ${state.editDoc.getPageCount()} 页`];
+    const summary = state.summary; const parts = [`共 ${state.editDoc.getPageCount()} 页`];
     if (summary.rotated) parts.push(`旋转 ${summary.rotated} 页`);
     if (summary.removed) parts.push(`删除 ${summary.removed} 页`);
     if (summary.texts) parts.push(`文字 ${summary.texts} 处`);
     if (summary.images) parts.push(`图片 ${summary.images} 处`);
     elements.editInfo.textContent = parts.join('　·　');
   }
-  async function renderEditPreview() {
-    if (!state.editPreviewBytes || !state.editDoc) { elements.editCanvas.hidden = true; elements.editEmpty.hidden = false; elements.editPageInfo.textContent = '—'; return; }
-    const count = state.editDoc.getPageCount();
-    state.editPage = Math.min(Math.max(1, state.editPage), Math.max(1, count));
-    elements.editPageInfo.textContent = `${state.editPage} / ${count}`;
-    try { const result = await renderPdfPage(state.editPreviewBytes, state.editPage, elements.editCanvas, 720); state.editViewport = result.viewport; elements.editEmpty.hidden = true; }
-    catch (error) { elements.editCanvas.hidden = true; elements.editEmpty.hidden = false; elements.editEmpty.textContent = `预览失败：${error.message}`; }
+  async function renderStage() {
+    if (!state.viewDoc || !state.pageCount) { elements.stageCanvas.hidden = true; elements.stageEmpty.hidden = false; elements.pageInfo.textContent = '—'; return; }
+    state.page = Math.min(Math.max(1, state.page), state.pageCount);
+    elements.pageInfo.textContent = `${state.page} / ${state.pageCount}`;
+    try { const result = await renderPageToCanvas(state.viewDoc, state.page, elements.stageCanvas, 900); state.viewport = result.viewport; elements.stageCanvas.hidden = false; elements.stageEmpty.hidden = true; }
+    catch (error) { elements.stageCanvas.hidden = true; elements.stageEmpty.hidden = false; elements.stageEmpty.textContent = `预览失败：${error.message}`; }
   }
-  async function refreshEditPreview() { if (!state.editDoc) return; try { state.editPreviewBytes = await state.editDoc.save(); } catch { /* 忽略 */ } await renderEditPreview(); }
-  function setEditEnabled(enabled) { for (const id of ['rotateBtn', 'removeBtn', 'addTextBtn', 'addImageBtn', 'exportBtn', 'resetEditBtn']) elements[id].disabled = !enabled; }
-  elements.editInput.addEventListener('change', async (event) => {
-    const file = event.target.files && event.target.files[0]; event.target.value = '';
-    if (!file) return;
-    try { state.editBytes = await readFileBytes(file); state.editDoc = await loadDocument(state.editBytes); state.editPreviewBytes = state.editBytes; state.editPage = 1; state.editFont = null; state.editSummary = { rotated: 0, removed: 0, texts: 0, images: 0 }; setEditEnabled(true); updateEditInfo(); renderEditPreview(); setStatus(elements.editStatus, '已载入，可执行操作后导出。', 'success'); }
-    catch (error) { state.editBytes = null; state.editDoc = null; state.editPreviewBytes = null; setEditEnabled(false); updateEditInfo(); renderEditPreview(); setStatus(elements.editStatus, `无法读取 PDF：${error.message}`, 'error'); }
-  });
-  elements.editPrev.addEventListener('click', () => { state.editPage -= 1; renderEditPreview(); });
-  elements.editNext.addEventListener('click', () => { state.editPage += 1; renderEditPreview(); });
-  elements.editCanvas.addEventListener('click', (event) => {
-    if (!state.editViewport) return;
-    const rect = elements.editCanvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left) * (elements.editCanvas.width / rect.width);
-    const y = (event.clientY - rect.top) * (elements.editCanvas.height / rect.height);
-    const point = state.editViewport.convertToPdfPoint(x, y);
+  async function renderRail() {
+    const file = activeFile();
+    elements.rail.replaceChildren();
+    if (!file) { elements.rail.append(Object.assign(document.createElement('p'), { className: 'pdf-rail__empty', textContent: '请先添加 PDF' })); return; }
+    if (state.mode === 'merge') {
+      for (let index = 0; index < state.files.length; index += 1) {
+        const entry = state.files[index];
+        const card = document.createElement('div'); card.className = `pdf-thumb-card${entry.id === state.activeId ? ' is-active' : ''}`; card.draggable = true; card.dataset.index = String(index);
+        const canvas = document.createElement('canvas'); card.append(canvas);
+        const label = document.createElement('span'); label.className = 'pdf-thumb-card__label'; label.textContent = entry.name; card.append(label);
+        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'pdf-thumb-card__remove'; remove.textContent = '×'; remove.title = '移除'; remove.setAttribute('aria-label', '移除'); remove.addEventListener('click', (event) => { event.stopPropagation(); removeFile(entry.id); }); card.append(remove);
+        card.addEventListener('click', () => switchActive(entry.id));
+        card.addEventListener('dragstart', (event) => { event.dataTransfer.setData('text/plain', String(index)); card.classList.add('is-dragging'); });
+        card.addEventListener('dragend', () => card.classList.remove('is-dragging'));
+        card.addEventListener('dragover', (event) => event.preventDefault());
+        card.addEventListener('drop', (event) => { event.preventDefault(); const from = Number(event.dataTransfer.getData('text/plain')); if (Number.isInteger(from) && from !== index) { const [moved] = state.files.splice(from, 1); state.files.splice(index, 0, moved); renderChips(); renderRail(); } });
+        elements.rail.append(card);
+        getFileDoc(entry).then((doc) => renderPageToCanvas(doc, 1, canvas, 80)).catch(() => {});
+      }
+      return;
+    }
+    for (let index = 1; index <= state.pageCount; index += 1) {
+      const card = document.createElement('div'); card.className = 'pdf-thumb-card'; card.dataset.page = String(index);
+      if (state.mode === 'edit' && index === state.page) card.classList.add('is-active');
+      if (state.mode === 'extract' && state.selection.has(index - 1)) card.classList.add('is-selected');
+      const canvas = document.createElement('canvas'); card.append(canvas);
+      const label = document.createElement('span'); label.className = 'pdf-thumb-card__label'; label.textContent = `第 ${index} 页`; card.append(label);
+      card.addEventListener('click', () => { if (state.mode === 'extract') { if (state.selection.has(index - 1)) state.selection.delete(index - 1); else state.selection.add(index - 1); card.classList.toggle('is-selected'); renderSide(); } else { state.page = index; renderStage(); renderRail(); } });
+      elements.rail.append(card);
+      try { await renderPageToCanvas(state.viewDoc, index, canvas, 90); } catch { /* 忽略单页缩略图失败 */ }
+    }
+  }
+  async function refreshView() {
+    const file = activeFile();
+    if (!file) { state.viewDoc = null; state.pageCount = 0; state.page = 1; return; }
+    if (state.mode === 'edit') { state.viewDoc = await loadPdfDoc(state.editPreviewBytes); }
+    else { state.viewDoc = await getFileDoc(file); }
+    state.pageCount = state.viewDoc.numPages;
+    state.page = Math.min(Math.max(1, state.page), state.pageCount);
+  }
+  async function renderAll() {
+    const hasFiles = state.files.length > 0;
+    elements.workbar.hidden = !hasFiles;
+    elements.pdfBody.hidden = !hasFiles;
+    renderChips(); renderSide();
+    if (!hasFiles) { elements.rail.replaceChildren(); elements.stageCanvas.hidden = true; elements.stageEmpty.hidden = false; return; }
+    await refreshView();
+    await renderStage();
+    await renderRail();
+  }
+  async function ensureEditDoc() {
+    const file = activeFile(); if (!file) return;
+    if (state.editDoc && state.editDocId === file.id) return;
+    state.editDoc = await loadDocument(file.bytes); state.editPreviewBytes = file.bytes; state.editDocId = file.id;
+    state.editFont = null; state.summary = { rotated: 0, removed: 0, texts: 0, images: 0 };
+  }
+  async function applyMode() {
+    state.pendingTool = null; elements.stageCanvas.classList.remove('is-placing'); elements.stageHint.textContent = '';
+    if (state.mode === 'edit') await ensureEditDoc();
+    if (state.mode === 'extract') state.selection = new Set();
+    await renderAll();
+  }
+  async function switchActive(id) {
+    if (state.activeId === id) return;
+    state.activeId = id; state.page = 1; state.selection = new Set();
+    if (state.mode === 'edit') { state.editDoc = null; state.editDocId = null; await ensureEditDoc(); }
+    await renderAll();
+  }
+  function removeFile(id) {
+    state.files = state.files.filter((file) => file.id !== id); state.fileDocs.delete(id);
+    if (state.activeId === id) { state.activeId = state.files[0] ? state.files[0].id : null; state.page = 1; state.selection = new Set(); state.editDoc = null; state.editDocId = null; }
+    renderAll();
+  }
+  async function addFiles(fileList) {
+    const files = [...fileList].filter((file) => /\.pdf$/i.test(file.name) || file.type === 'application/pdf');
+    if (!files.length) { setStatus('请选择 PDF 文件。', 'error'); return; }
+    try {
+      for (const file of files) { const bytes = await readFileBytes(file); state.fileSeq += 1; state.files.push({ id: `f${state.fileSeq}`, name: file.name, bytes }); }
+      if (!state.activeId) state.activeId = state.files[0].id;
+      setStatus(`已添加 ${files.length} 个文件，共 ${state.files.length} 个。`, 'success');
+      await renderAll();
+    } catch (error) { setStatus(error.message, 'error'); }
+  }
+  function setPending(tool) {
+    state.pendingTool = state.pendingTool === tool ? null : tool;
+    elements.stageCanvas.classList.toggle('is-placing', Boolean(state.pendingTool));
+    elements.placeTextBtn.classList.toggle('button--cta', state.pendingTool === 'text'); elements.placeTextBtn.classList.toggle('button--secondary', state.pendingTool !== 'text');
+    elements.placeImageBtn.classList.toggle('button--cta', state.pendingTool === 'image'); elements.placeImageBtn.classList.toggle('button--secondary', state.pendingTool !== 'image');
+    elements.stageHint.textContent = state.pendingTool ? (state.pendingTool === 'text' ? '点击页面放置文字' : '点击页面放置图片') : '';
+  }
+  async function refreshEditPreview() {
+    state.editPreviewBytes = await state.editDoc.save();
+    state.viewDoc = await loadPdfDoc(state.editPreviewBytes);
+    state.pageCount = state.viewDoc.numPages;
+    state.page = Math.min(Math.max(1, state.page), state.pageCount);
+    await renderStage(); updateEditInfo();
+    const active = elements.rail.querySelector(`.pdf-thumb-card[data-page="${state.page}"] canvas`);
+    if (active) renderPageToCanvas(state.viewDoc, state.page, active, 90).catch(() => {});
+  }
+
+  elements.pickBtn.addEventListener('click', () => elements.fileInput.click());
+  elements.fileInput.addEventListener('change', (event) => { const files = [...event.target.files]; event.target.value = ''; if (files.length) addFiles(files); });
+  elements.dropzone.addEventListener('dragover', (event) => { event.preventDefault(); elements.dropzone.classList.add('is-over'); });
+  elements.dropzone.addEventListener('dragleave', () => elements.dropzone.classList.remove('is-over'));
+  elements.dropzone.addEventListener('drop', (event) => { event.preventDefault(); elements.dropzone.classList.remove('is-over'); if (event.dataTransfer && event.dataTransfer.files.length) addFiles(event.dataTransfer.files); });
+  for (const button of elements.workbar.querySelectorAll('.pdf-mode')) button.addEventListener('click', () => { state.mode = button.dataset.mode; for (const other of elements.workbar.querySelectorAll('.pdf-mode')) { const active = other === button; other.classList.toggle('is-active', active); other.setAttribute('aria-selected', String(active)); } applyMode(); });
+  elements.prevPage.addEventListener('click', () => { state.page -= 1; renderStage(); renderRail(); });
+  elements.nextPage.addEventListener('click', () => { state.page += 1; renderStage(); renderRail(); });
+  elements.stageCanvas.addEventListener('click', async (event) => {
+    if (state.mode !== 'edit' || !state.pendingTool || !state.viewport || !state.editDoc) return;
+    const rect = elements.stageCanvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left) * (elements.stageCanvas.width / rect.width);
+    const y = (event.clientY - rect.top) * (elements.stageCanvas.height / rect.height);
+    const point = state.viewport.convertToPdfPoint(x, y);
+    const page = state.editDoc.getPages()[state.page - 1]; if (!page) return;
     const px = Math.round(point[0]); const py = Math.round(point[1]);
-    elements.textX.value = String(px); elements.textY.value = String(py);
-    elements.imageX.value = String(px); elements.imageY.value = String(py);
-    elements.textPage.value = String(state.editPage); elements.imagePage.value = String(state.editPage);
-    setStatus(elements.editStatus, `已设置坐标：第 ${state.editPage} 页 X=${px}, Y=${py}`, 'info');
-  });
-  elements.rotateBtn.addEventListener('click', async () => {
-    if (!state.editDoc) return;
-    try { const indices = parsePageRanges(elements.rotateRange.value, state.editDoc.getPageCount()); const delta = Number(elements.rotateAngle.value); const pages = state.editDoc.getPages(); for (const index of indices) { const page = pages[index]; if (page) page.setRotation(root.PDFLib.degrees(((page.getRotation().angle || 0) + delta) % 360)); } state.editSummary.rotated += indices.length; updateEditInfo(); await refreshEditPreview(); setStatus(elements.editStatus, `已旋转 ${indices.length} 页。`, 'success'); }
-    catch (error) { setStatus(elements.editStatus, error.message, 'error'); }
-  });
-  elements.removeBtn.addEventListener('click', async () => {
-    if (!state.editDoc) return;
-    try { const indices = parsePageRanges(elements.removeRange.value, state.editDoc.getPageCount()); if (indices.length >= state.editDoc.getPageCount()) throw new Error('不能删除全部页面'); for (const index of indices.slice().sort((a, b) => b - a)) state.editDoc.removePage(index); state.editSummary.removed += indices.length; updateEditInfo(); await refreshEditPreview(); setStatus(elements.editStatus, `已删除 ${indices.length} 页。`, 'success'); }
-    catch (error) { setStatus(elements.editStatus, error.message, 'error'); }
-  });
-  elements.addTextBtn.addEventListener('click', async () => {
-    if (!state.editDoc) return;
-    const text = elements.textContent.value;
-    if (!text) { setStatus(elements.editStatus, '请输入要添加的文字。', 'error'); return; }
-    if (!/^[\x20-\x7e]*$/.test(text)) { setStatus(elements.editStatus, '内置字体仅支持英文、数字和常用符号，暂不支持中文。', 'error'); return; }
     try {
-      const page = state.editDoc.getPages()[Number(elements.textPage.value) - 1];
-      if (!page) throw new Error('页码超出范围');
-      state.editFont ||= await state.editDoc.embedFont(root.PDFLib.StandardFonts.Helvetica);
-      page.drawText(text, { x: Number(elements.textX.value), y: Number(elements.textY.value), size: Number(elements.textSize.value), font: state.editFont, color: root.PDFLib.rgb(...hexToRgb(elements.textColor.value)) });
-      state.editSummary.texts += 1; updateEditInfo(); await refreshEditPreview(); setStatus(elements.editStatus, '已添加文字。', 'success');
-    } catch (error) { setStatus(elements.editStatus, `添加文字失败：${error.message}`, 'error'); }
+      if (state.pendingTool === 'text') {
+        const text = elements.textContent.value;
+        if (!text) { setStatus('请输入要放置的文字。', 'error'); return; }
+        if (!/^[\x20-\x7e]*$/.test(text)) { setStatus('内置字体仅支持英文、数字和常用符号。', 'error'); return; }
+        state.editFont ||= await state.editDoc.embedFont(root.PDFLib.StandardFonts.Helvetica);
+        page.drawText(text, { x: px, y: py, size: Number(elements.textSize.value), font: state.editFont, color: root.PDFLib.rgb(...hexToRgb(elements.textColor.value)) });
+        state.summary.texts += 1;
+      } else {
+        if (!state.editImage) { setStatus('请先选择图片。', 'error'); return; }
+        const image = state.editImage.type === 'image/png' ? await state.editDoc.embedPng(state.editImage.bytes) : await state.editDoc.embedJpg(state.editImage.bytes);
+        const width = Number(elements.imageWidth.value); const height = width * image.height / image.width;
+        page.drawImage(image, { x: px, y: py, width, height });
+        state.summary.images += 1;
+      }
+      setPending(null); await refreshEditPreview(); setStatus('已放置。', 'success');
+    } catch (error) { setStatus(`放置失败：${error.message}`, 'error'); }
   });
-  elements.addImageBtn.addEventListener('click', async () => {
-    if (!state.editDoc) return;
-    if (!state.editImage) { setStatus(elements.editStatus, '请先选择图片。', 'error'); return; }
-    try {
-      const page = state.editDoc.getPages()[Number(elements.imagePage.value) - 1];
-      if (!page) throw new Error('页码超出范围');
-      const image = state.editImage.type === 'image/png' ? await state.editDoc.embedPng(state.editImage.bytes) : await state.editDoc.embedJpg(state.editImage.bytes);
-      const width = Number(elements.imageWidth.value); const height = width * image.height / image.width;
-      page.drawImage(image, { x: Number(elements.imageX.value), y: Number(elements.imageY.value), width, height });
-      state.editSummary.images += 1; updateEditInfo(); await refreshEditPreview(); setStatus(elements.editStatus, '已添加图片。', 'success');
-    } catch (error) { setStatus(elements.editStatus, `添加图片失败：${error.message}`, 'error'); }
+  elements.mergeBtn.addEventListener('click', async () => {
+    if (!state.files.length) return;
+    elements.mergeBtn.disabled = true; setStatus('正在合并…', 'info');
+    try { const bytes = await mergePdfs(state.files.map((file) => file.bytes)); downloadBytes('merged.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(`已合并 ${state.files.length} 个文件（${formatBytes(bytes.length)}）。`, 'success'); }
+    catch (error) { setStatus(`合并失败：${error.message}`, 'error'); }
+    finally { elements.mergeBtn.disabled = false; }
   });
+  elements.clearBtn.addEventListener('click', () => { state.files = []; state.fileDocs.clear(); state.activeId = null; state.editDoc = null; state.editDocId = null; state.selection = new Set(); renderAll(); setStatus('已清空。', 'info'); });
+  elements.extractBtn.addEventListener('click', async () => {
+    const file = activeFile(); if (!file) return;
+    if (!state.selection.size) { setStatus('请先点击缩略图选择页面。', 'error'); return; }
+    try { const indices = [...state.selection].sort((a, b) => a - b); const bytes = await extractPages(file.bytes, indices); downloadBytes('extracted.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(`已提取 ${indices.length} 页（${formatBytes(bytes.length)}）。`, 'success'); }
+    catch (error) { setStatus(`提取失败：${error.message}`, 'error'); }
+  });
+  elements.selectAllBtn.addEventListener('click', () => { for (let index = 0; index < state.pageCount; index += 1) state.selection.add(index); renderRail(); renderSide(); });
+  elements.clearSelBtn.addEventListener('click', () => { state.selection = new Set(); renderRail(); renderSide(); });
+  elements.splitAllBtn.addEventListener('click', async () => {
+    const file = activeFile(); if (!file) return;
+    elements.splitAllBtn.disabled = true; setStatus('正在拆分…', 'info');
+    try { const pages = await splitToPages(file.bytes); const files = pages.map((bytes, index) => ({ name: `page-${String(index + 1).padStart(3, '0')}.pdf`, data: bytes })); downloadBytes('pdf-pages.zip', zipStore(files), 'application/zip'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(`已拆分为 ${pages.length} 个文件并打包下载。`, 'success'); }
+    catch (error) { setStatus(`拆分失败：${error.message}`, 'error'); }
+    finally { elements.splitAllBtn.disabled = false; }
+  });
+  elements.placeTextBtn.addEventListener('click', () => setPending('text'));
+  elements.placeImageBtn.addEventListener('click', () => setPending('image'));
   elements.imageInput.addEventListener('change', async (event) => {
     const file = event.target.files && event.target.files[0]; event.target.value = '';
     if (!file) return;
-    if (file.type !== 'image/png' && file.type !== 'image/jpeg') { setStatus(elements.editStatus, '仅支持 PNG 或 JPG 图片。', 'error'); return; }
-    try { state.editImage = { type: file.type, bytes: await readFileBytes(file) }; setStatus(elements.editStatus, `已选择图片：${file.name}`, 'success'); }
-    catch (error) { setStatus(elements.editStatus, error.message, 'error'); }
+    if (file.type !== 'image/png' && file.type !== 'image/jpeg') { setStatus('仅支持 PNG 或 JPG 图片。', 'error'); return; }
+    try { state.editImage = { type: file.type, bytes: await readFileBytes(file) }; setStatus(`已选择图片：${file.name}，点击「放置图片」后在页面上点击定位。`, 'success'); }
+    catch (error) { setStatus(error.message, 'error'); }
+  });
+  elements.rotateBtn.addEventListener('click', async () => {
+    if (!state.editDoc) return;
+    const page = state.editDoc.getPages()[state.page - 1]; if (!page) return;
+    page.setRotation(root.PDFLib.degrees(((page.getRotation().angle || 0) + 90) % 360));
+    state.summary.rotated += 1; await refreshEditPreview(); setStatus('已旋转当前页。', 'success');
+  });
+  elements.deleteBtn.addEventListener('click', async () => {
+    if (!state.editDoc) return;
+    if (state.editDoc.getPageCount() <= 1) { setStatus('不能删除全部页面。', 'error'); return; }
+    state.editDoc.removePage(state.page - 1); state.summary.removed += 1;
+    state.page = Math.min(state.page, state.editDoc.getPageCount());
+    await refreshEditPreview(); await renderRail(); setStatus('已删除当前页。', 'success');
   });
   elements.exportBtn.addEventListener('click', async () => {
     if (!state.editDoc) return;
-    elements.exportBtn.disabled = true; setStatus(elements.editStatus, '正在导出…', 'info');
-    try { const bytes = await state.editDoc.save(); downloadBytes('edited.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(elements.editStatus, `已导出（${formatBytes(bytes.length)}）。`, 'success'); }
-    catch (error) { setStatus(elements.editStatus, `导出失败：${error.message}`, 'error'); }
+    elements.exportBtn.disabled = true; setStatus('正在导出…', 'info');
+    try { const bytes = await state.editDoc.save(); downloadBytes('edited.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(`已导出（${formatBytes(bytes.length)}）。`, 'success'); }
+    catch (error) { setStatus(`导出失败：${error.message}`, 'error'); }
     finally { elements.exportBtn.disabled = false; }
   });
   elements.resetEditBtn.addEventListener('click', async () => {
-    if (!state.editBytes) return;
-    try { state.editDoc = await loadDocument(state.editBytes); state.editPreviewBytes = state.editBytes; state.editPage = 1; state.editFont = null; state.editSummary = { rotated: 0, removed: 0, texts: 0, images: 0 }; updateEditInfo(); await renderEditPreview(); setStatus(elements.editStatus, '已撤销全部修改。', 'info'); }
-    catch (error) { setStatus(elements.editStatus, error.message, 'error'); }
+    const file = activeFile(); if (!file) return;
+    state.editDoc = await loadDocument(file.bytes); state.editPreviewBytes = file.bytes; state.editFont = null; state.summary = { rotated: 0, removed: 0, texts: 0, images: 0 };
+    await renderAll(); setStatus('已撤销全部修改。', 'info');
   });
-  renderMergeList(); updateEditInfo();
+
+  renderAll();
 })(typeof globalThis !== 'undefined' ? globalThis : this);
