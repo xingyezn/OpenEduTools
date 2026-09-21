@@ -265,12 +265,10 @@
     state.spec = spec; state.aspect = spec.px[0] / spec.px[1]; elements.ratioSelect.value = 'free'; elements.sizeMode.value = 'spec';
     if (state.working) { resetCrop(); syncCropBox(); schedulePreview(); }
   }
-  async function encodeWithQuality(format, quality) {
-    const output = currentOutput();
-    const canvas = document.createElement('canvas');
-    drawCrop(canvas, output.width, output.height);
-    return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), format, format === 'image/png' ? undefined : quality));
-  }
+  function renderToCanvas(width, height) { const canvas = document.createElement('canvas'); drawCrop(canvas, width, height); return canvas; }
+  async function encodeCanvas(canvas, format, quality) { return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), format, format === 'image/png' ? undefined : quality)); }
+  async function encodeWithQuality(format, quality) { const output = currentOutput(); return await encodeCanvas(renderToCanvas(output.width, output.height), format, quality); }
+  async function encodeAtScale(scale, format, quality) { return await encodeCanvas(renderToCanvas(Math.max(1, Math.round(state.crop.width * scale)), Math.max(1, Math.round(state.crop.height * scale))), format, quality); }
   async function exportBlob(forcePng) {
     const format = forcePng ? 'image/png' : elements.formatSelect.value;
     return await encodeWithQuality(format, Number(elements.quality.value) / 100);
@@ -279,24 +277,39 @@
     if (!state.working) { setStatus('请先载入图片。', 'error'); return; }
     const targetKb = Number(elements.targetSize.value);
     if (!Number.isFinite(targetKb) || targetKb <= 0) { setStatus('请输入有效的目标大小（KB）。', 'error'); return; }
-    if (elements.formatSelect.value === 'image/png') { elements.formatSelect.value = 'image/jpeg'; syncQualityState(); setStatus('PNG 无法按质量压缩，已切换为 JPEG。', 'info'); }
     const format = elements.formatSelect.value;
     const targetBytes = targetKb * 1024;
     setStatus('正在按目标大小压缩…', 'info');
-    let low = 0.1; let high = 0.95; let best = null;
-    for (let index = 0; index < 9; index += 1) {
-      const quality = (low + high) / 2;
-      const blob = await encodeWithQuality(format, quality);
-      if (!blob) break;
-      if (blob.size <= targetBytes) { best = { quality, size: blob.size }; low = quality; } else { high = quality; }
+    if (format !== 'image/png') {
+      let low = 0.1; let high = 0.95; let best = null;
+      for (let index = 0; index < 9; index += 1) {
+        const quality = (low + high) / 2;
+        const blob = await encodeWithQuality(format, quality);
+        if (!blob) break;
+        if (blob.size <= targetBytes) { best = { quality, size: blob.size }; low = quality; } else { high = quality; }
+      }
+      if (best) {
+        elements.quality.value = String(Math.round(best.quality * 100)); lastSize = formatBytes(best.size);
+        updateSliderOutputs(); renderPreview();
+        setStatus(`已压缩到约 ${formatBytes(best.size)}（质量 ${Math.round(best.quality * 100)}）。`, 'success'); return;
+      }
     }
-    if (best) {
-      elements.quality.value = String(Math.round(best.quality * 100)); lastSize = formatBytes(best.size);
-      updateSliderOutputs(); renderPreview();
-      setStatus(`已压缩到约 ${formatBytes(best.size)}（质量 ${Math.round(best.quality * 100)}）。`, 'success');
+    let low = 0.1; let high = 1; let bestScale = null;
+    for (let index = 0; index < 10; index += 1) {
+      const scale = (low + high) / 2;
+      const blob = await encodeAtScale(scale, format, Number(elements.quality.value) / 100);
+      if (!blob) break;
+      if (blob.size <= targetBytes) { bestScale = { scale, size: blob.size }; low = scale; } else { high = scale; }
+    }
+    if (bestScale) {
+      const width = Math.max(1, Math.round(state.crop.width * bestScale.scale));
+      const height = Math.max(1, Math.round(state.crop.height * bestScale.scale));
+      elements.sizeMode.value = 'custom'; elements.keepRatio.checked = true;
+      elements.customWidth.value = String(width); elements.customHeight.value = String(height);
+      lastSize = formatBytes(bestScale.size); renderPreview();
+      setStatus(`已压缩到约 ${formatBytes(bestScale.size)}（输出 ${width}×${height}）。`, 'success');
     } else {
-      elements.quality.value = '10'; lastSize = ''; updateSliderOutputs(); renderPreview();
-      setStatus('即使最低质量仍超过目标大小，可减小输出尺寸或裁切更小的区域。', 'error');
+      setStatus('无法压到目标大小，请减小裁切区域或降低质量。', 'error');
     }
   }
   async function downloadImage() {
