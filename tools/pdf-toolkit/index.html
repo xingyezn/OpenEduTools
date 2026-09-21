@@ -32,7 +32,23 @@
         <aside class="pdf-side" id="side" aria-label="操作面板">
           <div id="sideMerge" class="pdf-side__panel" hidden><h3>合并</h3><p id="mergeCount" class="small muted"></p><p class="small muted">拖动缩略图调整顺序，点 × 删除该页。</p><div class="tool-actions"><button id="mergeBtn" class="button button--cta" type="button">合并并下载</button><button id="clearBtn" class="button button--ghost" type="button">清空</button></div></div>
           <div id="sideExtract" class="pdf-side__panel" hidden><h3>提取页面</h3><p id="extractCount" class="small muted">已选 0 页</p><p class="small muted">点击左侧缩略图选择要提取的页面。</p><div class="tool-actions"><button id="extractBtn" class="button button--cta" type="button">提取所选页面</button><button id="selectAllBtn" class="button button--secondary" type="button">全选</button><button id="clearSelBtn" class="button button--secondary" type="button">清空选择</button><button id="splitAllBtn" class="button button--secondary" type="button">每页拆分（ZIP）</button></div></div>
-          <div id="sideEdit" class="pdf-side__panel" hidden><h3>编辑页面</h3><p id="editInfo" class="small muted">尚未载入</p><div class="tool-actions"><button id="textToolBtn" class="button button--secondary" type="button">文字</button><button id="imageToolBtn" class="button button--secondary" type="button">图片</button></div><div class="form-grid"><div class="field"><label for="textSize">字号</label><input id="textSize" type="number" min="6" max="96" value="18" inputmode="numeric"></div><div class="field"><label for="textColor">颜色</label><input id="textColor" type="color" value="#111111"></div></div><div class="field"><label for="imageInput">图片文件（PNG / JPG）</label><input id="imageInput" type="file" accept="image/png,image/jpeg"></div><p class="small muted">选择「文字」后在页面点击即可输入；选择「图片」并选好文件后点击页面放置。放置后可拖动位置，双击文字可再次编辑，点 × 删除。</p><hr><div class="tool-actions"><button id="rotateBtn" class="button button--secondary" type="button">旋转当前页 90°</button><button id="deleteBtn" class="button button--danger" type="button">删除当前页</button></div><div class="tool-actions"><button id="exportBtn" class="button button--cta" type="button">导出 PDF</button><button id="resetEditBtn" class="button button--ghost" type="button">撤销全部修改</button></div></div>
+          <div id="sideEdit" class="pdf-side__panel" hidden>
+            <h3>添加内容</h3>
+            <p id="editInfo" class="small muted">尚未载入</p>
+            <div class="tool-actions"><button id="textToolBtn" class="button button--secondary" type="button">添加文字</button><button id="imageToolBtn" class="button button--secondary" type="button">添加图片</button></div>
+            <div class="form-grid"><div class="field"><label for="textSize">字号</label><input id="textSize" type="number" min="6" max="96" value="18" inputmode="numeric"></div><div class="field"><label for="textColor">颜色</label><input id="textColor" type="color" value="#111111"></div></div>
+            <div class="field"><label for="imageInput">图片文件（PNG / JPG）</label><input id="imageInput" type="file" accept="image/png,image/jpeg"></div>
+            <p class="small muted">选工具后点击页面放置，可拖动位置、拖动右下角缩放、双击改字、点 × 删除。</p>
+            <hr>
+            <h3>解析并编辑原文</h3>
+            <label class="check"><input id="editTextToggle" type="checkbox">显示本页文字，双击可修改</label>
+            <p class="small muted">修改后的文字导出时会用底色覆盖原文字并重绘（仅英文/数字可靠，中文暂不支持重绘）。</p>
+            <div id="imageList" class="pdf-image-list"></div>
+            <input id="replaceImageInput" class="visually-hidden" type="file" accept="image/png,image/jpeg">
+            <hr>
+            <div class="tool-actions"><button id="rotateBtn" class="button button--secondary" type="button">旋转当前页 90°</button><button id="deleteBtn" class="button button--danger" type="button">删除当前页</button></div>
+            <div class="tool-actions"><button id="exportBtn" class="button button--cta" type="button">导出 PDF</button><button id="resetEditBtn" class="button button--ghost" type="button">撤销全部修改</button></div>
+          </div>
         </aside>
       </div>
       <p id="status" class="status-line" role="status" aria-live="polite"></p>

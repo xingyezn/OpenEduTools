@@ -40,6 +40,17 @@
 .pdf-overlay:hover .pdf-overlay__remove { display: grid; }
 .pdf-overlay__resize { position: absolute; right: -0.4rem; bottom: -0.4rem; width: 0.85rem; height: 0.85rem; background: var(--primary); border: 1px solid #fff; border-radius: 2px; cursor: nwse-resize; display: none; }
 .pdf-overlay--image:hover .pdf-overlay__resize { display: block; }
+.pdf-overlay--existing { color: transparent; border: 1px dashed transparent; cursor: text; }
+.pdf-overlay--existing:hover { border-color: var(--secondary); }
+.pdf-overlay--existing[contenteditable="true"] { color: #111; background: rgb(255 255 255 / 0.92); border-color: var(--primary); outline: none; }
+.pdf-overlay--existing.is-edited { border-color: var(--warning); }
+.pdf-image-list { display: grid; gap: var(--space-2); }
+.pdf-image-item { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); gap: var(--space-2); align-items: center; padding: var(--space-2); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+.pdf-image-item img { width: 3.5rem; height: 3.5rem; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: 4px; }
+.pdf-image-item__meta { font-size: var(--text-xs); color: var(--text-muted); }
+.pdf-image-item__actions { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-top: 2px; }
+.pdf-image-item__actions button { padding: 0.2rem 0.5rem; font-size: var(--text-xs); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-soft); color: var(--text); cursor: pointer; }
+.pdf-image-empty { color: var(--text-muted); font-size: var(--text-sm); }
 .pdf-empty { position: absolute; color: var(--text-muted); font-size: var(--text-sm); }
 .pdf-side { display: grid; gap: var(--space-3); align-content: start; padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-glass); }
 .pdf-side__panel { display: grid; gap: var(--space-3); }
