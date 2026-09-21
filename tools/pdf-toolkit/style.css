@@ -42,8 +42,8 @@
 .pdf-overlay:hover .pdf-overlay__remove { display: grid; }
 .pdf-overlay__resize { position: absolute; right: -0.4rem; bottom: -0.4rem; width: 0.85rem; height: 0.85rem; background: var(--primary); border: 1px solid #fff; border-radius: 2px; cursor: nwse-resize; display: none; }
 .pdf-overlay--image:hover .pdf-overlay__resize { display: block; }
-.pdf-overlay--existing { color: transparent; border: 1px dashed transparent; cursor: text; line-height: 1.25; }
-.pdf-overlay--existing:hover { border-color: var(--secondary); }
+.pdf-overlay--existing { color: transparent; padding: 0 2px; border: 1px dashed transparent; cursor: text; line-height: 1.25; }
+.pdf-overlay--existing:hover { border-color: var(--secondary); background: rgb(96 165 250 / 0.14); }
 .pdf-overlay--existing[contenteditable="true"] { color: #111; background: rgb(255 255 255 / 0.92); border-color: var(--primary); outline: none; }
 .pdf-overlay--existing.is-edited { color: #111; background: transparent; border-color: transparent; }
 .pdf-overlay--existing.is-edited:hover { border-color: var(--accent-strong); }

@@ -51,6 +51,26 @@
   const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
   function matMul(m1, m2) { return [m1[0] * m2[0] + m1[2] * m2[1], m1[1] * m2[0] + m1[3] * m2[1], m1[0] * m2[2] + m1[2] * m2[3], m1[1] * m2[2] + m1[3] * m2[3], m1[0] * m2[4] + m1[2] * m2[5] + m1[4], m1[1] * m2[4] + m1[3] * m2[5] + m1[5]]; }
   function canvasToBytes(canvas, type, quality) { return new Promise((resolve) => canvas.toBlob((blob) => { if (!blob) { resolve(null); return; } blob.arrayBuffer().then((buffer) => resolve(new Uint8Array(buffer))); }, type, quality)); }
+  async function renderTextImage(text, sizePt, colorCss, fontCss) {
+    const k = 4;
+    const fontPx = Math.max(4, sizePt * k);
+    const measure = document.createElement('canvas').getContext('2d');
+    measure.font = `${fontPx}px ${fontCss}`;
+    const metrics = measure.measureText(text);
+    const ascent = metrics.actualBoundingBoxAscent || fontPx * 0.8;
+    const descent = metrics.actualBoundingBoxDescent || fontPx * 0.25;
+    const pad = Math.max(1, Math.ceil(fontPx * 0.12));
+    const width = Math.max(1, Math.ceil(metrics.width) + pad * 2);
+    const height = Math.max(1, Math.ceil(ascent + descent) + pad * 2);
+    const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+    const context = canvas.getContext('2d');
+    context.font = `${fontPx}px ${fontCss}`;
+    context.textBaseline = 'alphabetic';
+    context.fillStyle = colorCss;
+    context.fillText(text, pad, pad + ascent);
+    const bytes = await canvasToBytes(canvas, 'image/png');
+    return { bytes, width: width / k, height: height / k, bottomFromBaseline: (pad + descent) / k };
+  }
 
   async function loadDocument(bytes) { return await root.PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true }); }
   async function mergePageList(entries, getBytes) {
@@ -331,7 +351,8 @@
     node.style.fontSize = `${item.size * unit * scale.y}px`;
     node.style.left = `${point[0] * scale.x}px`;
     node.style.top = `${point[1] * scale.y - item.size * unit * scale.y * 0.95}px`;
-    node.style.minWidth = `${item.width * unit * scale.x}px`;
+    node.style.minWidth = `${Math.max(12, item.width * unit * scale.x)}px`;
+    node.style.minHeight = `${Math.max(12, item.size * unit * scale.y * 1.2)}px`;
     node.addEventListener('dblclick', (event) => { event.stopPropagation(); startEditExistingText(item, node); });
     return node;
   }
@@ -492,17 +513,15 @@
     if (!state.editDoc) return;
     elements.exportBtn.disabled = true; setStatus('正在导出…', 'info');
     try {
-      const { PDFDocument, StandardFonts } = root.PDFLib;
+      const { PDFDocument } = root.PDFLib;
       const exportDoc = await PDFDocument.load(await state.editDoc.save(), { ignoreEncryption: true });
-      const pages = exportDoc.getPages(); let font = null; let skipped = 0;
+      const pages = exportDoc.getPages();
       for (const [pageNumber, items] of state.textPages) {
         const page = pages[pageNumber - 1]; if (!page) continue;
         for (const item of items) {
           if (item.newStr === undefined || item.newStr === item.str) continue;
-          if (!/^[\x20-\x7e]*$/.test(item.newStr)) { skipped += 1; continue; }
-          page.drawRectangle({ x: item.x - item.size * 0.1, y: item.y - item.height * 0.35, width: Math.max(item.width, item.newStr.length * item.size * 0.55) + item.size * 0.2, height: item.height * 1.5, color: root.PDFLib.rgb(1, 1, 1) });
-          font ||= await exportDoc.embedFont(StandardFonts[selectedFont().pdf]);
-          page.drawText(item.newStr, { x: item.x, y: item.y, size: item.size, font, color: root.PDFLib.rgb(0, 0, 0) });
+          page.drawRectangle({ x: item.x - item.size * 0.1, y: item.y - item.height * 0.35, width: Math.max(item.width, item.newStr.length * item.size * 0.6) + item.size * 0.2, height: item.height * 1.5, color: root.PDFLib.rgb(1, 1, 1) });
+          if (item.newStr.trim()) { const textImage = await renderTextImage(item.newStr, item.size, '#000000', selectedFont().css); const embedded = await exportDoc.embedPng(textImage.bytes); page.drawImage(embedded, { x: item.x, y: item.y - textImage.bottomFromBaseline, width: textImage.width, height: textImage.height }); }
         }
       }
       for (const [pageNumber, images] of state.imagesByPage) {
@@ -514,10 +533,10 @@
       }
       for (const overlay of state.overlays) {
         const page = pages[overlay.page - 1]; if (!page) continue;
-        if (overlay.type === 'text') { if (!overlay.text) continue; font ||= await exportDoc.embedFont(StandardFonts[selectedFont().pdf]); page.drawText(overlay.text, { x: overlay.x, y: overlay.y, size: overlay.size, font, color: root.PDFLib.rgb(...hexToRgb(overlay.color)) }); }
+        if (overlay.type === 'text') { if (!overlay.text) continue; const textImage = await renderTextImage(overlay.text, overlay.size, overlay.color, selectedFont().css); const embedded = await exportDoc.embedPng(textImage.bytes); page.drawImage(embedded, { x: overlay.x, y: overlay.y - textImage.bottomFromBaseline, width: textImage.width, height: textImage.height }); }
         else { const image = overlay.imageType === 'image/png' ? await exportDoc.embedPng(overlay.bytes) : await exportDoc.embedJpg(overlay.bytes); page.drawImage(image, { x: overlay.x, y: overlay.y, width: overlay.width, height: overlay.height }); }
       }
-      const bytes = await exportDoc.save(); downloadBytes('edited.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(`已导出（${formatBytes(bytes.length)}）${skipped ? `，${skipped} 处中文未重绘` : ''}。`, 'success');
+      const bytes = await exportDoc.save(); downloadBytes('edited.pdf', bytes, 'application/pdf'); root.OpenEduAnalytics?.toolUse?.('pdf-toolkit'); setStatus(`已导出（${formatBytes(bytes.length)}）。`, 'success');
     } catch (error) { setStatus(`导出失败：${error.message}`, 'error'); }
     finally { elements.exportBtn.disabled = false; }
   });
