@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "image-editor",
+  "name": "图片处理",
+  "description": "在浏览器本地裁切、旋转、调色并导出图片，支持自由裁切、常用比例与一寸两寸等证件照规格。",
+  "category": "data-processing",
+  "subjects": ["general", "arts", "information-technology"],
+  "tags": ["图片", "裁切", "调色", "证件照"],
+  "version": "0.1.0",
+  "status": "beta",
+  "entry": "tools/image-editor/index.html",
+  "icon": "image",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-21",
+  "updatedAt": "2026-09-21"
+}
