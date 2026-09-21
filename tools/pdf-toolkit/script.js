@@ -48,6 +48,7 @@
   }
   function hexToRgb(hex) { const match = /^#?([0-9a-f]{6})$/i.exec(String(hex || '')); if (!match) return [0, 0, 0]; const value = parseInt(match[1], 16); return [((value >> 16) & 0xff) / 255, ((value >> 8) & 0xff) / 255, (value & 0xff) / 255]; }
   const FONTS = { helvetica: { pdf: 'Helvetica', css: '"Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif' }, times: { pdf: 'TimesRoman', css: '"Times New Roman", Times, serif' }, courier: { pdf: 'Courier', css: '"Courier New", Courier, monospace' } };
+  const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
   function matMul(m1, m2) { return [m1[0] * m2[0] + m1[2] * m2[1], m1[1] * m2[0] + m1[3] * m2[1], m1[0] * m2[2] + m1[2] * m2[3], m1[1] * m2[2] + m1[3] * m2[3], m1[0] * m2[4] + m1[2] * m2[5] + m1[4], m1[1] * m2[4] + m1[3] * m2[5] + m1[5]]; }
   function canvasToBytes(canvas, type, quality) { return new Promise((resolve) => canvas.toBlob((blob) => { if (!blob) { resolve(null); return; } blob.arrayBuffer().then((buffer) => resolve(new Uint8Array(buffer))); }, type, quality)); }
 
@@ -72,9 +73,9 @@
   if (typeof module !== 'undefined') module.exports = api;
   if (typeof document === 'undefined') return;
 
-  const ids = ['fileInput', 'pickBtn', 'dropzone', 'workbar', 'fullscreenBtn', 'fileChips', 'pdfBody', 'rail', 'prevPage', 'nextPage', 'pageInfo', 'stageHint', 'stageCanvas', 'overlayLayer', 'stageEmpty', 'side', 'sideMerge', 'sideExtract', 'sideEdit', 'mergeCount', 'mergeBtn', 'clearBtn', 'extractCount', 'extractBtn', 'selectAllBtn', 'clearSelBtn', 'splitAllBtn', 'editInfo', 'textToolBtn', 'imageToolBtn', 'textSize', 'textColor', 'fontSelect', 'imageInput', 'editTextToggle', 'imageList', 'replaceImageInput', 'rotateBtn', 'deleteBtn', 'exportBtn', 'resetEditBtn', 'status'];
+  const ids = ['fileInput', 'pickBtn', 'dropzone', 'workbar', 'fullscreenBtn', 'fileChips', 'pdfBody', 'rail', 'prevPage', 'nextPage', 'pageInfo', 'stageHint', 'stageCanvas', 'overlayLayer', 'stageEmpty', 'zoomOut', 'zoomIn', 'zoomFit', 'zoomInfo', 'side', 'sideMerge', 'sideExtract', 'sideEdit', 'mergeCount', 'mergeBtn', 'clearBtn', 'extractCount', 'extractBtn', 'selectAllBtn', 'clearSelBtn', 'splitAllBtn', 'editInfo', 'textToolBtn', 'imageToolBtn', 'textSize', 'textColor', 'fontSelect', 'imageInput', 'editTextToggle', 'imageList', 'replaceImageInput', 'rotateBtn', 'deleteBtn', 'exportBtn', 'resetEditBtn', 'status'];
   const elements = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
-  const state = { files: [], fileSeq: 0, mode: 'merge', activeId: null, page: 1, pageCount: 0, pageSize: { width: 595, height: 842 }, selection: new Set(), viewDoc: null, viewport: null, pendingTool: null, editImage: null, mergePages: [], mergeSeq: 0, editDoc: null, editDocId: null, editPreviewBytes: null, editFont: null, overlays: [], overlaySeq: 0, textPages: new Map(), imagesByPage: new Map(), editTextMode: false, replaceTarget: null, summary: { rotated: 0, removed: 0 }, fileDocs: new Map() };
+  const state = { files: [], fileSeq: 0, mode: 'merge', activeId: null, page: 1, pageCount: 0, pageSize: { width: 595, height: 842 }, selection: new Set(), viewDoc: null, viewport: null, zoom: 1, pendingTool: null, editImage: null, mergePages: [], mergeSeq: 0, editDoc: null, editDocId: null, editPreviewBytes: null, editFont: null, overlays: [], overlaySeq: 0, textPages: new Map(), imagesByPage: new Map(), editTextMode: false, replaceTarget: null, summary: { rotated: 0, removed: 0 }, fileDocs: new Map() };
 
   const pdfjs = root.pdfjsLib;
   if (pdfjs && pdfjs.GlobalWorkerOptions) pdfjs.GlobalWorkerOptions.workerSrc = new URL('./vendor/pdf.worker.min.js', location.href).href;
@@ -186,8 +187,23 @@
     if (!state.viewDoc || !state.pageCount) { elements.stageCanvas.hidden = true; elements.stageEmpty.hidden = false; elements.pageInfo.textContent = '—'; elements.overlayLayer.replaceChildren(); return; }
     state.page = Math.min(Math.max(1, state.page), state.pageCount);
     elements.pageInfo.textContent = `${state.page} / ${state.pageCount}`;
-    try { const result = await renderPageToCanvas(state.viewDoc, state.page, elements.stageCanvas, 900); state.viewport = result.viewport; state.pageSize = { width: result.width, height: result.height }; elements.stageCanvas.hidden = false; elements.stageEmpty.hidden = true; await ensurePageExtracts(); renderOverlays(); renderImageList(); }
-    catch (error) { elements.stageCanvas.hidden = true; elements.stageEmpty.hidden = false; elements.stageEmpty.textContent = `预览失败：${error.message}`; }
+    elements.zoomInfo.textContent = `${Math.round(state.zoom * 100)}%`;
+    try {
+      const page = await state.viewDoc.getPage(state.page);
+      const base = page.getViewport({ scale: 1 });
+      const wrap = elements.stageCanvas.closest('.pdf-canvas-wrap');
+      const availableWidth = Math.max(240, (wrap ? wrap.clientWidth : 900) - 24);
+      const availableHeight = Math.max(240, window.innerHeight * (document.fullscreenElement ? 0.86 : 0.74));
+      const fitScale = Math.min(availableWidth / base.width, availableHeight / base.height, 3);
+      const viewport = page.getViewport({ scale: fitScale * state.zoom });
+      const canvas = elements.stageCanvas;
+      canvas.width = Math.max(1, Math.floor(viewport.width)); canvas.height = Math.max(1, Math.floor(viewport.height));
+      canvas.style.width = `${canvas.width}px`; canvas.style.height = `${canvas.height}px`;
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      state.viewport = viewport; state.pageSize = { width: base.width, height: base.height };
+      canvas.hidden = false; elements.stageEmpty.hidden = true;
+      await ensurePageExtracts(); renderOverlays(); renderImageList();
+    } catch (error) { elements.stageCanvas.hidden = true; elements.stageEmpty.hidden = false; elements.stageEmpty.textContent = `预览失败：${error.message}`; }
   }
   async function renderRail() {
     const file = activeFile();
@@ -290,10 +306,11 @@
 
   function overlayScale() { const rect = elements.stageCanvas.getBoundingClientRect(); return { x: rect.width / elements.stageCanvas.width || 1, y: rect.height / elements.stageCanvas.height || 1 }; }
   function positionOverlay(overlay, node, scale) {
+    const unit = state.viewport ? state.viewport.scale : 1;
     const point = state.viewport.convertToViewportPoint(overlay.x, overlay.y);
     node.style.left = `${point[0] * scale.x}px`;
-    if (overlay.type === 'text') { const fontPx = overlay.size * scale.y; node.style.fontSize = `${fontPx}px`; node.style.top = `${point[1] * scale.y - fontPx}px`; }
-    else { node.style.top = `${(point[1] - overlay.height) * scale.y}px`; const img = node.querySelector('img'); if (img) { img.style.width = `${overlay.width * scale.x}px`; img.style.height = `${overlay.height * scale.y}px`; } }
+    if (overlay.type === 'text') { const fontPx = overlay.size * unit * scale.y; node.style.fontSize = `${fontPx}px`; node.style.top = `${point[1] * scale.y - fontPx}px`; }
+    else { node.style.top = `${(point[1] - overlay.height * unit) * scale.y}px`; const img = node.querySelector('img'); if (img) { img.style.width = `${overlay.width * unit * scale.x}px`; img.style.height = `${overlay.height * unit * scale.y}px`; } }
   }
   function createOverlayNode(overlay, scale) {
     const node = document.createElement('div'); node.className = `pdf-overlay pdf-overlay--${overlay.type}`; node.dataset.id = overlay.id;
@@ -308,20 +325,39 @@
   function createExistingTextNode(item, scale) {
     const node = document.createElement('div'); node.className = `pdf-overlay pdf-overlay--existing${item.newStr !== undefined && item.newStr !== item.str ? ' is-edited' : ''}`;
     node.textContent = item.newStr !== undefined ? item.newStr : item.str;
+    const unit = state.viewport ? state.viewport.scale : 1;
     const point = state.viewport.convertToViewportPoint(item.x, item.y);
     node.style.fontFamily = selectedFont().css;
-    node.style.fontSize = `${item.size * scale.y}px`;
+    node.style.fontSize = `${item.size * unit * scale.y}px`;
     node.style.left = `${point[0] * scale.x}px`;
-    node.style.top = `${point[1] * scale.y - item.size * scale.y * 0.95}px`;
-    node.style.minWidth = `${item.width * scale.x}px`;
+    node.style.top = `${point[1] * scale.y - item.size * unit * scale.y * 0.95}px`;
+    node.style.minWidth = `${item.width * unit * scale.x}px`;
     node.addEventListener('dblclick', (event) => { event.stopPropagation(); startEditExistingText(item, node); });
+    return node;
+  }
+  function createCoverNode(item, scale) {
+    const coverWidth = Math.max(item.width, (item.newStr ? item.newStr.length * item.size * 0.55 : 0)) + item.size * 0.2;
+    const x0 = item.x - item.size * 0.1;
+    const y0 = item.y - item.height * 0.35;
+    const x1 = x0 + coverWidth;
+    const y1 = item.y + item.height * 1.15;
+    const topLeft = state.viewport.convertToViewportPoint(x0, y1);
+    const bottomRight = state.viewport.convertToViewportPoint(x1, y0);
+    const node = document.createElement('div'); node.className = 'pdf-cover';
+    node.style.left = `${Math.min(topLeft[0], bottomRight[0]) * scale.x}px`;
+    node.style.top = `${Math.min(topLeft[1], bottomRight[1]) * scale.y}px`;
+    node.style.width = `${Math.abs(bottomRight[0] - topLeft[0]) * scale.x}px`;
+    node.style.height = `${Math.abs(bottomRight[1] - topLeft[1]) * scale.y}px`;
     return node;
   }
   function renderOverlays() {
     elements.overlayLayer.replaceChildren();
     if (state.mode !== 'edit' || !state.viewport) return;
     const scale = overlayScale();
-    if (state.editTextMode) for (const item of state.textPages.get(state.page) || []) elements.overlayLayer.append(createExistingTextNode(item, scale));
+    if (state.editTextMode) for (const item of state.textPages.get(state.page) || []) {
+      if (item.newStr !== undefined && item.newStr !== item.str) elements.overlayLayer.append(createCoverNode(item, scale));
+      elements.overlayLayer.append(createExistingTextNode(item, scale));
+    }
     for (const overlay of state.overlays) if (overlay.page === state.page) elements.overlayLayer.append(createOverlayNode(overlay, scale));
   }
   function startDrag(overlay, node, event) {
@@ -352,7 +388,7 @@
   function startEditExistingText(item, node) {
     node.setAttribute('contenteditable', 'true'); node.focus();
     const range = document.createRange(); range.selectNodeContents(node); const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
-    const commit = () => { node.removeAttribute('contenteditable'); const value = node.textContent.trim(); item.newStr = value === item.str ? undefined : value; node.classList.toggle('is-edited', item.newStr !== undefined); node.removeEventListener('blur', commit); node.removeEventListener('keydown', onKey); updateEditInfo(); };
+    const commit = () => { node.removeAttribute('contenteditable'); const value = node.textContent.trim(); item.newStr = value === item.str ? undefined : value; node.removeEventListener('blur', commit); node.removeEventListener('keydown', onKey); renderOverlays(); updateEditInfo(); };
     const onKey = (event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); node.blur(); } };
     node.addEventListener('blur', commit); node.addEventListener('keydown', onKey);
   }
@@ -366,6 +402,12 @@
   elements.fullscreenBtn.addEventListener('click', () => { const body = elements.pdfBody; try { if (document.fullscreenElement) { if (document.exitFullscreen) document.exitFullscreen().catch(() => {}); } else if (body.requestFullscreen) body.requestFullscreen().catch(() => root.OETToolPage.showToast('无法进入全屏，可使用浏览器缩放。')); else root.OETToolPage.showToast('当前浏览器不支持全屏，可使用浏览器缩放。'); } catch { root.OETToolPage.showToast('当前浏览器不支持全屏，可使用浏览器缩放。'); } });
   document.addEventListener('fullscreenchange', () => { elements.fullscreenBtn.textContent = document.fullscreenElement ? '退出全屏' : '全屏'; if (state.viewDoc) renderStage(); });
   elements.fontSelect.addEventListener('change', renderOverlays);
+  function nextZoom(direction) { const index = ZOOM_STEPS.findIndex((value) => value >= state.zoom - 0.001); const current = index < 0 ? ZOOM_STEPS.length - 1 : index; return ZOOM_STEPS[Math.min(ZOOM_STEPS.length - 1, Math.max(0, current + direction))]; }
+  function setZoom(value) { state.zoom = Math.min(3, Math.max(0.5, value)); renderStage(); }
+  elements.zoomIn.addEventListener('click', () => setZoom(nextZoom(1)));
+  elements.zoomOut.addEventListener('click', () => setZoom(nextZoom(-1)));
+  elements.zoomFit.addEventListener('click', () => setZoom(1));
+  window.addEventListener('resize', () => { if (state.viewDoc) renderStage(); });
   elements.prevPage.addEventListener('click', () => { state.page -= 1; renderStage(); renderRail(); });
   elements.nextPage.addEventListener('click', () => { state.page += 1; renderStage(); renderRail(); });
   elements.stageCanvas.addEventListener('click', (event) => {
@@ -458,7 +500,7 @@
         for (const item of items) {
           if (item.newStr === undefined || item.newStr === item.str) continue;
           if (!/^[\x20-\x7e]*$/.test(item.newStr)) { skipped += 1; continue; }
-          page.drawRectangle({ x: item.x - 1, y: item.y - item.height * 0.25, width: Math.max(item.width, item.newStr.length * item.size * 0.5) + 2, height: item.height * 1.3, color: root.PDFLib.rgb(1, 1, 1) });
+          page.drawRectangle({ x: item.x - item.size * 0.1, y: item.y - item.height * 0.35, width: Math.max(item.width, item.newStr.length * item.size * 0.55) + item.size * 0.2, height: item.height * 1.5, color: root.PDFLib.rgb(1, 1, 1) });
           font ||= await exportDoc.embedFont(StandardFonts[selectedFont().pdf]);
           page.drawText(item.newStr, { x: item.x, y: item.y, size: item.size, font, color: root.PDFLib.rgb(0, 0, 0) });
         }

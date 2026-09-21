@@ -26,7 +26,7 @@
       <div id="pdfBody" class="pdf-body" hidden>
         <aside class="pdf-rail" id="rail" aria-label="缩略图"></aside>
         <section class="pdf-stage" aria-label="页面预览">
-          <div class="pdf-stage__bar"><button id="prevPage" class="button button--quiet" type="button">上一页</button><span id="pageInfo" class="small muted">—</span><button id="nextPage" class="button button--quiet" type="button">下一页</button><span id="stageHint" class="small muted"></span></div>
+          <div class="pdf-stage__bar"><button id="prevPage" class="button button--quiet" type="button">上一页</button><span id="pageInfo" class="small muted">—</span><button id="nextPage" class="button button--quiet" type="button">下一页</button><button id="zoomOut" class="button button--quiet" type="button" aria-label="缩小">−</button><span id="zoomInfo" class="small muted">100%</span><button id="zoomIn" class="button button--quiet" type="button" aria-label="放大">＋</button><button id="zoomFit" class="button button--quiet" type="button">适应</button><span id="stageHint" class="small muted"></span></div>
           <div class="pdf-canvas-wrap"><div class="pdf-page"><canvas id="stageCanvas" class="pdf-canvas"></canvas><div id="overlayLayer" class="pdf-overlay-layer"></div></div><p id="stageEmpty" class="pdf-empty">选择文件后在此预览</p></div>
         </section>
         <aside class="pdf-side" id="side" aria-label="操作面板">
