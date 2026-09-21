@@ -132,6 +132,7 @@
         if (entry.fileId === state.activeId && entry.pageIndex + 1 === state.page) card.classList.add('is-active');
         const canvas = document.createElement('canvas'); card.append(canvas);
         const label = document.createElement('span'); label.className = 'pdf-thumb-card__label'; label.textContent = `第 ${index + 1} 页`; card.append(label);
+        const sourceLabel = document.createElement('span'); sourceLabel.className = 'pdf-thumb-card__source'; sourceLabel.textContent = source.name; sourceLabel.title = source.name; card.append(sourceLabel);
         const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'pdf-thumb-card__remove'; remove.textContent = '×'; remove.title = '删除该页'; remove.setAttribute('aria-label', '删除该页'); remove.addEventListener('click', (event) => { event.stopPropagation(); state.mergePages.splice(index, 1); renderRail(); renderSide(); });
         card.append(remove);
         card.addEventListener('click', () => { state.activeId = entry.fileId; state.page = entry.pageIndex + 1; renderChips(); renderStage(); renderRail(); });

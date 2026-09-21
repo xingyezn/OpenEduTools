@@ -19,6 +19,7 @@
 .pdf-thumb-card.is-selected { border-color: var(--primary); background: var(--accent); }
 .pdf-thumb-card canvas { width: 100%; height: auto; background: #fff; border-radius: 2px; box-shadow: var(--shadow-sm); }
 .pdf-thumb-card__label { font-size: var(--text-xs); color: var(--text-muted); }
+.pdf-thumb-card__source { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); color: var(--text-muted); opacity: 0.8; }
 .pdf-thumb-card__remove { position: absolute; top: -0.5rem; right: -0.5rem; width: 1.4rem; height: 1.4rem; border-radius: 50%; border: 1px solid var(--border); background: var(--surface-solid); color: var(--text); cursor: pointer; line-height: 1; }
 .pdf-thumb-card[draggable="true"] { cursor: grab; }
 .pdf-thumb-card.is-dragging { opacity: 0.45; }
