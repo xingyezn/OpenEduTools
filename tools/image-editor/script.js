@@ -105,7 +105,7 @@
   const context = elements.stageCanvas.getContext('2d');
   const previewContext = elements.previewCanvas.getContext('2d');
   const state = { image: null, file: null, working: null, workingW: 0, workingH: 0, crop: { x: 0, y: 0, width: 0, height: 0 }, orientation: { rotate: 0, flipH: false, flipV: false }, aspect: null, spec: null, adjust: { brightness: 1, contrast: 1, saturate: 1, hue: 0, grayscale: 0, sepia: 0 } };
-  let drag = null; let previewTimer = 0;
+  let drag = null; let previewTimer = 0; let sizeTimer = 0; let sizeToken = 0;
 
   function setStatus(message, kind = '') { elements.status.textContent = message; elements.status.dataset.kind = kind; }
   function setControlsEnabled(enabled) { elements.downloadBtn.disabled = !enabled; elements.copyImageBtn.disabled = !enabled; }
@@ -173,12 +173,24 @@
     ctx.drawImage(state.working, state.crop.x, state.crop.y, state.crop.width, state.crop.height, 0, 0, targetWidth, targetHeight);
     ctx.filter = 'none';
   }
+  function formatLabel() { return elements.formatSelect.options[elements.formatSelect.selectedIndex].textContent; }
   function renderPreview() {
     if (!state.working) return;
     const output = currentOutput();
     const preview = fitDimensions(output.width, output.height, 480, 480);
     drawCrop(elements.previewCanvas, preview.width, preview.height);
-    elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${elements.formatSelect.options[elements.formatSelect.selectedIndex].textContent}`;
+    elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${formatLabel()} · 计算大小…`;
+    const token = (sizeToken += 1);
+    clearTimeout(sizeTimer);
+    sizeTimer = setTimeout(() => estimateSize(output, token), 200);
+  }
+  async function estimateSize(output, token) {
+    if (output.width * output.height > 24000000) { if (token === sizeToken) elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${formatLabel()} · 尺寸过大，未估算`; return; }
+    try {
+      const blob = await exportBlob(false);
+      if (token !== sizeToken || !blob) return;
+      elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${formatLabel()} · 预估约 ${formatBytes(blob.size)}`;
+    } catch { if (token === sizeToken) elements.outputInfo.textContent = `${output.width} × ${output.height} px · ${formatLabel()}`; }
   }
   function schedulePreview() { clearTimeout(previewTimer); previewTimer = setTimeout(renderPreview, 120); }
   function loadFile(file) {
