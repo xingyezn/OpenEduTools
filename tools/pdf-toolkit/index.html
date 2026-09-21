@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="在浏览器本地合并、拆分、旋转、删除 PDF 页面，并添加文字或图片后导出。"><title>PDF 工具箱 · OpenEduTools</title>
   <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
-  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/analytics.js" defer></script><script src="../../js/format.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./vendor/pdf-lib.min.js" defer></script><script src="./script.js" defer></script>
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/analytics.js" defer></script><script src="../../js/format.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./vendor/pdf-lib.min.js" defer></script><script src="./vendor/pdf.min.js" defer></script><script src="./script.js" defer></script>
 </head>
 <body data-tool-id="pdf-toolkit">
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -29,6 +29,7 @@
         <p class="small muted">载入一个 PDF，提取指定页面为新文件，或把每一页拆成单独文件打包下载。</p>
         <div class="field"><label for="splitInput">选择一个 PDF</label><input id="splitInput" type="file" accept="application/pdf,.pdf"></div>
         <p id="splitInfo" class="small muted">尚未载入</p>
+        <div class="pdf-preview"><div class="pdf-preview__bar"><button id="splitPrev" class="button button--quiet" type="button">上一页</button><span id="splitPageInfo" class="small muted">—</span><button id="splitNext" class="button button--quiet" type="button">下一页</button></div><div class="pdf-canvas-wrap"><canvas id="splitCanvas" class="pdf-canvas" aria-label="PDF 预览"></canvas><p id="splitEmpty" class="pdf-empty">载入 PDF 后在此预览</p></div></div>
         <div class="field"><label for="splitRange">页码范围（如 1-3,5）</label><input id="splitRange" type="text" placeholder="1-3,5" inputmode="numeric"></div>
         <div class="tool-actions"><button id="extractBtn" class="button button--cta" type="button" disabled>提取为新 PDF</button><button id="splitAllBtn" class="button button--secondary" type="button" disabled>每页拆分（ZIP）</button></div>
         <p id="splitStatus" class="status-line" role="status" aria-live="polite"></p>
@@ -38,6 +39,7 @@
         <p class="small muted">载入一个 PDF 后可累积执行多种操作，最后统一导出。坐标以页面左下角为原点、单位为 pt（1 pt ≈ 1/72 英寸，A4 约 595×842 pt）。</p>
         <div class="field"><label for="editInput">载入一个 PDF</label><input id="editInput" type="file" accept="application/pdf,.pdf"></div>
         <p id="editInfo" class="small muted">尚未载入</p>
+        <div class="pdf-preview"><div class="pdf-preview__bar"><button id="editPrev" class="button button--quiet" type="button">上一页</button><span id="editPageInfo" class="small muted">—</span><button id="editNext" class="button button--quiet" type="button">下一页</button><span class="small muted">点击预览可设置文字/图片坐标</span></div><div class="pdf-canvas-wrap"><canvas id="editCanvas" class="pdf-canvas" aria-label="PDF 预览，可点击定位"></canvas><p id="editEmpty" class="pdf-empty">载入 PDF 后在此预览</p></div></div>
         <div class="pdf-grid">
           <fieldset class="pdf-group"><legend>页面操作</legend>
             <div class="form-grid"><div class="field"><label for="rotateRange">旋转页码范围</label><input id="rotateRange" type="text" placeholder="1,3-5" inputmode="numeric"></div><div class="field"><label for="rotateAngle">角度</label><select id="rotateAngle"><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></div></div>
