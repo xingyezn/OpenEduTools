@@ -173,7 +173,7 @@
         "拆分",
         "编辑"
       ],
-      "version": "0.1.0",
+      "version": "0.2.1",
       "status": "beta",
       "entry": "tools/pdf-toolkit/index.html",
       "icon": "pdf",
