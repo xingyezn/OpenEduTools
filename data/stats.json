@@ -1,19 +1,124 @@
 {
-  "updated_at": "2026-09-21T03:13:06+08:00",
+  "updated_at": "2026-09-22T00:01:55+08:00",
   "summary": {
-    "total_opens": 0,
-    "total_uses": 0,
-    "total_favorites": 0
+    "total_opens": 14,
+    "total_uses": 6,
+    "total_favorites": 9
   },
-  "tools": {},
+  "tools": {
+    "classroom-timer": {
+      "opens": 0,
+      "uses": 0,
+      "favorites": 1,
+      "shares": 0
+    },
+    "fullscreen-clock": {
+      "opens": 4,
+      "uses": 1,
+      "favorites": 1,
+      "shares": 1
+    },
+    "handwriting-digits": {
+      "opens": 5,
+      "uses": 4,
+      "favorites": 1,
+      "shares": 0
+    },
+    "image-editor": {
+      "opens": 1,
+      "uses": 0,
+      "favorites": 1,
+      "shares": 0
+    },
+    "markdown-to-word": {
+      "opens": 1,
+      "uses": 1,
+      "favorites": 1,
+      "shares": 0
+    },
+    "noise-meter": {
+      "opens": 0,
+      "uses": 0,
+      "favorites": 1,
+      "shares": 0
+    },
+    "pomodoro-timer": {
+      "opens": 0,
+      "uses": 0,
+      "favorites": 1,
+      "shares": 1
+    },
+    "random-group": {
+      "opens": 0,
+      "uses": 0,
+      "favorites": 1,
+      "shares": 0
+    },
+    "random-picker": {
+      "opens": 1,
+      "uses": 0,
+      "favorites": 1,
+      "shares": 0
+    },
+    "score-statistics": {
+      "opens": 2,
+      "uses": 0,
+      "favorites": 0,
+      "shares": 0
+    }
+  },
   "rankings": {
     "all_time": {
-      "most_used": [],
-      "most_favorited": []
+      "most_used": [
+        "handwriting-digits",
+        "fullscreen-clock",
+        "markdown-to-word",
+        "classroom-timer",
+        "image-editor",
+        "noise-meter",
+        "pomodoro-timer",
+        "random-group",
+        "random-picker",
+        "score-statistics"
+      ],
+      "most_favorited": [
+        "classroom-timer",
+        "fullscreen-clock",
+        "handwriting-digits",
+        "image-editor",
+        "markdown-to-word",
+        "noise-meter",
+        "pomodoro-timer",
+        "random-group",
+        "random-picker",
+        "score-statistics"
+      ]
     },
     "last_7_days": {
-      "most_used": [],
-      "most_favorited": []
+      "most_used": [
+        "handwriting-digits",
+        "fullscreen-clock",
+        "markdown-to-word",
+        "classroom-timer",
+        "image-editor",
+        "noise-meter",
+        "pomodoro-timer",
+        "random-group",
+        "random-picker",
+        "score-statistics"
+      ],
+      "most_favorited": [
+        "classroom-timer",
+        "fullscreen-clock",
+        "handwriting-digits",
+        "image-editor",
+        "markdown-to-word",
+        "noise-meter",
+        "pomodoro-timer",
+        "random-group",
+        "random-picker",
+        "score-statistics"
+      ]
     }
   }
 }
