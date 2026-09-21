@@ -81,6 +81,7 @@ export function timingSafeEqual(left, right) {
 
 function rankBy(rows, score, limit = RANKING_LIMIT) {
   return [...rows]
+    .filter((row) => score(row) > 0)
     .sort((a, b) => score(b) - score(a) || String(a.tool_id).localeCompare(String(b.tool_id), 'en'))
     .slice(0, limit)
     .map((row) => row.tool_id);

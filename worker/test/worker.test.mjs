@@ -116,6 +116,19 @@ test('buildExport 生成 summary、tools 与两组排行', () => {
   assert.equal(payload.updated_at, '2026-09-21T09:00:00+08:00');
 });
 
+test('排行忽略计数为 0 的工具', () => {
+  const rows = [
+    { tool_id: 'idle-tool', opens: 0, uses: 0, favorite_adds: 0, favorite_removes: 0, shares: 0 },
+    { tool_id: 'active-tool', opens: 2, uses: 3, favorite_adds: 0, favorite_removes: 0, shares: 0 },
+    { tool_id: 'loved-tool', opens: 1, uses: 0, favorite_adds: 4, favorite_removes: 1, shares: 0 }
+  ];
+  const payload = buildExport(rows, rows);
+  assert.deepEqual(payload.rankings.all_time.most_used, ['active-tool']);
+  assert.deepEqual(payload.rankings.all_time.most_favorited, ['loved-tool']);
+  assert.deepEqual(payload.rankings.last_7_days.most_used, ['active-tool']);
+  assert.equal(payload.tools['idle-tool'].uses, 0);
+});
+
 test('CORS 只放行配置的来源', () => {
   const env = { ALLOWED_ORIGINS: 'https://xingyezn.github.io, http://localhost:8000' };
   assert.deepEqual(allowedOrigins(env), ['https://xingyezn.github.io', 'http://localhost:8000']);
