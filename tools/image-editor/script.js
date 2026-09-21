@@ -101,7 +101,7 @@
   if (typeof module !== 'undefined') module.exports = api;
   if (typeof document === 'undefined') return;
 
-  const elements = Object.fromEntries(['loadBtn', 'fileInput', 'rotateLeftBtn', 'rotateRightBtn', 'flipHBtn', 'flipVBtn', 'resetImageBtn', 'fullscreenBtn', 'workspace', 'stage', 'canvasWrap', 'stageCanvas', 'cropBox', 'stageEmpty', 'imageMeta', 'ratioSelect', 'specSelect', 'brightness', 'brightnessValue', 'contrast', 'contrastValue', 'saturate', 'saturateValue', 'hue', 'hueValue', 'grayscale', 'grayscaleValue', 'sepia', 'sepiaValue', 'resetAdjustBtn', 'formatSelect', 'sizeMode', 'quality', 'qualityValue', 'customWidth', 'customHeight', 'keepRatio', 'fileName', 'previewCanvas', 'outputInfo', 'downloadBtn', 'copyImageBtn', 'status'].map((id) => [id, document.getElementById(id)]));
+  const elements = Object.fromEntries(['loadBtn', 'fileInput', 'rotateLeftBtn', 'rotateRightBtn', 'flipHBtn', 'flipVBtn', 'resetImageBtn', 'fullscreenBtn', 'workspace', 'stage', 'canvasWrap', 'stageCanvas', 'cropBox', 'stageEmpty', 'imageMeta', 'ratioSelect', 'specSelect', 'brightness', 'brightnessValue', 'contrast', 'contrastValue', 'saturate', 'saturateValue', 'hue', 'hueValue', 'grayscale', 'grayscaleValue', 'sepia', 'sepiaValue', 'resetAdjustBtn', 'formatSelect', 'sizeMode', 'quality', 'qualityValue', 'customWidth', 'customHeight', 'keepRatio', 'targetSize', 'compressBtn', 'fileName', 'previewCanvas', 'outputInfo', 'downloadBtn', 'copyImageBtn', 'status'].map((id) => [id, document.getElementById(id)]));
   const context = elements.stageCanvas.getContext('2d');
   const previewContext = elements.previewCanvas.getContext('2d');
   const state = { image: null, file: null, working: null, workingW: 0, workingH: 0, crop: { x: 0, y: 0, width: 0, height: 0 }, orientation: { rotate: 0, flipH: false, flipV: false }, aspect: null, spec: null, adjust: { brightness: 1, contrast: 1, saturate: 1, hue: 0, grayscale: 0, sepia: 0 } };
@@ -265,13 +265,39 @@
     state.spec = spec; state.aspect = spec.px[0] / spec.px[1]; elements.ratioSelect.value = 'free'; elements.sizeMode.value = 'spec';
     if (state.working) { resetCrop(); syncCropBox(); schedulePreview(); }
   }
-  async function exportBlob(forcePng) {
+  async function encodeWithQuality(format, quality) {
     const output = currentOutput();
     const canvas = document.createElement('canvas');
-    const format = forcePng ? 'image/png' : elements.formatSelect.value;
     drawCrop(canvas, output.width, output.height);
-    const quality = Number(elements.quality.value) / 100;
     return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), format, format === 'image/png' ? undefined : quality));
+  }
+  async function exportBlob(forcePng) {
+    const format = forcePng ? 'image/png' : elements.formatSelect.value;
+    return await encodeWithQuality(format, Number(elements.quality.value) / 100);
+  }
+  async function compressToTarget() {
+    if (!state.working) { setStatus('请先载入图片。', 'error'); return; }
+    const targetKb = Number(elements.targetSize.value);
+    if (!Number.isFinite(targetKb) || targetKb <= 0) { setStatus('请输入有效的目标大小（KB）。', 'error'); return; }
+    if (elements.formatSelect.value === 'image/png') { elements.formatSelect.value = 'image/jpeg'; syncQualityState(); setStatus('PNG 无法按质量压缩，已切换为 JPEG。', 'info'); }
+    const format = elements.formatSelect.value;
+    const targetBytes = targetKb * 1024;
+    setStatus('正在按目标大小压缩…', 'info');
+    let low = 0.1; let high = 0.95; let best = null;
+    for (let index = 0; index < 9; index += 1) {
+      const quality = (low + high) / 2;
+      const blob = await encodeWithQuality(format, quality);
+      if (!blob) break;
+      if (blob.size <= targetBytes) { best = { quality, size: blob.size }; low = quality; } else { high = quality; }
+    }
+    if (best) {
+      elements.quality.value = String(Math.round(best.quality * 100)); lastSize = formatBytes(best.size);
+      updateSliderOutputs(); renderPreview();
+      setStatus(`已压缩到约 ${formatBytes(best.size)}（质量 ${Math.round(best.quality * 100)}）。`, 'success');
+    } else {
+      elements.quality.value = '10'; lastSize = ''; updateSliderOutputs(); renderPreview();
+      setStatus('即使最低质量仍超过目标大小，可减小输出尺寸或裁切更小的区域。', 'error');
+    }
   }
   async function downloadImage() {
     if (!state.image) return;
@@ -333,7 +359,8 @@
   elements.specSelect.addEventListener('change', applySpec);
   for (const id of ['brightness', 'contrast', 'saturate', 'hue', 'grayscale', 'sepia']) elements[id].addEventListener('input', readAdjust);
   elements.resetAdjustBtn.addEventListener('click', () => { state.adjust = { brightness: 1, contrast: 1, saturate: 1, hue: 0, grayscale: 0, sepia: 0 }; elements.brightness.value = '100'; elements.contrast.value = '100'; elements.saturate.value = '100'; elements.hue.value = '0'; elements.grayscale.value = '0'; elements.sepia.value = '0'; readAdjust(); });
-  elements.quality.addEventListener('input', updateSliderOutputs);
+  elements.quality.addEventListener('input', () => { updateSliderOutputs(); lastSize = ''; schedulePreview(); });
+  elements.compressBtn.addEventListener('click', compressToTarget);
   elements.formatSelect.addEventListener('change', () => { syncQualityState(); lastSize = ''; schedulePreview(); });
   for (const id of ['sizeMode', 'customWidth', 'customHeight', 'keepRatio']) elements[id].addEventListener('change', schedulePreview);
   elements.fullscreenBtn.addEventListener('click', toggleFullscreen);

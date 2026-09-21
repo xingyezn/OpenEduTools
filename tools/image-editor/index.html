@@ -54,8 +54,9 @@
           <div class="form-grid">
             <div class="field"><label for="formatSelect">格式</label><select id="formatSelect"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></div>
             <div class="field"><label for="sizeMode">输出尺寸</label><select id="sizeMode"><option value="crop">裁切尺寸</option><option value="spec">证件规格</option><option value="custom">自定义</option></select></div>
-            <div class="field"><label for="quality">质量</label><input id="quality" type="range" min="50" max="100" value="90"><span class="small muted">JPEG / WebP 质量：<b id="qualityValue">90</b></span></div>
+            <div class="field"><label for="quality">质量</label><input id="quality" type="range" min="10" max="100" value="90"><span class="small muted">JPEG / WebP 质量：<b id="qualityValue">90</b></span></div>
           </div>
+          <div class="form-grid"><div class="field"><label for="targetSize">目标大小（KB，可选）</label><input id="targetSize" type="number" min="1" max="20000" placeholder="例如 100" inputmode="numeric"></div><div class="field"><span class="field__label">自动压缩</span><button id="compressBtn" class="button button--secondary" type="button">压缩到目标大小</button></div></div>
           <div class="form-grid"><div class="field"><label for="customWidth">宽（px）</label><input id="customWidth" type="number" min="1" max="10000" value="800" inputmode="numeric"></div><div class="field"><label for="customHeight">高（px）</label><input id="customHeight" type="number" min="1" max="10000" value="600" inputmode="numeric"></div></div>
           <label class="check"><input id="keepRatio" type="checkbox" checked>自定义尺寸保持裁切比例</label>
           <div class="field"><label for="fileName">文件名</label><input id="fileName" type="text" value="edited-image" maxlength="60"></div>
