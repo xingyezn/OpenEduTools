@@ -20,11 +20,12 @@ test('颜色与文件大小辅助函数', () => {
   assert.equal(pdf.formatBytes(2048), '2.0 KB');
 });
 
-test('合并与提取 PDF 生成正确的页数', async () => {
+test('按页面列表合并与提取 PDF 生成正确的页数', async () => {
   const { PDFDocument } = globalThis.PDFLib;
   const first = await PDFDocument.create(); first.addPage();
   const second = await PDFDocument.create(); second.addPage(); second.addPage();
-  const merged = await pdf.mergePdfs([await first.save(), await second.save()]);
+  const sources = { a: await first.save(), b: await second.save() };
+  const merged = await pdf.mergePageList([{ fileId: 'a', pageIndex: 0 }, { fileId: 'b', pageIndex: 0 }, { fileId: 'b', pageIndex: 1 }], (id) => sources[id]);
   const mergedDoc = await PDFDocument.load(merged);
   assert.equal(mergedDoc.getPageCount(), 3);
   const extracted = await pdf.extractPages(merged, [0, 2]);
