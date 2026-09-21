@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "markdown-to-word",
+  "name": "Markdown 转 Word",
+  "description": "把 Markdown 转换为可编辑的 Word 文档，标题、列表、表格与数学公式都能保留。",
+  "category": "text-processing",
+  "subjects": ["general", "information-technology"],
+  "tags": ["Markdown", "Word", "公式", "文档"],
+  "version": "0.1.0",
+  "status": "beta",
+  "entry": "tools/markdown-to-word/index.html",
+  "icon": "document",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-21",
+  "updatedAt": "2026-09-21"
+}

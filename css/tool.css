@@ -6,6 +6,7 @@
 .tool-header__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
 .tool-header p { max-width: 42rem; color: var(--text-muted); }
 .tool-sections { display: grid; gap: var(--space-5); }
+.tool-sections > * { min-width: 0; }
 .tool-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--space-4); }
 .result-box { min-height: 7rem; padding: var(--space-4); background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--radius-md); }

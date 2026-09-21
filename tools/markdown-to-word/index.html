@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="把 Markdown 转换为可编辑的 Word 文档，标题、列表、表格与数学公式都能保留。"><title>Markdown 转 Word · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/analytics.js" defer></script><script src="../../js/format.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="markdown-to-word">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true"></span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../index.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../index.html">全部工具</a> / Markdown 转 Word</nav>
+    <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">DOC MAKER</span><h1>Markdown 转 Word</h1><p>在浏览器本地把 Markdown 转换为可编辑的 Word（.docx）文档：标题、列表、表格、引用、代码块都会保留，行内与独立公式会转换为 Word 原生的公式对象。右侧实时预览默认示例，你可以直接修改源文后重新导出；文档只在本地生成，不会上传。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">Markdown 仅在本页内存中处理</span></header>
+    <div class="tool-sections">
+      <section class="panel" aria-labelledby="editor-title">
+        <div class="md-toolbar"><h2 id="editor-title">Markdown 源文</h2><div class="tool-actions md-actions"><button id="convertBtn" class="button button--cta" type="button">转换为 Word (.docx)</button><button id="copyMdBtn" class="button button--secondary" type="button">复制 Markdown</button><button id="downloadMdBtn" class="button button--secondary" type="button">下载 .md</button><button id="resetBtn" class="button button--ghost" type="button">恢复示例</button></div></div>
+        <div class="field"><label for="markdown">Markdown 内容</label><textarea id="markdown" class="md-input" spellcheck="false" placeholder="在这里粘贴或输入 Markdown…"></textarea></div>
+        <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section class="panel" aria-labelledby="preview-title">
+        <h2 id="preview-title">预览</h2>
+        <div id="preview" class="md-preview"></div>
+      </section>
+      <aside class="notice"><strong>支持的语法：</strong>标题、有序/无序列表、表格、引用、代码块、粗体/斜体/删除线、链接，以及行内公式 <code>$...$</code> 与独立公式 <code>$$...$$</code>。公式支持分数、根号、上下标、求和/积分、括号、矩阵等常见写法。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

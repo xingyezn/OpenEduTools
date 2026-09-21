@@ -8,7 +8,7 @@ export const categories = new Set([
   'data-processing', 'text-processing', 'ai-assistance', 'general'
 ]);
 export const statuses = new Set(['experimental', 'beta', 'stable', 'deprecated']);
-export const icons = new Set(['user-search', 'users', 'timer', 'text-clean', 'chart', 'handwriting', 'volume', 'clock']);
+export const icons = new Set(['user-search', 'users', 'timer', 'text-clean', 'chart', 'handwriting', 'volume', 'clock', 'document']);
 const toolSchema = JSON.parse(fs.readFileSync(path.join(rootDir, 'schemas', 'tool.schema.json'), 'utf8'));
 
 export function isDate(value) {
