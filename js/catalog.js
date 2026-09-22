@@ -15,6 +15,7 @@
     const formatCount = typeof settings.formatCount === 'function' ? settings.formatCount : (value) => String(value);
     const stats = settings.stats ? (settings.stats[tool.id] || { uses: 0, favorites: 0 }) : null;
     const card = element('article', 'tool-card');
+    card.setAttribute('data-reveal', '');
     const head = element('div', 'tool-card__head');
     const icon = element('span', 'tool-card__icon', ICON_LABELS[tool.icon] || '工'); icon.setAttribute('aria-hidden', 'true');
     const tools = element('div', 'tool-card__tools');
@@ -46,8 +47,38 @@
     parts.push(actions);
     card.append(...parts); return card;
   }
-  function renderCards(container, tools, favoriteIds, onToggle, options) { container.replaceChildren(...tools.map((tool) => createToolCard(tool, favoriteIds, onToggle, options))); }
-  const api = { CATEGORY_NAMES, SUBJECT_NAMES, createToolCard, renderCards };
+  function renderCards(container, tools, favoriteIds, onToggle, options) {
+    container.replaceChildren(...tools.map((tool) => createToolCard(tool, favoriteIds, onToggle, options)));
+    if (root.OETMotion && typeof root.OETMotion.observe === 'function') root.OETMotion.observe(container);
+  }
+  function renderPagination(container, view, onSelect) {
+    if (!container) return;
+    container.replaceChildren();
+    container.hidden = !view || view.total === 0;
+    if (!view || view.total === 0) return;
+    const status = element('p', 'pagination__status', `第 ${view.page} / ${view.pageCount} 页 · 共 ${view.total} 个工具`);
+    if (view.pageCount <= 1) { container.append(status); return; }
+    const controls = element('div', 'pagination__controls');
+    const pageList = root.OETCatalogView && typeof root.OETCatalogView.pageList === 'function' ? root.OETCatalogView.pageList : (page, count) => [page];
+    function pageButton(label, page, settings) {
+      const options = settings || {};
+      const button = element('button', options.current ? 'pagination__button is-current' : 'pagination__button', label);
+      button.type = 'button';
+      button.disabled = Boolean(options.disabled);
+      if (options.label) button.setAttribute('aria-label', options.label);
+      if (options.current) button.setAttribute('aria-current', 'page');
+      button.addEventListener('click', () => onSelect(page));
+      return button;
+    }
+    controls.append(pageButton('上一页', view.page - 1, { disabled: view.page <= 1, label: '上一页' }));
+    for (const item of pageList(view.page, view.pageCount)) {
+      if (item === '…') { const gap = element('span', 'pagination__gap', '…'); gap.setAttribute('aria-hidden', 'true'); controls.append(gap); continue; }
+      controls.append(pageButton(String(item), item, { current: item === view.page, label: `第 ${item} 页` }));
+    }
+    controls.append(pageButton('下一页', view.page + 1, { disabled: view.page >= view.pageCount, label: '下一页' }));
+    container.append(status, controls);
+  }
+  const api = { CATEGORY_NAMES, SUBJECT_NAMES, createToolCard, renderCards, renderPagination };
   root.OETCatalog = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="浏览 OpenEduTools 的全部教师微工具，可按功能分类、学科与关键词筛选。"><title>全部工具 · OpenEduTools</title>
+  <link rel="icon" href="./assets/icons/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32.png"><link rel="icon" type="image/png" sizes="48x48" href="./assets/icons/favicon-48.png"><link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png"><link rel="stylesheet" href="./css/tokens.css"><link rel="stylesheet" href="./css/main.css"><link rel="stylesheet" href="./css/components.css">
+  <script src="./js/theme.js"></script><script src="./js/storage.js" defer></script><script src="./js/favorites.js" defer></script><script src="./js/recent.js" defer></script><script src="./js/search.js" defer></script><script src="./js/catalog-view.js" defer></script><script src="./js/format.js" defer></script><script src="./js/analytics.js" defer></script><script src="./js/catalog.js" defer></script><script src="./js/tool-page.js" defer></script><script src="./js/motion.js" defer></script><script src="./js/all-tools.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="./index.html"><span class="brand__mark" aria-hidden="true">O</span>OpenEduTools</a><nav class="site-nav" aria-label="主导航"><a href="./index.html">工具</a><a href="./all-tools.html" aria-current="page">全部工具</a><a href="./about.html">关于</a><a href="./contribute.html">参与贡献</a><a href="https://github.com/xingyezn/OpenEduTools" target="_blank" rel="noopener noreferrer" data-github-link>GitHub ↗</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="page-main"><div class="container">
+    <section class="catalog-hero" data-reveal>
+      <span class="section-kicker">ALL TOOLS</span>
+      <h1 id="catalog-title">全部工具</h1>
+      <p class="muted">按功能分类、学科或关键词查找合适的教学微工具，全部在浏览器本地运行，无需登录。</p>
+      <div class="search-row catalog-hero__search"><div class="field"><label for="tool-search">搜索工具</label><input id="tool-search" type="search" autocomplete="off" placeholder="搜索名称、介绍、标签或学科"></div><button id="clear-search" class="button button--secondary" type="button">清除条件</button></div>
+    </section>
+    <div class="catalog-layout">
+      <aside class="catalog-sidebar panel" data-reveal aria-label="工具筛选">
+        <div class="filter-group"><span class="field__label">按功能分类</span><div id="category-list" class="category-list category-list--vertical" aria-label="工具功能分类"></div></div>
+        <div class="filter-group"><span class="field__label">按学科分类</span><div id="subject-list" class="category-list" aria-label="工具学科分类"></div></div>
+        <button id="favorite-filter" class="filter-button filter-button--block" type="button" aria-pressed="false">☆ 仅看收藏</button>
+      </aside>
+      <div class="catalog-main">
+        <div class="catalog-toolbar"><span id="result-count" aria-live="polite">正在加载工具…</span></div>
+        <p id="catalog-status" class="notice" role="status" aria-live="polite">正在加载工具目录…</p>
+        <div id="tool-grid" class="tool-grid"></div>
+        <nav id="catalog-pagination" class="pagination" aria-label="工具目录分页" hidden></nav>
+        <div id="catalog-empty" class="empty-state" hidden><h3>没有找到工具</h3><p>试试缩短关键词或清除筛选条件。</p></div>
+      </div>
+    </div>
+  </div></main>
+  <footer class="site-footer"><div class="container site-footer__inner"><span>OpenEduTools V0.1 · MIT License</span><ul class="inline-list"><li><a href="./about.html#privacy">隐私说明</a></li><li><a href="./contribute.html">参与贡献</a></li><li><a href="https://github.com/xingyezn/OpenEduTools" target="_blank" rel="noopener noreferrer">GitHub 仓库 ↗</a></li></ul></div></footer><div class="toast" data-toast role="status" hidden></div>
+  <noscript><p class="container notice notice--error">工具目录需要 JavaScript；单个工具页面也需要启用 JavaScript 才能运行。</p></noscript>
+</body></html>

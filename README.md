@@ -44,7 +44,8 @@ V0.1 的静态站点、12 个首批工具、元数据工具链、自动化测试
 
 ```text
 OpenEduTools/
-├── index.html                 # 首页与工具目录
+├── index.html                 # 首页与工具目录（热度排序、分页）
+├── all-tools.html             # 全部工具（侧栏分类 + 筛选 + 分页）
 ├── about.html                 # 项目介绍与隐私说明
 ├── contribute.html            # 贡献入口
 ├── 404.html
@@ -58,11 +59,14 @@ OpenEduTools/
 │   └── tool.css               # 工具页公共样式
 ├── js/
 │   ├── app.js                 # 首页初始化
-│   ├── catalog.js             # 元数据加载与工具目录
+│   ├── all-tools.js           # 全部工具页初始化
+│   ├── catalog.js             # 元数据加载、工具卡片与分页渲染
+│   ├── catalog-view.js        # 热度排序与分页纯函数
 │   ├── search.js              # 搜索与筛选
 │   ├── favorites.js           # 收藏
 │   ├── recent.js              # 最近使用
 │   ├── theme.js               # 主题
+│   ├── motion.js              # 滚动入场与页头动效
 │   ├── analytics.js           # 匿名统计客户端（唯一上报入口）
 │   ├── format.js              # 计数格式化
 │   └── tool-page.js           # 工具页公共行为

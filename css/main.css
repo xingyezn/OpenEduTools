@@ -48,6 +48,13 @@ p { margin-block: 0 var(--space-4); }
 .muted { color: var(--text-muted); } .small { font-size: var(--text-sm); }
 .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.site-header.is-scrolled { border-bottom-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+#catalog-title { scroll-margin-top: 6rem; }
+.motion-ready [data-reveal] { opacity: 0; transform: translateY(1.1rem); transition: opacity 520ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1); will-change: opacity, transform; }
+.motion-ready [data-reveal].is-visible { opacity: 1; transform: none; }
+.back-to-top { position: fixed; z-index: var(--z-toast); right: var(--space-4); bottom: var(--space-4); width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border: var(--border-width) solid var(--border); border-radius: 50%; background: var(--surface-solid); color: var(--text); box-shadow: var(--shadow-md); cursor: pointer; font-size: 1.1rem; opacity: 0; transform: translateY(0.75rem); pointer-events: none; transition: opacity 200ms ease, transform 200ms ease, border-color 150ms ease; }
+.back-to-top.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+.back-to-top:hover { border-color: var(--accent-strong); }
 @keyframes pulse-ring { 0%, 100% { opacity: 0.25; transform: translate(-50%, -50%) scale(0.95); } 50% { opacity: 0.75; transform: translate(-50%, -50%) scale(1.04); } }
 @media (max-width: 48rem) { .hero { grid-template-columns: 1fr; min-height: auto; } .hero__visual { min-height: 9rem; } .section-intro { align-items: flex-start; flex-direction: column; } .section-intro p { text-align: left; } }
 @media (max-width: 42rem) { .site-header { position: static; } .site-header__inner { align-items: flex-start; flex-direction: column; padding-block: var(--space-3); } .site-nav { width: 100%; gap: var(--space-3); overflow-x: auto; padding-bottom: var(--space-1); } .theme-field { margin-left: auto; } .hero { padding: var(--space-5); border-radius: var(--radius-lg); } }
