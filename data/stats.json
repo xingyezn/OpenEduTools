@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-09-23T04:39:55+08:00",
+  "updated_at": "2026-09-24T04:51:40+08:00",
   "summary": {
-    "total_opens": 22,
-    "total_uses": 23,
-    "total_favorites": 9
+    "total_opens": 24,
+    "total_uses": 24,
+    "total_favorites": 10
   },
   "tools": {
     "classroom-timer": {
@@ -27,7 +27,7 @@
     "image-editor": {
       "opens": 3,
       "uses": 5,
-      "favorites": 1,
+      "favorites": 2,
       "shares": 0
     },
     "markdown-to-word": {
@@ -61,13 +61,19 @@
       "shares": 0
     },
     "random-picker": {
-      "opens": 1,
-      "uses": 0,
+      "opens": 2,
+      "uses": 1,
       "favorites": 1,
       "shares": 0
     },
     "score-statistics": {
       "opens": 2,
+      "uses": 0,
+      "favorites": 0,
+      "shares": 0
+    },
+    "video-converter": {
+      "opens": 1,
       "uses": 0,
       "favorites": 0,
       "shares": 0
@@ -80,13 +86,14 @@
         "image-editor",
         "handwriting-digits",
         "markdown-to-word",
-        "fullscreen-clock"
+        "fullscreen-clock",
+        "random-picker"
       ],
       "most_favorited": [
+        "image-editor",
         "classroom-timer",
         "fullscreen-clock",
         "handwriting-digits",
-        "image-editor",
         "markdown-to-word",
         "noise-meter",
         "pomodoro-timer",
@@ -100,13 +107,14 @@
         "image-editor",
         "handwriting-digits",
         "markdown-to-word",
-        "fullscreen-clock"
+        "fullscreen-clock",
+        "random-picker"
       ],
       "most_favorited": [
+        "image-editor",
         "classroom-timer",
         "fullscreen-clock",
         "handwriting-digits",
-        "image-editor",
         "markdown-to-word",
         "noise-meter",
         "pomodoro-timer",
