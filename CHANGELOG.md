@@ -6,11 +6,20 @@
 
 - 匿名使用统计：工具打开、使用、收藏与分享计数，以及首页「本周热门」「最多收藏」排行；
 - 首页展示工具总数、累计使用量、收藏量与打开次数，工具卡片和工具页介绍区显示使用与收藏次数，工具页新增分享按钮；
-- Cloudflare Worker + D1 统计服务（`worker/`）与每日 GitHub Actions 同步到 `data/stats.json`。
+- Cloudflare Worker + D1 统计服务（`worker/`）与每日 GitHub Actions 同步到 `data/stats.json`；
+- 首页工具目录支持分页（每页 9 个），并默认按使用与收藏热度排序；
+- 新增「全部工具」页面，提供侧栏分类浏览、搜索与分页；
+- 首页、全部工具页和公共页面加入滚动入场动画、页头滚动效果与返回顶部按钮；
+- 新增「视频格式转换」工具，在浏览器本地把 MP4、MOV、WebM、MKV 等转换为 MP4 或 WebM，并支持压缩、分辨率与帧率选项。
+
+### 依赖
+
+- 视频格式转换工具引入 Mediabunny 1.59.0（MPL-2.0），生产文件随仓库托管于 `tools/video-converter/vendor/`，理由、体积与供应链评估见该目录 README。
 
 ### 文档
 
-- 新增 [PRIVACY.md](PRIVACY.md)，并同步更新 README、TOOL_SPEC、关于页与贡献指南中的隐私说明。
+- 新增 [PRIVACY.md](PRIVACY.md)，并同步更新 README、TOOL_SPEC、关于页与贡献指南中的隐私说明；
+- README 更新工具数量与第三方依赖说明。
 
 ### 隐私
 

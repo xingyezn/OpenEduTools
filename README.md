@@ -30,7 +30,7 @@ V0.1 聚焦一个可公开使用、可持续扩展的最小版本：
 - 统一的工具卡片、详情页、导航、表单和反馈样式；
 - 使用 `tool.json` 管理工具元数据；
 - 响应式布局、键盘操作、基础无障碍和明暗主题；
-- 12 个首批工具：随机点名、随机分组、课堂计时器、文本清洗、成绩统计、手写数字收集、课堂噪音计、全屏时钟、番茄钟、Markdown 转 Word、图片处理、PDF 工具箱；
+- 13 个首批工具：随机点名、随机分组、课堂计时器、文本清洗、成绩统计、手写数字收集、课堂噪音计、全屏时钟、番茄钟、Markdown 转 Word、图片处理、PDF 工具箱、视频格式转换；
 - 每个工具可下载独立离线包，解压后双击即可使用；
 - 匿名使用统计（工具打开、使用、收藏、分享计数）与首页热门排行；
 - GitHub Pages 自动部署；
@@ -38,7 +38,7 @@ V0.1 聚焦一个可公开使用、可持续扩展的最小版本：
 
 完整任务见 [docs/V0.1_TASKS.md](docs/V0.1_TASKS.md)。
 
-V0.1 的静态站点、12 个首批工具、元数据工具链、自动化测试和 Pages 工作流已经实现。可直接访问 [线上站点](https://xingyezn.github.io/OpenEduTools/)；当前测试记录见 [docs/TEST_REPORT.md](docs/TEST_REPORT.md)，发布前人工验收项见 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)。
+V0.1 的静态站点、13 个首批工具、元数据工具链、自动化测试和 Pages 工作流已经实现。可直接访问 [线上站点](https://xingyezn.github.io/OpenEduTools/)；当前测试记录见 [docs/TEST_REPORT.md](docs/TEST_REPORT.md)，发布前人工验收项见 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)。
 
 ## 目录结构
 
@@ -137,7 +137,7 @@ npm run check
 npm run build:index
 ```
 
-生成 12 个工具的离线包：
+生成 13 个工具的离线包：
 
 ```bash
 npm run build:downloads
@@ -251,7 +251,7 @@ V0.1 使用以下稳定分类 ID：
 
 ## 路线图
 
-- **V0.1**：门户基础能力、统一规范、12 个示范工具、匿名使用统计、Pages 部署。
+- **V0.1**：门户基础能力、统一规范、13 个示范工具、匿名使用统计、Pages 部署。
 - **V0.2**：更多教育工具、导入导出增强、PWA 与离线缓存评估。
 - **V0.3**：多语言、工具模板生成器、自动化可访问性检查。
 
@@ -259,11 +259,11 @@ V0.1 使用以下稳定分类 ID：
 
 ## 许可证
 
-项目使用 [MIT License](LICENSE)。当前 V0.1 不包含第三方运行时依赖、远程字体或外部素材。
+项目使用 [MIT License](LICENSE)。站点不使用 CDN 或远程运行时资源；少量必要依赖（如 PDF 工具箱的 pdf.js 与 pdf-lib、视频格式转换的 Mediabunny）固定版本并随仓库本地托管，许可证与来源见各工具的 `vendor/` 目录。
 
 ## GitHub Pages 发布
 
 1. 将仓库默认分支设为 `main`，在 Settings → Pages 将 Source 选择为 **GitHub Actions**；
 2. 推送到 `main`，`Deploy GitHub Pages` 工作流会先运行完整检查，再上传并发布静态文件；
-3. 在工作流给出的 Pages 地址检查首页、公共页面和 12 个工具；
+3. 在工作流给出的 Pages 地址检查首页、公共页面和 13 个工具；
 4. 按 [发布清单](docs/RELEASE_CHECKLIST.md) 完成人工、跨浏览器和线上验收后创建 `v0.1.0` 标签与 Release。

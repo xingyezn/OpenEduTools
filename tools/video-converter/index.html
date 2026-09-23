@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在浏览器本地把 MP4、MOV、WebM、MKV 等视频转换为 MP4 或 WebM，可压缩体积。"><title>视频格式转换 · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/analytics.js" defer></script><script src="../../js/format.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./vendor/mediabunny.min.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="video-converter">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true">O</span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../all-tools.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../all-tools.html">全部工具</a> / 视频格式转换</nav>
+    <header class="tool-header">
+      <div class="tool-header__row">
+        <div><span class="tool-kicker">VIDEO CONVERTER</span><h1>视频格式转换</h1><p>把课堂录制、手机拍摄或屏幕录制的视频转换成通用的 MP4，或压缩成体积更小的 WebM，全过程在本页完成。</p></div>
+        <button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button>
+      </div>
+      <span class="privacy-mark">视频仅在本页内存中处理，不上传</span>
+    </header>
+    <div class="tool-sections">
+      <section class="panel" aria-labelledby="source-title">
+        <h2 id="source-title">选择视频</h2>
+        <p id="support-status" class="status-line" role="status" aria-live="polite"></p>
+        <div id="dropZone" class="drop-zone">
+          <p class="drop-zone__hint">把视频文件拖到这里，或</p>
+          <button id="chooseFileBtn" class="button" type="button">选择视频文件</button>
+          <input id="fileInput" type="file" accept="video/*,.mkv,.mov,.m4v,.ts" hidden>
+          <p class="small muted">支持 MP4、MOV、WebM、MKV、MPEG-TS 等；文件只在本页读取。</p>
+        </div>
+        <dl id="fileInfo" class="stat-grid" hidden>
+          <div class="stat"><dt>文件</dt><dd id="infoName">—</dd></div>
+          <div class="stat"><dt>大小</dt><dd id="infoSize">—</dd></div>
+          <div class="stat"><dt>时长</dt><dd id="infoDuration">—</dd></div>
+          <div class="stat"><dt>分辨率</dt><dd id="infoResolution">—</dd></div>
+          <div class="stat"><dt>视频编码</dt><dd id="infoVideo">—</dd></div>
+          <div class="stat"><dt>声音编码</dt><dd id="infoAudio">—</dd></div>
+        </dl>
+        <p id="source-status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section class="panel" aria-labelledby="settings-title">
+        <h2 id="settings-title">转换设置</h2>
+        <div class="form-grid">
+          <div class="field"><label for="targetFormat">目标格式</label><select id="targetFormat"><option value="mp4">MP4（H.264 + AAC，兼容性最好）</option><option value="webm">WebM（VP9 + Opus，网页友好）</option></select></div>
+          <div class="field"><label for="preset">质量预设</label><select id="preset"><option value="balanced">均衡（推荐）</option><option value="quality">保持画质</option><option value="size">优先减小体积</option><option value="remux">仅换封装（能复制就不重新编码）</option></select></div>
+        </div>
+        <details class="advanced">
+          <summary>高级选项</summary>
+          <div class="form-grid advanced__grid">
+            <div class="field"><label for="maxHeight">限制分辨率</label><select id="maxHeight"><option value="">保持原始</option><option value="1080">最高 1080p</option><option value="720">最高 720p</option><option value="480">最高 480p</option></select></div>
+            <div class="field"><label for="frameRate">帧率</label><select id="frameRate"><option value="">保持原始</option><option value="30">30 帧/秒</option><option value="25">25 帧/秒</option><option value="24">24 帧/秒</option></select></div>
+            <label class="check advanced__check"><input id="removeAudio" type="checkbox">去除声音（仅保留画面）</label>
+          </div>
+        </details>
+        <p id="plan-summary" class="small muted"></p>
+        <div class="tool-actions"><button id="convertBtn" class="button" type="button" disabled>开始转换</button><button id="cancelBtn" class="button button--secondary" type="button" hidden>取消</button><button id="resetBtn" class="button button--secondary" type="button" disabled>重置</button></div>
+        <div id="progressWrap" class="progress" hidden>
+          <progress id="progressBar" max="100" value="0">0%</progress>
+          <div class="progress__meta"><span id="progressText">0%</span><span id="progressDetail"></span></div>
+        </div>
+        <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+      <section class="panel" aria-labelledby="result-title">
+        <h2 id="result-title">结果</h2>
+        <div id="resultBox" class="result-box"><p class="muted">转换完成后，这里会显示体积对比、预览和下载按钮。</p></div>
+      </section>
+      <aside class="notice"><strong>使用提示：</strong>转换在浏览器本地进行，视频不会上传；输出文件先在内存中汇总，超大文件（超过约 1 GB）可能受浏览器内存限制。AVI、WMV、FLV 等老格式浏览器无法解封装，暂不支持。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

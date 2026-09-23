@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "video-converter",
+  "name": "视频格式转换",
+  "description": "在浏览器本地把 MP4、MOV、WebM、MKV 等视频转换为 MP4 或 WebM，可压缩体积，视频不上传。",
+  "category": "data-processing",
+  "subjects": ["general", "information-technology", "arts"],
+  "tags": ["视频", "格式转换", "MP4", "WebM", "压缩", "转码"],
+  "version": "0.1.0",
+  "status": "beta",
+  "entry": "tools/video-converter/index.html",
+  "icon": "video",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-09-23",
+  "updatedAt": "2026-09-23"
+}
