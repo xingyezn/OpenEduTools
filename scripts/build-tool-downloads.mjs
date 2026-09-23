@@ -56,7 +56,7 @@ async function readEntry(source, target = source) { return { name: target, data:
 
 async function collectDirectory(baseDir, relative = '') {
   const dir = path.join(baseDir, relative);
-  const items = await readdir(dir, { withFileTypes: true });
+  const items = (await readdir(dir, { withFileTypes: true })).sort((left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0));
   const result = [];
   for (const item of items) {
     const next = path.join(relative, item.name);
