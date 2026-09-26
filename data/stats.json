@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-09-26T04:52:52+08:00",
+  "updated_at": "2026-09-27T04:23:01+08:00",
   "summary": {
-    "total_opens": 26,
-    "total_uses": 24,
+    "total_opens": 29,
+    "total_uses": 26,
     "total_favorites": 10
   },
   "tools": {
@@ -37,8 +37,8 @@
       "shares": 0
     },
     "noise-meter": {
-      "opens": 0,
-      "uses": 0,
+      "opens": 1,
+      "uses": 1,
       "favorites": 1,
       "shares": 0
     },
@@ -55,14 +55,14 @@
       "shares": 1
     },
     "random-group": {
-      "opens": 0,
+      "opens": 1,
       "uses": 0,
       "favorites": 1,
       "shares": 0
     },
     "random-picker": {
-      "opens": 3,
-      "uses": 1,
+      "opens": 4,
+      "uses": 2,
       "favorites": 1,
       "shares": 0
     },
@@ -86,8 +86,9 @@
         "image-editor",
         "handwriting-digits",
         "markdown-to-word",
+        "random-picker",
         "fullscreen-clock",
-        "random-picker"
+        "noise-meter"
       ],
       "most_favorited": [
         "image-editor",
@@ -107,8 +108,9 @@
         "image-editor",
         "handwriting-digits",
         "markdown-to-word",
+        "random-picker",
         "fullscreen-clock",
-        "random-picker"
+        "noise-meter"
       ],
       "most_favorited": [
         "image-editor",
