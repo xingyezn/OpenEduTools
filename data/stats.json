@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-09-28T04:36:28+08:00",
+  "updated_at": "2026-09-29T06:45:49+08:00",
   "summary": {
-    "total_opens": 30,
-    "total_uses": 26,
+    "total_opens": 31,
+    "total_uses": 27,
     "total_favorites": 11
   },
   "tools": {
@@ -31,8 +31,8 @@
       "shares": 0
     },
     "markdown-to-word": {
-      "opens": 2,
-      "uses": 2,
+      "opens": 3,
+      "uses": 3,
       "favorites": 1,
       "shares": 0
     },
@@ -104,23 +104,13 @@
     },
     "last_7_days": {
       "most_used": [
-        "pdf-toolkit",
-        "image-editor",
-        "handwriting-digits",
-        "markdown-to-word",
         "random-picker",
+        "markdown-to-word",
         "noise-meter"
       ],
       "most_favorited": [
         "classroom-timer",
-        "image-editor",
-        "fullscreen-clock",
-        "handwriting-digits",
-        "markdown-to-word",
-        "noise-meter",
-        "pomodoro-timer",
-        "random-group",
-        "random-picker"
+        "image-editor"
       ]
     }
   }
