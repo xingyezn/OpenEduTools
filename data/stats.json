@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-03T05:35:24+08:00",
+  "updated_at": "2026-10-04T04:22:49+08:00",
   "summary": {
     "total_opens": 32,
     "total_uses": 28,
@@ -104,9 +104,8 @@
     },
     "last_7_days": {
       "most_used": [
-        "random-picker",
         "markdown-to-word",
-        "noise-meter"
+        "random-picker"
       ],
       "most_favorited": [
         "classroom-timer"
