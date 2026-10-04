@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-04T04:22:49+08:00",
+  "updated_at": "2026-10-05T04:39:06+08:00",
   "summary": {
     "total_opens": 32,
     "total_uses": 28,
@@ -107,9 +107,7 @@
         "markdown-to-word",
         "random-picker"
       ],
-      "most_favorited": [
-        "classroom-timer"
-      ]
+      "most_favorited": []
     }
   }
 }
