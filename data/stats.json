@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-07T06:01:31+08:00",
+  "updated_at": "2026-10-08T06:26:37+08:00",
   "summary": {
     "total_opens": 32,
     "total_uses": 28,
@@ -103,9 +103,7 @@
       ]
     },
     "last_7_days": {
-      "most_used": [
-        "random-picker"
-      ],
+      "most_used": [],
       "most_favorited": []
     }
   }
