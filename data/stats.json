@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-10-17T04:15:59+08:00",
+  "updated_at": "2026-10-18T03:51:24+08:00",
   "summary": {
-    "total_opens": 33,
-    "total_uses": 28,
+    "total_opens": 34,
+    "total_uses": 31,
     "total_favorites": 11
   },
   "tools": {
@@ -25,8 +25,8 @@
       "shares": 0
     },
     "image-editor": {
-      "opens": 3,
-      "uses": 5,
+      "opens": 4,
+      "uses": 8,
       "favorites": 2,
       "shares": 0
     },
@@ -103,7 +103,9 @@
       ]
     },
     "last_7_days": {
-      "most_used": [],
+      "most_used": [
+        "image-editor"
+      ],
       "most_favorited": []
     }
   }
