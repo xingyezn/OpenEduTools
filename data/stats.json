@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-10-22T05:02:36+08:00",
+  "updated_at": "2026-10-23T04:58:51+08:00",
   "summary": {
-    "total_opens": 34,
-    "total_uses": 31,
+    "total_opens": 42,
+    "total_uses": 35,
     "total_favorites": 11
   },
   "tools": {
@@ -13,37 +13,37 @@
       "shares": 0
     },
     "fullscreen-clock": {
-      "opens": 5,
-      "uses": 1,
+      "opens": 6,
+      "uses": 3,
       "favorites": 1,
       "shares": 1
     },
     "handwriting-digits": {
-      "opens": 5,
+      "opens": 6,
       "uses": 4,
       "favorites": 1,
       "shares": 0
     },
     "image-editor": {
-      "opens": 4,
+      "opens": 5,
       "uses": 8,
       "favorites": 2,
       "shares": 0
     },
     "markdown-to-word": {
-      "opens": 3,
+      "opens": 4,
       "uses": 3,
       "favorites": 1,
       "shares": 0
     },
     "noise-meter": {
-      "opens": 1,
-      "uses": 1,
+      "opens": 2,
+      "uses": 2,
       "favorites": 1,
       "shares": 0
     },
     "pdf-toolkit": {
-      "opens": 6,
+      "opens": 7,
       "uses": 11,
       "favorites": 0,
       "shares": 0
@@ -55,14 +55,14 @@
       "shares": 1
     },
     "random-group": {
-      "opens": 1,
+      "opens": 2,
       "uses": 0,
       "favorites": 1,
       "shares": 0
     },
     "random-picker": {
-      "opens": 5,
-      "uses": 3,
+      "opens": 6,
+      "uses": 4,
       "favorites": 1,
       "shares": 0
     },
@@ -85,9 +85,9 @@
         "pdf-toolkit",
         "image-editor",
         "handwriting-digits",
-        "markdown-to-word",
         "random-picker",
         "fullscreen-clock",
+        "markdown-to-word",
         "noise-meter"
       ],
       "most_favorited": [
@@ -104,7 +104,10 @@
     },
     "last_7_days": {
       "most_used": [
-        "image-editor"
+        "image-editor",
+        "fullscreen-clock",
+        "noise-meter",
+        "random-picker"
       ],
       "most_favorited": []
     }
