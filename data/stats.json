@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-24T04:48:55+08:00",
+  "updated_at": "2026-10-25T03:58:59+08:00",
   "summary": {
     "total_opens": 42,
     "total_uses": 35,
@@ -104,7 +104,6 @@
     },
     "last_7_days": {
       "most_used": [
-        "image-editor",
         "fullscreen-clock",
         "noise-meter",
         "random-picker"
