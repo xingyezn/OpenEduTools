@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-11-14T07:01:25+08:00",
+  "updated_at": "2026-11-15T05:48:58+08:00",
   "summary": {
-    "total_opens": 56,
+    "total_opens": 57,
     "total_uses": 37,
     "total_favorites": 11
   },
@@ -31,7 +31,7 @@
       "shares": 0
     },
     "markdown-to-word": {
-      "opens": 5,
+      "opens": 6,
       "uses": 3,
       "favorites": 1,
       "shares": 0
@@ -103,9 +103,7 @@
       ]
     },
     "last_7_days": {
-      "most_used": [
-        "fullscreen-clock"
-      ],
+      "most_used": [],
       "most_favorited": []
     }
   }
