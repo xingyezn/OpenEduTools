@@ -4,6 +4,33 @@
   "tools": [
     {
       "$schema": "../../schemas/tool.schema.json",
+      "id": "circuit-lab",
+      "name": "电流电压电阻探究实验室",
+      "description": "切换串联或并联电阻，实时计算电流、电压与等效电阻，并绘制伏安特性图。",
+      "category": "research",
+      "subjects": [
+        "science",
+        "mathematics"
+      ],
+      "tags": [
+        "欧姆定律",
+        "电路",
+        "电流",
+        "电压",
+        "电阻"
+      ],
+      "version": "0.1.0",
+      "status": "stable",
+      "entry": "tools/circuit-lab/index.html",
+      "icon": "circuit",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": false,
+      "createdAt": "2026-11-19",
+      "updatedAt": "2026-11-19"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
       "id": "classroom-timer",
       "name": "课堂计时器",
       "description": "提供防漂移的课堂倒计时与正计时，并支持大字展示。",
@@ -207,6 +234,33 @@
       "featured": false,
       "createdAt": "2026-09-21",
       "updatedAt": "2026-09-21"
+    },
+    {
+      "$schema": "../../schemas/tool.schema.json",
+      "id": "projectile-lab",
+      "name": "抛体运动探究实验室",
+      "description": "调节初速度、抛射角与高度，实时演示抛体轨迹并计算射程、飞行时间和落地速度。",
+      "category": "research",
+      "subjects": [
+        "science",
+        "mathematics"
+      ],
+      "tags": [
+        "抛体运动",
+        "平抛",
+        "斜抛",
+        "物理",
+        "轨迹"
+      ],
+      "version": "0.1.0",
+      "status": "stable",
+      "entry": "tools/projectile-lab/index.html",
+      "icon": "physics",
+      "offline": true,
+      "dataPolicy": "local-only",
+      "featured": false,
+      "createdAt": "2026-11-19",
+      "updatedAt": "2026-11-19"
     },
     {
       "$schema": "../../schemas/tool.schema.json",

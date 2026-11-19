@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="切换串联或并联电阻，实时计算电流、电压与等效电阻，并绘制伏安特性图。"><title>电流电压电阻探究实验室 · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/analytics.js" defer></script><script src="../../js/format.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="circuit-lab">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true">O</span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../all-tools.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../all-tools.html">全部工具</a> / 电流电压电阻探究实验室</nav>
+    <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">CIRCUIT LAB</span><h1>电流电压电阻探究实验室</h1><p>改变电源电压、电阻数量和连接方式，观察电流、电压与等效电阻如何响应，并记录实验数据。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">电路参数仅在本页内存中计算</span></header>
+    <div class="tool-sections">
+      <section class="panel" aria-labelledby="controls-title">
+        <h2 id="controls-title">实验参数</h2>
+        <div class="circuit-controls">
+          <div class="field">
+            <span class="field__label">连接方式</span>
+            <div class="seg" role="group" aria-label="电路连接方式">
+              <button class="seg__btn is-active" type="button" data-mode="series" aria-pressed="true">串联</button>
+              <button class="seg__btn" type="button" data-mode="parallel" aria-pressed="false">并联</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="voltage">电源电压 U（V）</label>
+            <div class="range-row"><input id="voltage-range" type="range" min="0" max="24" step="0.5" value="6" aria-label="电源电压滑块"><input id="voltage" type="number" min="0" max="24" step="0.1" value="6" inputmode="decimal"></div>
+          </div>
+        </div>
+        <div class="field resistor-field">
+          <span class="field__label">电阻</span>
+          <div id="resistor-list" class="resistor-list"></div>
+          <div><button id="add-resistor" class="button button--secondary" type="button">＋ 添加电阻</button></div>
+        </div>
+        <div class="tool-actions">
+          <button id="record" class="button button--cta" type="button">记录本次数据</button>
+          <button id="reset" class="button button--secondary" type="button">重置实验</button>
+        </div>
+        <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="circuit-title">
+        <h2 id="circuit-title">电路与读数</h2>
+        <div class="circuit-layout">
+          <figure class="circuit-figure">
+            <svg id="circuit-svg" class="circuit-svg" viewBox="0 0 720 360" role="img" aria-label="电路图"></svg>
+            <figcaption id="circuit-caption">电路图会随连接方式和电阻数量更新。</figcaption>
+          </figure>
+          <div class="circuit-results">
+            <dl id="summary" class="stat-grid"></dl>
+            <div id="formula" class="formula-box" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <caption class="visually-hidden">各电阻的阻值、电压、电流和功率</caption>
+            <thead><tr><th scope="col">元件</th><th scope="col">阻值</th><th scope="col">电压</th><th scope="col">电流</th><th scope="col">功率</th></tr></thead>
+            <tbody id="branch-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="chart-title">
+        <h2 id="chart-title">伏安特性</h2>
+        <figure class="lab-figure">
+          <canvas id="ohm-canvas" class="lab-canvas" width="760" height="440" aria-label="电流随电压变化的伏安特性曲线图">当前浏览器不支持画布，无法显示伏安特性图。</canvas>
+          <figcaption>横轴为电压 U，纵轴为电流 I；实线为等效电阻，虚线为各个电阻，圆点为当前工作点。</figcaption>
+        </figure>
+      </section>
+
+      <section id="records-section" class="panel" aria-labelledby="records-title" hidden>
+        <div class="records-head"><h2 id="records-title">实验记录</h2><span id="records-count" class="muted"></span></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <caption class="visually-hidden">已记录的电路实验数据</caption>
+            <thead><tr><th scope="col">序号</th><th scope="col">连接方式</th><th scope="col">电压</th><th scope="col">电阻</th><th scope="col">等效电阻</th><th scope="col">总电流</th><th scope="col">总功率</th></tr></thead>
+            <tbody id="records-body"></tbody>
+          </table>
+        </div>
+        <div class="tool-actions">
+          <button id="export-records" class="button button--secondary" type="button">导出记录 CSV</button>
+          <button id="clear-records" class="button button--danger" type="button">清空记录</button>
+        </div>
+      </section>
+
+      <aside class="notice"><strong>探究提示：</strong>保持电源电压不变，逐步增大一个电阻的阻值，观察总电流如何变化；再切换串联与并联，比较等效电阻与各电阻的大小关系。本工具采用理想电源和理想电阻模型，忽略导线电阻、电源内阻与温度影响。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

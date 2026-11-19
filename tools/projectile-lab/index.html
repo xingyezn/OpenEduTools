@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="调节初速度、抛射角与高度，实时演示抛体轨迹并计算射程、飞行时间和落地速度。"><title>抛体运动探究实验室 · OpenEduTools</title>
+  <link rel="stylesheet" href="../../css/tokens.css"><link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/components.css"><link rel="stylesheet" href="../../css/tool.css"><link rel="stylesheet" href="./style.css">
+  <script src="../../js/theme.js"></script><script src="../../js/storage.js" defer></script><script src="../../js/favorites.js" defer></script><script src="../../js/recent.js" defer></script><script src="../../js/analytics.js" defer></script><script src="../../js/format.js" defer></script><script src="../../js/tool-page.js" defer></script><script src="./script.js" defer></script>
+</head>
+<body data-tool-id="projectile-lab">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header"><div class="container site-header__inner"><a class="brand" href="../../index.html"><span class="brand__mark" aria-hidden="true">O</span>OpenEduTools</a><nav class="site-nav" aria-label="工具导航"><a href="../../all-tools.html">全部工具</a><label class="theme-field">主题<select class="select" data-theme-select aria-label="颜色主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label></nav></div></header>
+  <main id="main" class="tool-layout">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href="../../all-tools.html">全部工具</a> / 抛体运动探究实验室</nav>
+    <header class="tool-header"><div class="tool-header__row"><div><span class="tool-kicker">PHYSICS LAB</span><h1>抛体运动探究实验室</h1><p>改变初速度、抛射角与初始高度，观察轨迹如何变化，并比较不同角度下的射程与落地速度。</p></div><button class="favorite-button" data-tool-favorite type="button" aria-pressed="false">☆ 收藏</button></div><span class="privacy-mark">实验参数仅在本页内存中计算</span></header>
+    <div class="tool-sections">
+      <section class="panel" aria-labelledby="controls-title">
+        <h2 id="controls-title">实验参数</h2>
+        <div class="lab-controls">
+          <div class="field">
+            <label for="gravity-preset">重力环境</label>
+            <select id="gravity-preset" class="select">
+              <option value="earth">地球（9.8 m/s²）</option>
+              <option value="moon">月球（1.6 m/s²）</option>
+              <option value="mars">火星（3.7 m/s²）</option>
+              <option value="custom">自定义</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="gravity">重力加速度 g（m/s²）</label>
+            <input id="gravity" type="number" min="0.1" max="50" step="0.1" value="9.8" inputmode="decimal">
+          </div>
+          <div class="field">
+            <label for="speed">初速度 v₀（m/s）</label>
+            <div class="range-row"><input id="speed-range" type="range" min="1" max="60" step="0.5" value="20" aria-label="初速度滑块"><input id="speed" type="number" min="1" max="60" step="0.5" value="20" inputmode="decimal"></div>
+          </div>
+          <div class="field">
+            <label for="angle">抛射角 θ（°）</label>
+            <div class="range-row"><input id="angle-range" type="range" min="0" max="90" step="1" value="45" aria-label="抛射角滑块"><input id="angle" type="number" min="0" max="90" step="1" value="45" inputmode="decimal"></div>
+          </div>
+          <div class="field">
+            <label for="height">初始高度 h（m）</label>
+            <div class="range-row"><input id="height-range" type="range" min="0" max="50" step="0.5" value="0" aria-label="初始高度滑块"><input id="height" type="number" min="0" max="200" step="0.5" value="0" inputmode="decimal"></div>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button id="launch" class="button button--cta" type="button">发射演示</button>
+          <button id="reset" class="button button--secondary" type="button">重置参数</button>
+          <button id="export" class="button button--secondary" type="button">导出实验数据 CSV</button>
+        </div>
+        <p id="status" class="status-line" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="stage-title">
+        <h2 id="stage-title">运动轨迹</h2>
+        <canvas id="trajectory-canvas" class="lab-canvas lab-canvas--trajectory" width="960" height="540" aria-label="抛体运动轨迹图，横轴为水平距离，纵轴为高度">当前浏览器不支持画布，无法显示轨迹图。</canvas>
+        <div id="readout" class="lab-readout" aria-live="off"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="result-title">
+        <h2 id="result-title">实验结论</h2>
+        <dl id="summary" class="stat-grid"></dl>
+      </section>
+
+      <section class="panel" aria-labelledby="compare-title">
+        <h2 id="compare-title">多角度对比</h2>
+        <div class="lab-compare">
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <caption class="visually-hidden">不同抛射角下的飞行时间、射程、最大高度和落地速度</caption>
+              <thead><tr><th scope="col">角度</th><th scope="col">飞行时间</th><th scope="col">水平射程</th><th scope="col">最大高度</th><th scope="col">落地速度</th></tr></thead>
+              <tbody id="compare-body"></tbody>
+            </table>
+          </div>
+          <figure class="lab-figure">
+            <canvas id="angle-canvas" class="lab-canvas lab-canvas--angle" width="520" height="390" aria-label="射程随抛射角变化的曲线图">当前浏览器不支持画布，无法显示关系图。</canvas>
+            <figcaption>保持当前初速度、高度和重力不变，射程随抛射角的变化。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <aside class="notice"><strong>探究提示：</strong>先保持初速度不变，把抛射角从 15° 调到 75°，观察射程先增大后减小的现象；再改变初始高度，看看最佳角度是否仍是 45°。本工具采用理想模型，忽略空气阻力，结果适合课堂定性分析与数值比较。</aside>
+    </div>
+    <noscript><p class="notice notice--error">此工具需要启用 JavaScript 才能运行。</p></noscript>
+  </main><div class="toast" data-toast role="status" hidden></div>
+</body>
+</html>

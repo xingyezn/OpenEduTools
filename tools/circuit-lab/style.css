@@ -1,0 +1,36 @@
+.circuit-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: var(--space-4); align-items: start; }
+.seg { width: 100%; }
+.seg__btn { flex: 1; }
+.range-row { display: grid; grid-template-columns: minmax(0, 1fr) 5.5rem; align-items: center; gap: var(--space-3); }
+.range-row input[type="range"] { width: 100%; min-height: 2.75rem; accent-color: var(--primary); cursor: pointer; }
+.resistor-field { margin-top: var(--space-4); }
+.resistor-list { display: grid; gap: var(--space-2); }
+.resistor-row { display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-2); }
+.resistor-row__index { font-family: var(--font-mono); font-weight: 800; color: var(--primary); }
+.resistor-row input { min-width: 0; }
+.resistor-row__unit { color: var(--text-muted); font-size: var(--text-sm); }
+.resistor-row .icon-btn { width: 2.5rem; height: 2.5rem; }
+.circuit-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--space-4); align-items: start; }
+.circuit-figure { display: grid; gap: var(--space-2); margin: 0; }
+.circuit-figure figcaption { color: var(--text-muted); font-size: var(--text-sm); }
+.circuit-svg { display: block; width: 100%; height: auto; background: var(--surface-input); border: 1px solid var(--border); border-radius: var(--radius-md); }
+.circuit-svg text { font-family: var(--font-sans); }
+.circuit-svg .wire { fill: none; stroke: var(--text-muted); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.circuit-svg .component { fill: var(--surface-soft); stroke: var(--primary); stroke-width: 2.6; }
+.circuit-svg .battery { fill: none; stroke: var(--warning); stroke-width: 3.2; stroke-linecap: round; }
+.circuit-svg .label { fill: var(--text); font-size: 12px; font-weight: 700; }
+.circuit-svg .annotation { fill: var(--text-muted); font-size: 10.5px; }
+.circuit-svg .current { fill: var(--secondary); font-size: 11.5px; font-weight: 700; }
+.circuit-svg .arrow { fill: var(--secondary); }
+.circuit-svg .empty { fill: var(--text-muted); font-size: 14px; }
+.circuit-results { display: grid; gap: var(--space-3); }
+.formula-box { padding: var(--space-3) var(--space-4); border: 1px dashed var(--border-strong); border-radius: var(--radius-md); background: var(--surface-soft); font-family: var(--font-mono); font-size: var(--text-sm); line-height: 1.8; white-space: pre-wrap; }
+.formula-box:empty { display: none; }
+.lab-figure { display: grid; gap: var(--space-2); margin: 0; }
+.lab-figure figcaption { color: var(--text-muted); font-size: var(--text-sm); }
+.lab-canvas { display: block; width: 100%; height: auto; background: var(--surface-input); border: 1px solid var(--border); border-radius: var(--radius-md); aspect-ratio: 19 / 11; min-height: 14rem; }
+.records-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-3); }
+.records-head h2 { margin: 0; }
+.data-table td { white-space: nowrap; }
+@media (max-width: 52rem) { .circuit-controls, .circuit-layout { grid-template-columns: 1fr; } }
+@media (max-width: 30rem) { .range-row { grid-template-columns: minmax(0, 1fr) 4.5rem; } .resistor-row { grid-template-columns: 2.8rem minmax(0, 1fr) auto auto; } }

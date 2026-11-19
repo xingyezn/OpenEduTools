@@ -1,0 +1,18 @@
+.lab-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--space-4); }
+.range-row { display: grid; grid-template-columns: minmax(0, 1fr) 5.5rem; align-items: center; gap: var(--space-3); }
+.range-row input[type="range"] { width: 100%; min-height: 2.75rem; accent-color: var(--primary); cursor: pointer; }
+.range-row input[type="number"] { min-width: 0; }
+.lab-canvas { display: block; width: 100%; height: auto; background: var(--surface-input); border: 1px solid var(--border); border-radius: var(--radius-md); }
+.lab-canvas--trajectory { aspect-ratio: 16 / 9; min-height: 15rem; }
+.lab-canvas--angle { aspect-ratio: 4 / 3; }
+.lab-readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: var(--space-2); margin-top: var(--space-3); }
+.readout-item { display: grid; gap: 0.1rem; padding: var(--space-2) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-soft); }
+.readout-item span { color: var(--text-muted); font-size: var(--text-xs); }
+.readout-item b { font-family: var(--font-mono); font-size: var(--text-sm); }
+.lab-compare { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--space-4); align-items: start; }
+.lab-figure { display: grid; gap: var(--space-2); margin: 0; }
+.lab-figure figcaption { color: var(--text-muted); font-size: var(--text-sm); }
+.data-table tbody tr[data-current="true"] { background: var(--warning-bg); font-weight: 700; }
+.data-table td { white-space: nowrap; }
+@media (max-width: 52rem) { .lab-compare { grid-template-columns: 1fr; } }
+@media (max-width: 30rem) { .range-row { grid-template-columns: minmax(0, 1fr) 4.5rem; } }

@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tool.schema.json",
+  "id": "projectile-lab",
+  "name": "抛体运动探究实验室",
+  "description": "调节初速度、抛射角与高度，实时演示抛体轨迹并计算射程、飞行时间和落地速度。",
+  "category": "research",
+  "subjects": ["science", "mathematics"],
+  "tags": ["抛体运动", "平抛", "斜抛", "物理", "轨迹"],
+  "version": "0.1.0",
+  "status": "stable",
+  "entry": "tools/projectile-lab/index.html",
+  "icon": "physics",
+  "offline": true,
+  "dataPolicy": "local-only",
+  "featured": false,
+  "createdAt": "2026-11-19",
+  "updatedAt": "2026-11-19"
+}
