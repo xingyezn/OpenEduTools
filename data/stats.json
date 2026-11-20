@@ -1,11 +1,17 @@
 {
-  "updated_at": "2026-11-19T07:42:49+08:00",
+  "updated_at": "2026-11-20T08:01:38+08:00",
   "summary": {
-    "total_opens": 59,
-    "total_uses": 37,
+    "total_opens": 63,
+    "total_uses": 39,
     "total_favorites": 11
   },
   "tools": {
+    "circuit-lab": {
+      "opens": 1,
+      "uses": 0,
+      "favorites": 0,
+      "shares": 0
+    },
     "classroom-timer": {
       "opens": 0,
       "uses": 0,
@@ -13,7 +19,7 @@
       "shares": 0
     },
     "fullscreen-clock": {
-      "opens": 9,
+      "opens": 10,
       "uses": 4,
       "favorites": 1,
       "shares": 1
@@ -54,6 +60,12 @@
       "favorites": 1,
       "shares": 1
     },
+    "projectile-lab": {
+      "opens": 1,
+      "uses": 1,
+      "favorites": 0,
+      "shares": 0
+    },
     "random-group": {
       "opens": 3,
       "uses": 0,
@@ -61,8 +73,8 @@
       "shares": 0
     },
     "random-picker": {
-      "opens": 9,
-      "uses": 4,
+      "opens": 10,
+      "uses": 5,
       "favorites": 1,
       "shares": 0
     },
@@ -84,11 +96,12 @@
       "most_used": [
         "pdf-toolkit",
         "image-editor",
+        "random-picker",
         "fullscreen-clock",
         "handwriting-digits",
-        "random-picker",
         "markdown-to-word",
-        "noise-meter"
+        "noise-meter",
+        "projectile-lab"
       ],
       "most_favorited": [
         "classroom-timer",
@@ -103,7 +116,10 @@
       ]
     },
     "last_7_days": {
-      "most_used": [],
+      "most_used": [
+        "projectile-lab",
+        "random-picker"
+      ],
       "most_favorited": []
     }
   }
